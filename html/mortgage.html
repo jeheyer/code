@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Mortgage Calculator</title>
+<meta charset="utf-8" />
+<meta name="description" content="A" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="index, follow, archive, noimageindex">
+<meta http-equiv="Cache-Control" content="no-cache"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0" />
+<style>
+table	{ width: 100%; border-spacing: 2px; border-collapse: collapse; border: 1px solid black; }
+th,td	{ font-family: arial; text-align: left; font-size:8; border: 1px solid black; padding: 4px; }
+h1	{ font-family: arial; font-size: 14; }
+</style>
+</head>
+<body>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/ajax-functions.js"></script>
+<script src="js/canvasjs.min.js"></script>
+
+<script>
+
+    function MakeChart(loan_amount, payments) {
+    
+        // Initialize arrays for the lines to draw
+        let principalArray = [];
+        let interestArray = [];
+        let equityArray = [];
+
+        // Calculate and store data points for the chart
+        for (let i = 0; i < payments.length; i++) {
+            principalArray.push({ x: i, y: payments[i].remainingBalance });
+            interestArray.push({ x: i, y: payments[i].sumOfInterestPayments })
+            equityArray.push({ x: i, y: payments[i].sumOfPrinciple });
+        }
+
+        // Set parameters for the chart
+        var chart = new CanvasJS.Chart("chartContainer", {
+            theme: "light2",
+            title: { text: "Payment Chart"  },
+            axisX: { title: "Year Number", interval: 1},
+            axisY: { title: "Principal/Equity", prefix: "$" },
+            axisY2: { title: "Interest Paid", prefix: "$" },
+            data: [
+                { 
+                    type: "line",
+                    name: "Principal",
+                    color: "#0000FF",
+                    axisYIndex: 0,
+                    showInLegend: true,
+                    dataPoints: principalArray
+                }, 
+                {
+                    type: "line",
+                    name: "Equity",
+                    color: "#00FF00",
+                    axisYIndex: 1,
+                    showInLegend: true,
+                    dataPoints: equityArray 
+                },
+                {
+                    type: "line",
+                    name: "Interest",
+                    color: "#FF0000",
+                    axisYType: "secondary",
+                    showInLegend: true,
+                    dataPoints: interestArray 
+                }
+            ]
+        });
+
+        // Draw the chart
+        if (loan_amount)
+                chart.render();
+
+}
+
+function rangeCheck(num, description, min, max, units) {
+          
+    if (!isNaN(num) && num >= min && num <= max) {
+        // Success
+        return 0;
+    } else {
+        // Failure
+        let errormsg = description + " must be between " + min + " and " + max;
+        if (units)
+            errormsg += " " + units;        
+        throwError(errormsg);
+        return 1;
+    }    
+}
+
+function throwError(message, value) {
+        
+    // Alert the user and log the error message in the console
+    alert(message);
+    throw new Error (message);
+}
+
+function GetLoanData() {
+        
+    var output = {};
+    //let url = `https://freebsd.lan.j5.org/mortgage.cgi?${location.search.substr(1)}`;
+    let url = `https://python.j5.org/mortgage.cgi?${location.search.substr(1)}`;
+    $.ajax({ url: url,
+        async: false,
+        dataType: 'json',
+        success: function(data) { output = data; }
+    });
+    
+    return output;
+}
+
+</script>
+
+<table id="input_table" border=0 width=800>
+  <tr>
+    <td width=320><b>Enter Loan Data:</b></td>
+    <td width=480><b>Graph</b></td>
+  </tr>
+  <tr>
+    <td>
+      <table cellspacing=5 align=left>
+        <form method=get action="">
+        <fieldset>    
+        <tr><td><legend>Loan Amount</legend><td><input type='text' name='loanAmount' id='loanAmount' size=4 maxlength=6 value=''></td></tr>
+        <tr><td><legend>Interest Rate:</legend><td><input type='text' name='interestRate' id='interestRate' size=4 maxlength=6 value=''></td></tr>
+        <tr><td><legend>Duration (years):</legend><td><input type='text' name='years' id='years' size=2 maxlength=2 value=''></td></tr>
+        <tr><td><legend>Start Year:</legend><td><input type='text' name='startYear' id='startYear' size=4 maxlength=4></td></tr>
+        <tr><td><legend>Start Month:</legend><td><input type='text' name='startMonth' id='startMonth' size=2 maxlength=2></td></tr>
+        <tr><td>Approximate Payments:</td><td><input type=submit value='Calculate'></td></tr>
+        <tr><td><legend>Monthtly Payment:</legend></td><td><span id="monthlyPayment" class="col-lg-6 px-0">$</span></td></tr>
+        <tr><td><legend>Total Payments:</legend></td><td><span id="sumOfPayments" class="col-lg-6 px-0">$</span></td></tr>
+        <tr><td><legend>Total Interest:</legend></td><td><span id="sumOfInterestPayments" class="col-lg-6 px-0">$</span></td></tr>
+        </fieldset>
+        </form>
+      </table>
+    </td>
+    <td>
+      <div id='chartContainer' style="width:720px; height: 300px"><canvas id='chart' class='chart'>browser doesn't support canvas</canvas></div>
+    </td>
+  </tr>
+</table>
+    
+<hr>
+
+<h1>Annual Payment Breakdown</h1>
+
+<table id="payment_table">
+<caption></caption>
+<thead></thead>
+<tbody></tbody>
+<tfoot></tfoot>
+</table>
+
+<script>
+
+    if (location.search.substr(1) !== "") {
+
+        let loanData = GetLoanData();
+        // Show the chart
+        MakeChart(loanData.loanAmount, loanData.paymentBreakdown);
+    
+        // Fill in fields on Loan data table
+        let LoanTableFields = [ "loanAmount", "interestRate", "years", "startYear", "startMonth" ];
+        $.each( LoanTableFields, function(i, field) {
+            document.querySelector(`#${field}`).value = loanData[field];
+        });
+        LoanTableFields = [ "monthlyPayment", "sumOfPayments", "sumOfInterestPayments" ];
+        $.each( LoanTableFields, function(i, field) {
+            value = loanData[field];
+            document.querySelector(`#${field}`).innerHTML = "$ " + parseFloat(value.toFixed(2)).toLocaleString();
+        });
+        
+        // Fill the table
+        FillTable("payment_table", loanData.paymentBreakdown);
+        
+    } else {
+
+        // Populate form with some default values
+        today = new Date();
+        document.querySelector("#loanAmount").value = 200000;
+        document.querySelector("#interestRate").value = 3.25;
+        document.querySelector("#years").value = 30;
+        document.querySelector("#startYear").value = today.getFullYear()
+        document.querySelector("#startMonth").value = today.getMonth()+2;
+    }
+
+
+</script>
+</body>
+</html>
+

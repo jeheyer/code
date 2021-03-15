@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Apple iOS Device Comparison Table</title>
+<meta charset="utf-8" />
+<meta name="description" content="Apple, iOS, iPhone, iPad, compare, comparison, features table" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="index, follow, archive, noimageindex">
+<meta http-equiv="Cache-Control" content="no-cache"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0" />
+<style>
+table	{ width: 100%; border-spacing: 2px; border-collapse: collapse; border: 1px solid black; }
+th,td	{ font-family: arial; text-align: left; font-size:8; border: 1px solid black; padding: 4px; }
+h1	    { font-family: arial; font-size: 14; }
+</style>
+</head>
+<body>
+
+<script src="js/jquery.min.js"></script>
+
+<script>
+
+function compareDevice(a, b) {
+        return parseInt(b.hardware_string) - parseInt(a.hardware_string);
+}
+    
+function getRequest() {
+        
+    var request;
+    if (window.XMLHttpRequest) {
+        request  = new XMLHttpRequest();
+    } else {
+        request = new ActiveXObject();
+    }
+   return request;
+}
+
+function getDeviceData() {
+    
+    var device_data = new Array();
+    let xhr = getRequest();
+    xhr.open('Get','data/ipads.json');
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4 && xhr.status === 200) { 
+            device_data = JSON.parse(xhr.responseText);
+            alert(device_data.length);
+        }
+    }
+    xhr.send();
+    return device_data;
+}
+
+let devices = getDeviceData();
+console.log("Got " + devices.length + " devices");
+for (let i=0; i < devices.length; i++) {
+    console.log(devices[i].common_name)
+}
+//devices.sort(compareDevice);
+
+</script>
+
+<table id="selection_table">
+<caption></caption>
+<thead></thead>
+<tbody></tbody>
+<tfoot></tfoot>
+</table>
+
+</body>
+</html>
+

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>VoIP Bandwidth Calculator</title>
+<meta charset="utf-8" />
+<meta name="description" content="Voice over IP Bandwidth Consumption Calculator, VoIP, Bandwidth, Calculator" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="index, follow, archive, noimageindex">
+</head>
+<body>
+
+<script>
+
+		function BWCalc(form){
+	
+			// Variables from the form
+			var Codec = form.codec.value;
+			var L2Proto = form.l2proto.value;
+			var IPHeaderComp = form.ipheadercomp.value;	 
+			var RTPHeaderComp = form.rtpheadercomp.value;	 
+			var SecurityType = form.securitytype.value;	 
+			var NumCalls = form.numcalls.value;	 
+			var SampleRate = form.samplerate.value;
+
+			// Variables used in the formula
+			var KbpsPerSecond;
+			var L2Overhead;
+			var IPOverhead = 12;
+			var UDPOverhead = 8;
+			var RTPOverhead = 20;
+			var SecurityOverhead = 0;
+						
+			if (Codec == 'G.711'){
+				KpbsPerSecond = 64000;
+			}
+			if (Codec == 'G.726'){
+				KpbsPerSecond = 32000;
+			}
+			if (Codec == 'G.729'){
+				KpbsPerSecond = 8000;
+			}
+			
+			var PacketsPerSecond = 1000 / SampleRate;
+			var PacketPayloadSize = KpbsPerSecond / PacketsPerSecond;
+
+			// Calculate Layer 2 Overhead
+			switch(L2Proto) {
+				
+				case 'Ethernet':
+						L2Overhead = 14; break
+				case 'DotQ':
+						L2Overhead = 18; break
+				case 'PPP':
+						L2Overhead = 6; break
+				case 'Frame Relay':
+						L2Overhead = 2; break
+				case 'MPLS':
+						L2Overhead = 4; break
+				case 'L2TP':
+						L2Overhead = 8; break
+				case 'GRE':
+						L2Overhead = 4; break
+			}
+
+			// Calculate Layer 3 Overhead
+			if (IPHeaderComp == 1) {
+					IPOverhead = 1;
+					UDPOverhead = 1;
+			}
+
+			if (RTPHeaderComp == 1)
+					RTPOverhead = 2;
+
+			if (SecurityType == 'IPSec/ESP')
+					SecurityOverhead = 60;
+
+			if (SecurityType == 'IPSec/AH')
+					SecurityOverhead = 16;
+
+			// Do the final calculations
+			var HeadersSize = 8 * (L2Overhead + IPOverhead + UDPOverhead + RTPOverhead + SecurityOverhead);
+			var TotalPacketSize = PacketPayloadSize + HeadersSize;
+			var BWKbps = (NumCalls * (PacketsPerSecond * TotalPacketSize)) / 1000;
+		
+			// Setup Text
+			var CallText = " call";
+			var ConsumeText = " consume";
+			if (NumCalls > 1)
+				CallText += "s";
+			else 
+				ConsumeText += "s";
+			
+			var OptionsText = "";
+			if (SecurityType != 0)
+				OptionsText = " with " + SecurityType;
+
+			// Popup Message
+			var Message = NumCalls + " "+ Codec + CallText + " over " + L2Proto + OptionsText + ConsumeText + " " + BWKbps + " kbps";	
+			alert(Message);
+
+			return 0;
+		}
+		
+</script>
+	
+	<TABLE CELLPADDING=5>
+
+	<FORM>
+
+	<TR><TD>Codec</TD><TD>
+		<SELECT NAME="codec" SIZE=1>
+			<OPTION VALUE="G.711">G.711
+			<OPTION VALUE="G.726">G.726
+			<OPTION VALUE="G.729">G.729
+		</SELECT>
+	</TD></TR>
+
+	<TR><TD>Sample Rate (ms)</TD><TD>
+		<SELECT NAME="samplerate" SIZE=1>
+			<OPTION VALUE=10>10
+			<OPTION VALUE=20 SELECTED>20
+			<OPTION VALUE=20>30
+			<OPTION VALUE=40>40
+			<OPTION VALUE=50>50
+			<OPTION VALUE=60>60
+		</SELECT>
+	</TD></TR>
+
+	<TR><TD>Layer 2 Protocol</TD><TD>
+		<SELECT NAME="l2proto" SIZE=1>
+			<OPTION VALUE="PPP">PPP
+			<OPTION VALUE="Frame Relay">Frame Relay
+			<OPTION VALUE="MPLS">MPLS
+			<OPTION VALUE="L2TP">L2TP
+			<OPTION VALUE="GRE">GRE
+			<OPTION VALUE="Ethernet">Ethernet
+			<OPTION VALUE="DotQ">Ethernet w/ 802.1Q
+		</SELECT>
+	</TD></TR>
+
+	<TR><TD>IP Header Compression</TD><TD>
+		<SELECT NAME="ipheadercomp" SIZE=1>
+			 <OPTION VALUE=0>No
+			 <OPTION VALUE=1>Yes
+		</SELECT>
+	</TD></TR>
+
+	<TR><TD>RTP Header Compression</TD><TD>
+		<SELECT NAME="rtpheadercomp" SIZE=1>
+			 <OPTION VALUE=0>No
+			 <OPTION VALUE=1>Yes
+		</SELECT>
+	</TD></TR>
+	
+	<TR><TD>Security</TD><TD>
+		<SELECT NAME="securitytype" SIZE=1>
+			<OPTION VALUE=0>None
+			<OPTION VALUE="IPSec/AH">IPSec w/ AH
+			<OPTION VALUE="IPSec/ESP">IPSec w/ ESP
+			<OPTION VALUE="GET">Cisco GET
+		</SELECT>
+	</TD></TR>
+
+	<TR><TD>Number of Simultaneous Calls</TD><TD>
+		<SELECT NAME="numcalls" SIZE=1>
+		<SCRIPT LANGUAGE="JavaScript">			
+			for (var i = 1; i <= 48; i++) {
+				document.writeln("<OPTION VALUE=" + i + ">" + i + "\n");
+			}
+		</SCRIPT>
+		</SELECT>
+	</TD></TR>
+
+	</TABLE>
+	
+	<INPUT TYPE="BUTTON" VALUE="Calculate" onClick="BWCalc(this.form)"> 
+	<INPUT TYPE="RESET" VALUE="Reset">
+	
+	</FORM>
+
+</body>
+</html>

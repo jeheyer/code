@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Squid Logs</title>
+<meta charset="utf-8" />
+<meta name="description" content="A" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="index, follow, archive, noimageindex">
+<meta http-equiv="Cache-Control" content="no-cache"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0" />
+<style>
+table	{ width: 100%; border-spacing: 2px; border-collapse: collapse; border: 1px solid black; }
+th,td	{ font-family: arial; text-align: left; font-size:8; border: 1px solid black; padding: 4px; }
+
+</style>
+</head>
+<body>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/ajax-functions.js"></script>
+
+<table id="data_table">
+<caption></caption>
+<thead></thead>
+<tbody></tbody>
+<tfoot></tfoot>
+</table>
+
+
+<script>
+
+    var data = {};
+    let url = `https://python.j5.org/squidread.cgi`;
+    $.ajax({ url: url,
+        async: false,
+        dataType: 'json',
+        success: function(output) { data = output; }
+    });
+    console.log(`Got data of length: ${data.length}`);
+
+    // Set alternating table row background colors
+    $(document).ready(function(){
+        $("table tr:even").css("background-color", "#fefefe");
+        $("table tr:odd").css("background-color", "#efefef");
+    });
+
+    // Fill Table Header
+    $(`#data_table thead`).empty();
+    let table_head_html = "<tr>";
+    for (let key in data[0]) {
+        table_head_html += "<th>" + key + "</th>";
+    }
+    table_head_html += "</tr>";
+    $(`#data_table thead`).append(table_head_html);
+        
+    // Fill Table Body
+    $(`#data_table tbody`).empty();
+    $.each(data, function(index, obj) {
+        let row_html = "<tr>";
+        for (let key in obj) {
+            let value = obj[key];
+            row_html += "<td>" + value + "</td>";
+        }
+        row_html += "</tr>";
+        $(`#data_table`).append(row_html);
+    });
+
+</script>
+</body>
+</html>
+
