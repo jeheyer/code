@@ -1,0 +1,32 @@
+[
+  {
+    "common_name": "iPad Mini 5",
+    "hardware_string": "iPad 11",
+    "cpu": "Apple A12 bionic"
+  },
+  {
+    "common_name": "iPad 5",
+    "hardware_string": "iPad 6",
+    "cpu": "Apple A9"
+  },
+  {
+    "common_name": "iPad Air 4",
+    "hardware_string": "iPad 13",
+    "cpu": "Apple A14 bionic"
+  },
+  {
+    "common_name": "iPad Air 3",
+    "hardware_string": "iPad 11",
+    "cpu": "Apple A12 bionic"
+  },
+  {
+    "common_name": "iPad 3",
+    "hardware_string": "iPad 3",
+    "cpu": "Apple A5X"
+  },
+  {
+    "common_name": "iPad Mini 2",
+    "hardware_string": "iPad 4",
+    "cpu": "Apple 7"
+  }
+]
