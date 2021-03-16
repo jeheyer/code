@@ -18,7 +18,6 @@ th,td	{ font-family: arial; text-align: left; font-size:8; border: 1px solid bla
 <body>
 
 <script src="../js/jquery.min.js"></script>
-<script src="../js/ajax-functions.js"></script>
 
 <table id="data_table">
 <caption></caption>
@@ -37,43 +36,33 @@ th,td	{ font-family: arial; text-align: left; font-size:8; border: 1px solid bla
     })
     .then(data => {
 
-
-    var data = {};
-    let url = `https://python.j5.org/squidread.cgi`;
-    $.ajax({ url: url,
-        async: false,
-        dataType: 'json',
-        success: function(output) { data = output; }
-    });
-    console.log(`Got data of length: ${data.length}`);
-
-    // Set alternating table row background colors
-    $(document).ready(function(){
+      // Set alternating table row background colors
+      $(document).ready(function(){
         $("table tr:even").css("background-color", "#fefefe");
         $("table tr:odd").css("background-color", "#efefef");
-    });
+      });
 
-    // Fill Table Header
-    $(`#data_table thead`).empty();
-    let table_head_html = "<tr>";
-    for (let key in data[0]) {
+      // Fill Table Header
+      $(`#data_table thead`).empty();
+      let table_head_html = "<tr>";
+      for (let key in data[0]) {
         table_head_html += "<th>" + key + "</th>";
-    }
-    table_head_html += "</tr>";
-    $(`#data_table thead`).append(table_head_html);
+      }
+      table_head_html += "</tr>";
+      $(`#data_table thead`).append(table_head_html);
         
-    // Fill Table Body
-    $(`#data_table tbody`).empty();
-    $.each(data, function(index, obj) {
+      // Fill Table Body
+      $(`#data_table tbody`).empty();
+      $.each(data, function(index, obj) {
         let row_html = "<tr>";
         for (let key in obj) {
-            let value = obj[key];
-            row_html += "<td>" + value + "</td>";
+          let value = obj[key];
+          row_html += "<td>" + value + "</td>";
         }
         row_html += "</tr>";
         $(`#data_table`).append(row_html);
-    });
- });
+      });
+    })
 
 </script>
 </body>
