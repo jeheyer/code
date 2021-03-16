@@ -58,7 +58,7 @@ h1      { font-family: arial; font-size: 14; }
    
         //$("#results_table tfoot").html(`AJAX call: ${url}`);
         
-        var results = new Array();
+        var results = [];
         $.ajax({ url: target + uri,
             async: false,
             dataType: 'json',
