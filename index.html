@@ -29,7 +29,12 @@ p               { color: black; font-family: Arial; text-align: left; }
 
 <hr>
 
-<footer>&copy; 2020 J5</footer>
+<footer></footer>
+
+<script>
+  today = new Date();
+  document.querySelector("footer").innerHTML = "&copy; " + today.getFullYear() + " J5";
+</script>
 
 </body>
 </html>
