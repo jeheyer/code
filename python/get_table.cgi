@@ -42,7 +42,7 @@ def main():
 
         # Read config file
         config = configparser.ConfigParser()
-        config.read('../private/cfg/mysql.cfg')
+        config.read('../../private/cfg/mysql.cfg')
         mysql_database = MySQLDatabase(
             config[db_name]['hostname'],
             config[db_name]['username'],
