@@ -34,6 +34,7 @@ th,td	{ font-family: arial; text-align: left; font-size:8; border: 1px solid bla
   .then(response => {
     if (response.ok)
       return response.json();
+    })
     .then(data => {
 
 
@@ -72,6 +73,7 @@ th,td	{ font-family: arial; text-align: left; font-size:8; border: 1px solid bla
         row_html += "</tr>";
         $(`#data_table`).append(row_html);
     });
+ });
 
 </script>
 </body>
