@@ -67,37 +67,36 @@ function PlotDNSResolvers(dns_resolvers = []) {
     .then(response => {
       if (response.ok)
         return response.json();
-      })
-      .then(data => {
+    })
+    .then(data => {
             
-        if (data.country_code) {
-                
-          // Create and fill in location Marker
-          let location_info = {};
-          location_info.title = data.ipv4_address;
-          random_offset = Math.round(Math.random() * 10) / 2000;
-          random_offset *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
-          location_info.lat = data.lat + random_offset;
-          location_info.lng = data.lng + random_offset;
-          location_info.details = `<b>DNS Resolver #${i+1}</b><br>${data.ipv4_address}<br>`;
-          if (data.isp)
-            location_info.details += `<abbr title="ASN ${data.asn} / ${data.org}">${data.isp}</abbr><br>`;
-          if (data.city)
-            location_info.details += `${data.city}`;
-          if (data.region_code)
-            location_info.details += `, <abbr title="${data.region_name}">${data.region_code}</abbr>`;
-            location_info.details += ` <abbr title="${data.country_name}">${data.country_code}</abbr>`;
+      if (data.country_code) {
+        // Create and fill in location Marker
+        let location_info = {};
+        location_info.title = data.ipv4_address;
+        random_offset = Math.round(Math.random() * 10) / 2000;
+        random_offset *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
+        location_info.lat = data.lat + random_offset;
+        location_info.lng = data.lng + random_offset;
+        location_info.details = `<b>DNS Resolver #${i+1}</b><br>${data.ipv4_address}<br>`;
+        if (data.isp)
+          location_info.details += `<abbr title="ASN ${data.asn} / ${data.org}">${data.isp}</abbr><br>`;
+        if (data.city)
+          location_info.details += `${data.city}`;
+        if (data.region_code) {
+          location_info.details += `, <abbr title="${data.region_name}">${data.region_code}</abbr>`;
+          location_info.details += ` <abbr title="${data.country_name}">${data.country_code}</abbr>`;
+        }
 
-          // Plot marker on map
-          PlotMarker(location_info);
+        // Plot marker on map
+        PlotMarker(location_info);
 
-          // Re-zoom map
-          map.fitBounds(bounds);
-          map.panToBounds(bounds);
+        // Re-zoom map
+        map.fitBounds(bounds);
+        map.panToBounds(bounds);
 
-         }            
-      })
-    }
+      }
+    });
   }
 }
 

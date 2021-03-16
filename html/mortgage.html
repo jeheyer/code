@@ -39,49 +39,49 @@ function MakeChart(loan_amount, payments) {
 
   // Set parameters for the chart
   var chart = new CanvasJS.Chart("chartContainer", {
-            theme: "light2",
-            title: { text: "Payment Chart"  },
-            axisX: { title: "Year Number", interval: 1},
-            axisY: { title: "Principal/Equity", prefix: "$" },
-            axisY2: { title: "Interest Paid", prefix: "$" },
-            data: [
-                { 
-                    type: "line",
-                    name: "Principal",
-                    color: "#0000FF",
-                    axisYIndex: 0,
-                    showInLegend: true,
-                    dataPoints: principalArray
-                }, 
-                {
-                    type: "line",
-                    name: "Equity",
-                    color: "#00FF00",
-                    axisYIndex: 1,
-                    showInLegend: true,
-                    dataPoints: equityArray 
-                },
-                {
-                    type: "line",
-                    name: "Interest",
-                    color: "#FF0000",
-                    axisYType: "secondary",
-                    showInLegend: true,
-                    dataPoints: interestArray 
-                }
-            ]
-        });
+    theme: "light2",
+    title: { text: "Payment Chart"  },
+    axisX: { title: "Year Number", interval: 1},
+    axisY: { title: "Principal/Equity", prefix: "$" },
+    axisY2: { title: "Interest Paid", prefix: "$" },
+    data: [
+      { 
+        type: "line",
+        name: "Principal",
+        color: "#0000FF",
+        axisYIndex: 0,
+        showInLegend: true,
+        dataPoints: principalArray
+      }, 
+      {
+        type: "line",
+        name: "Equity",
+        color: "#00FF00",
+        axisYIndex: 1,
+        showInLegend: true,
+        dataPoints: equityArray 
+      },
+      {
+        type: "line",
+        name: "Interest",
+        color: "#FF0000",
+        axisYType: "secondary",
+        showInLegend: true,
+        dataPoints: interestArray 
+      }
+    ]
+  });
 
-   // Draw the chart
-   if (loan_amount)
-     chart.render();
+  // Draw the chart
+  if (loan_amount)
+    chart.render();
 
 }
 
 async function getJSON(url, args = {}) {
-  let results = new Array();
+
   try {
-    results = await $.ajax({
+    let results = await $.ajax({
       url: url,
       data: args,
       type: 'GET',
