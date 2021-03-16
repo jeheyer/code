@@ -115,7 +115,7 @@ fetch(tokenRequest)
     throw new TypeError("Did not receive good HTTP code from backend");
   const contentType = response.headers.get('content-type');
   if (!contentType || !contentType.includes('application/json'))
-    throw new TypeError("Did not receive JSON from backend");
+    throw new TypeError("Did not receive valid JSON from backend");
   return response.json();
 })
 .then(data => {
