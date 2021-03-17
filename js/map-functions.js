@@ -20,8 +20,8 @@ function PlotMarker(location) {
 
     // Use this to randomize colos
     let colorindex = Math.floor(Math.random() * markercolors.length);
-    let icon_url = `https://maps.gstatic.com/mapfiles/ms2/micons/${markercolors[colorindex]}.png`;
-    //let icon_url = `https://code.j5.org/static/mapicons/${markercolors[colorindex]}.png`;
+    //let icon_url = `https://maps.gstatic.com/mapfiles/ms2/micons/${markercolors[colorindex]}.png`;
+    let icon_url = `https://code.j5.org/static/mapicons/${markercolors[colorindex]}.png`;
 
     // Create the marker
     let marker = new google.maps.Marker({
