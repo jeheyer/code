@@ -17,8 +17,8 @@ h1	{ font-family: arial; font-size: 14; }
 </head>
 <body>
 
+<!-- Load external scripts -->
 <script src="../js/jquery.min.js"></script>
-<script src="../js/jquery-functions.js"></script>
 <script src="../js/canvasjs.min.js"></script>
 
 <script>
@@ -78,11 +78,47 @@ function MakeChart(loan_amount, payments) {
 
 }
 
+function FillTable(table_id, data) {
+
+    // Set alternating table row background colors
+    $(document).ready(function(){
+        $("table tr:even").css("background-color", "#fefefe");
+        $("table tr:odd").css("background-color", "#efefef");
+    });
+
+    // Fill Table Header
+    $(`#${table_id} thead`).empty();
+    let table_head_html = "<tr>";
+    for (let key in data[0]) {
+        table_head_html += "<th>" + key + "</th>";
+    }
+    table_head_html += "</tr>";
+    $(`#${table_id} thead`).append(table_head_html);
+
+    // Fill Table Body
+    $(`#${table_id} tbody`).empty();
+    $.each(data, function(index, obj) {
+        let row_html = "<tr>";
+        for (let key in obj) {
+            if (Array.isArray(obj)) {
+                row_html += "<td>" + "array" + "</td>"
+            } else {
+                let value = obj[key];
+                if (key != "calendarYear")
+                    value = "$ " + parseFloat(value.toFixed(2)).toLocaleString();
+                row_html += "<td>" + value + "</td>";
+            }
+        }
+        row_html += "</tr>";
+        $(`#${table_id}`).append(row_html);
+    });
+}
+
 function ShowLoanData() {
 
   (async() => {
 
-    url = "https://python.j5.org/mortgage.cgi?" + location.search.substr(1);
+    url = "https://freebsd.mi-casa.j5.org/mortgage.cgi?" + location.search.substr(1);
 
     const ajax_request = new Request(url, {method: 'GET', mode: 'cors', cache: 'no-cache'});
 
@@ -114,6 +150,8 @@ function ShowLoanData() {
         value = loanData[field];
         document.querySelector("#" + field).innerHTML = "$ " + parseFloat(value.toFixed(2)).toLocaleString();
       }
+
+      // Fill payment breakdown table with data
       FillTable("payment_table", loanData.paymentBreakdown);
 
     })
@@ -169,11 +207,12 @@ function ShowLoanData() {
 
 if (location.search.substr(1) !== "") {
 
+  // Got parameters
   ShowLoanData();
 
 } else {
 
-  // Populate form with some default values
+  // Just populate form with some default values
   today = new Date();
   document.querySelector("#loanAmount").value = 200000;
   document.querySelector("#interestRate").value = 3.25;
