@@ -1,13 +1,25 @@
+
 import geoip2.database
-import json
-import math
 
 class GeoIP:
 
-    def __init__(self, ipv4_address):
 
-        self.hostname = None
-        self.ipv4_address = ipv4_address
+    def __init__(self, param):
+
+        import socket
+
+        if param[0].isnumeric() and param[-1].isnumeric() and len(param.split('.')) == 4:
+            self.ipv4_address = param
+            try:
+                self.hostname = socket.gethostbyaddr(param)[0]
+            except:
+                self.hostname = None
+        else:
+            self.hostname = param
+            try:
+                self.ipv4_address = socket.gethostbyname(param)[0]
+            except:
+                self.ipv4_address = None
         self.lat = 0; self.lng = 0
         self.city = None
         self.region_code = None
@@ -22,7 +34,7 @@ class GeoIP:
         # Get City Information
         with geoip2.database.Reader('/var/cache/mmdb/GeoIP2-City.mmdb') as reader:
             try:
-                response = reader.city(ipv4_address)
+                response = reader.city(self.ipv4_address)
             except:
                 return
             if response:
@@ -47,5 +59,7 @@ class GeoIP:
                 self.isp = response.isp
 
     def __str__(self):
+
+        import json
 
         return json.dumps(vars(self))
