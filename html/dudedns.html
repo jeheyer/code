@@ -101,7 +101,7 @@ function PlotDNSResolvers(dns_resolvers = []) {
 }
 
 // Prep Main API Call
-const tokenRequest = new Request("https://python.j5.org/getdnsservers/" + token, {
+const tokenRequest = new Request("/getdnsservers/" + token, {
   method: 'GET',
   mode: 'cors',
   cache: 'no-cache',
