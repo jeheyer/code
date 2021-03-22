@@ -34,24 +34,27 @@ def application(environ, start_response):
     import json, traceback
 
     try:
-        http_request = {
+        request = { 
             'host': environ.get('HTTP_HOST', 'localhost'),
-            'path': environ.get('REQUEST_URI', '/').split('?')[0],
+            'path': environ.get('REQUEST_URI', '/'),
             'query_string': {}
         }
-        params = environ.get('REQUEST_URI', '/').split('?')[1].split('&')
-        for _ in params:
-            [key, value] = _.split('=')
-            http_request['query_string'][key] = value
+        if '?' in request['path']:
+            request['path'], query_string = environ.get('REQUEST_URI', '/').split('?')
+            for _ in query_string.split('&'):
+                [key, value] = _.split('=')
+                request['query_string'][key] = value
 
-        data = main(http_request)
-        data_as_json = json.dumps(data, sort_keys=True, indent=2)
+        data = main(request)
+
+        output = json.dumps(data, sort_keys=True, indent=2)
         response_headers = [
             ('Content-type', 'application/json'),
-            ('Content-Length', str(len(data_as_json)))
+            ('Content-Length', str(len(output))),
+            ('X-Backend-Server', 'Apache + mod_wsgi')
         ]
         start_response('200 OK', response_headers)
-        return [ data_as_json.encode('utf-8') ]
+        return [ output.encode('utf-8') ]
 
     except:
         response_headers = [ ('Content-type', 'text/plain') ]
