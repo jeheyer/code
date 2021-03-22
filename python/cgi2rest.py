@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys, json
+import sys, json, os
 
 def main(request):
 
@@ -67,7 +67,7 @@ def ParseCLI():
 # Primary entry point
 if __name__ == '__main__':
 
-    import traceback, os
+    import traceback
 
     sys.stderr = sys.stdout
 
@@ -78,9 +78,11 @@ if __name__ == '__main__':
             request = ParseCLI()
 
         data = main(request)
+        data_as_json = json.dumps((data), indent=3)
 
+        print("Content-Length: {}".format(len(data_as_json)))
         print("Content-Type: application/json; charset=UTF-8\n")
-        print(json.dumps((data), indent=3))
+        print(data_as_json)
 
     except Exception as e:
         print("Status: 500\nContent-Type: text/plain; charset=UTF-8\n")

@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
-import sys, json, traceback
-
 def main(request):
-
+  
     modules = [ "mortgage", "geoip" ]
 
     #sys.path.insert(1, 'lib')
@@ -33,12 +31,19 @@ def main(request):
 
 def application(environ, start_response):
 
+    import json, traceback
+
     try:
         http_request = {
             'host': environ.get('HTTP_HOST', 'localhost'),
             'path': environ.get('REQUEST_URI', '/').split('?')[0],
             'query_string': {}
         }
+        params = environ.get('REQUEST_URI', '/').split('?')[1].split('&')
+        for _ in params:
+            [key, value] = _.split('=')
+            http_request['query_string'][key] = value
+
         data = main(http_request)
         data_as_json = json.dumps(data, sort_keys=True, indent=2)
         response_headers = [
@@ -46,10 +51,10 @@ def application(environ, start_response):
             ('Content-Length', str(len(data_as_json)))
         ]
         start_response('200 OK', response_headers)
-        output = data_as_json.encode('utf-8')
-        return [output]
+        return [ data_as_json.encode('utf-8') ]
 
     except:
-        start_response('500 Internal Server Error', [('Content-type', 'text/plain')])
+        response_headers = [ ('Content-type', 'text/plain') ]
+        start_response('500 Internal Server Error', response_headers)
         error = traceback.format_exc()
-        return [str(error).encode('utf-8')]
+        return [ str(error).encode('utf-8') ]
