@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys, json
 
@@ -101,3 +101,20 @@ def lambda_handler(event, context):
     headers = { 'Content-Type': "application/json" }
     return {'statusCode': 200, 'headers': headers, 'body': json.dumps(data)}
 
+# WSFI
+def application(environ, start_response):
+
+    status = '200 OK'
+    output = b'Hello World!'
+
+    try:
+        response_headers = [('Content-type', 'text/plain'),
+                        ('Content-Length', str(len(output)))]
+        fuck
+        start_response(status, response_headers)
+
+        return [output]
+
+    except Exception as e:
+        start_response('500 Internal Server Error', [('Content-type', 'text/plain')])
+        return [e.encode('utf-8')]
