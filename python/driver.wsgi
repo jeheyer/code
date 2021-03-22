@@ -4,8 +4,6 @@ def main(request):
   
     modules = [ "mortgage", "geoip" ]
 
-    #sys.path.insert(1, 'lib')
-
     for _ in modules:
 
         if "mortgage" in request['path']:
@@ -41,13 +39,13 @@ def application(environ, start_response):
         }
         if '?' in request['path']:
             request['path'], query_string = environ.get('REQUEST_URI', '/').split('?')
-            for _ in query_string.split('&'):
+            for _ in environ.get('QUERY_STRING', None).split('&'):
                 [key, value] = _.split('=')
                 request['query_string'][key] = value
 
         data = main(request)
-
         output = json.dumps(data, sort_keys=True, indent=2)
+
         response_headers = [
             ('Content-type', 'application/json'),
             ('Content-Length', str(len(output))),
