@@ -6,7 +6,7 @@ def main(request):
 
     modules = [ "mortgage", "geoip" ]
 
-    sys.path.insert(1, 'lib')
+    #sys.path.insert(1, 'lib')
 
     for _ in modules:
 
