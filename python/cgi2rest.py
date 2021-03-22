@@ -4,9 +4,7 @@ import sys, json
 
 def main(request):
 
-    modules = [ "mortgage", "geoip" ]
-
-    sys.path.insert(1, 'lib/')
+    modules = [ "mortgage", "geoip", "get_table" ]
 
     for _ in modules:
 
@@ -23,6 +21,13 @@ def main(request):
             return vars(GeoIP(ipv4_address))
 
         if "getdnsservers" in request['path']:
+            from system_tools import GetDNSServersFromToken
+            token = request['path'].split("/")[2]
+            if not token:
+                 token = "testing1234"
+            return GetDNSServersFromToken(token)
+
+        if "get_table" in request['path']:
             from system_tools import GetDNSServersFromToken
             token = request['path'].split("/")[2]
             if not token:
