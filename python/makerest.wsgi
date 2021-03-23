@@ -1,7 +1,7 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 from makerest import *
-import json
+import sys, json
 
 # WSGI entry point
 def application(environ, start_response):

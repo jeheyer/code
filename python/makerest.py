@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-import sys, json
-
 def main(request):
 
     modules = [ "mortgage", "geoip", "get_table" ]

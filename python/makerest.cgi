@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 from makerest import *
-import sys
+import sys, os, json
 
 # Old School CGI Entry Point
 def ParseCGI():
  
-    import os, cgi
+    import cgi
 
     request = {
         'host': os.environ.get('HTTP_HOST', 'localhost'),
@@ -41,15 +41,15 @@ def ParseCLI():
 # Primary entry point
 if __name__ == '__main__':
 
-    import os, traceback
+    import traceback
 
     sys.stderr = sys.stdout
 
     try:
-        if os.environ.get('REQUEST_METHOD'):
-            request = ParseCGI()
-        else:
+        if sys.argv == "makerest.cgi":
             request = ParseCLI()
+        #else:
+        request = ParseCGI()
 
         data = main(request)
         output = json.dumps(data, sort_keys=True, indent=2)
@@ -61,4 +61,3 @@ if __name__ == '__main__':
     except Exception as e:
         print("Status: 500\nContent-Type: text/plain; charset=UTF-8\n")
         traceback.print_exc(file=sys.stdout, limit=3)
-
