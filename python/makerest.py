@@ -26,11 +26,8 @@ def main(request):
             return GetDNSServersFromToken(token)
 
         if "get_table" in request['path']:
-            from system_tools import GetDNSServersFromToken
-            token = request['path'].split("/")[2]
-            if not token:
-                 token = "testing1234"
-            return GetDNSServersFromToken(token)
+            data = [{'name': "Barry"}, {'name': "Harry"}]
+            return data
 
     return dict(available_modules = modules)
 

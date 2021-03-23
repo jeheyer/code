@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from makerest import *
 
 # WSGI entry point
