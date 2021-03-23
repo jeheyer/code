@@ -17,7 +17,7 @@ class GeoIP:
         else:
             self.hostname = param
             try:
-                self.ipv4_address = socket.gethostbyname(param)[0]
+                self.ipv4_address = socket.gethostbyname(param)
             except:
                 self.ipv4_address = None
         self.lat = 0; self.lng = 0
