@@ -1,6 +1,4 @@
 import mysql.connector
-import os
-import json
 
 class MySQLDatabase():
 
@@ -39,10 +37,7 @@ class MySQLDatabase():
 
     def PrintAsJSON(self):
 
-        #if os.environ.get('REQUEST_METHOD'):
-        #    print("Status: 200\nContent-Type: text/json; charset=UTF-8\n")
-
-        #for row in self.rows:
+        import json
         print(json.dumps(self.rows, indent=4, sort_keys=True, default=str))
 
     def SQLQuery(self, command):
