@@ -27,6 +27,11 @@ def main(request):
 
         if "get_table" in request['path']:
             data = [{'name': "Barry"}, {'name': "Harry"}]
+            db_name = request['database']
+            db_table = request['table']
+            if 'join_table' in request:
+                db_join_table = request['join_table']
+
             return data
 
     return dict(available_modules = modules)
