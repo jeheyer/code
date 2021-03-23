@@ -46,10 +46,10 @@ if __name__ == '__main__':
     sys.stderr = sys.stdout
 
     try:
-        if sys.argv == "makerest.cgi":
+        if 'REQUEST_METHOD' in os.environ:
+            request = ParseCGI()
+        else:
             request = ParseCLI()
-        #else:
-        request = ParseCGI()
 
         data = main(request)
         output = json.dumps(data, sort_keys=True, indent=2)
