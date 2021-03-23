@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 
 from makerest import *
-import sys, json
 
 # WSGI entry point
 def application(environ, start_response):
 
-    import traceback
+    import traceback, json
 
     request = { 
         'host': environ.get('HTTP_HOST', 'localhost'),

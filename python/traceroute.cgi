@@ -3,7 +3,6 @@
 from __future__ import print_function
 import os
 import subprocess
-#from geoip import geolite2
 
 output = str(subprocess.check_output('traceroute -n -q 1 -4 -T 66.170.1.1', shell=True))
 lines = output.split("\\n")
