@@ -26,17 +26,36 @@ def main(request):
             return GetDNSServersFromToken(token)
 
         if "get_table" in request['path']:
-            data = [{'name': "Barry"}, {'name': "Harry"}]
-            if 'database' in request and 'table' in request:
-                db_name = request['database']
-                db_table = request['table']
-                if 'join_table' in request:
-                    db_join_table = request['join_table']
+            data = []
+            params = request['query_string']
+            if 'database' in params and 'table' in params:
+                db_name = params['database']
+                db_table = params['table']
+                if 'join_table' in params:
+                    db_join_table = params['join_table']
   
                 data.append({db_name: db_table})
             else:
                 raise Exception("Must provide database name and table name as arguments")
-            return data
+
+            from system_tools import GetConfig
+            config = GetConfig('mysql')
+
+            from database import MySQLDatabase
+            mysql_database = MySQLDatabase(
+                config[db_name]['hostname'],
+                config[db_name]['username'],
+                config[db_name]['password'],
+                db_name
+            )
+            mysql_database.OpenConnection()
+            if db_table == "polls":
+                rows = mysql_database.SQLQuery("SELECT * FROM polls,{} WHERE polls.poll_name = '{}' AND id = polls.choice_id".format(db_join_table, db_join_table))
+            else:
+                rows = mysql_database.GetTable(db_table,"ORDER BY id")
+            mysql_database.CloseConnection()
+
+            return rows
 
     return dict(available_modules = modules)
 
