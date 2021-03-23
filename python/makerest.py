@@ -31,7 +31,7 @@ def main(request):
             db_table = request['table']
             if 'join_table' in request:
                 db_join_table = request['join_table']
-
+            data.append({db_name: db_table})
             return data
 
     return dict(available_modules = modules)
