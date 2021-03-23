@@ -27,11 +27,15 @@ def main(request):
 
         if "get_table" in request['path']:
             data = [{'name': "Barry"}, {'name': "Harry"}]
-            db_name = request['database']
-            db_table = request['table']
-            if 'join_table' in request:
-                db_join_table = request['join_table']
-            data.append({db_name: db_table})
+            if 'database' in request and 'table' in request:
+                db_name = request['database']
+                db_table = request['table']
+                if 'join_table' in request:
+                    db_join_table = request['join_table']
+  
+                data.append({db_name: db_table})
+            else:
+                raise Exception("Must provide database name and table name as arguments")
             return data
 
     return dict(available_modules = modules)
