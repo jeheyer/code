@@ -13,7 +13,6 @@ def main(request):
         if "geoip" in request['path']:
             from geoip import GeoIP
             ipv4_address = request['path'].split("/")[2]
-            return dict(ip = ipv4_address)
             if not ipv4_address:
                 ipv4_address = request['client_ip']
             return vars(GeoIP(ipv4_address))
@@ -27,7 +26,7 @@ def main(request):
 
         if "get_table" in request['path']:
 
-            if 'database' in params and 'table' in params:
+            if 'database' in params and 'table' in request['query_string']:
                 db_name = request['query_string']['database']
                 db_table = request['query_string']['table']
                 if 'join_table' in request['query_string']:
