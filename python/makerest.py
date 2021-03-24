@@ -50,4 +50,3 @@ def main(request):
             return rows
 
     return dict(available_modules = modules)
-
