@@ -5,13 +5,17 @@ def application(environ, start_response):
 
     import traceback, json
 
-    request = { 
+    request = {  
         'host': environ.get('HTTP_HOST', 'localhost'),
         'path': environ.get('REQUEST_URI', '/'),
-        'query_string': {}
+        'query_string': {},
+        'client_ip': environ.get('HTTP_X_REAL_IP', None)
     }
-
+  
     try:
+
+        if not request['client_ip']:
+            request['client_ip'] = environ['REMOTE_ADDR']
 
         if '?' in request['path']:
             request['path'], query_string = environ.get('REQUEST_URI', '/').split('?')

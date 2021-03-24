@@ -12,8 +12,12 @@ def ParseCGI():
     request = {
         'host': os.environ.get('HTTP_HOST', 'localhost'),
         'path': os.environ.get('REQUEST_URI', '/').split('?')[0],
-        'query_string': {}
+        'query_string': {},
+        'client_ip': os.environ.get('HTTP_X_REAL_IP', None)
     }
+
+    if not request['client_ip']:
+        request['client_ip'] = os.environ.get('REMOTE_ADDR', "127.0.0.1")
 
     query_fields_objects = cgi.FieldStorage()
 
@@ -26,7 +30,7 @@ def ParseCGI():
 # Called via CLI
 def ParseCLI():
 
-    request = dict(host = "localhost", path = "/", query_string = {})
+    request = dict(host = "localhost", path = "/", query_string = {}, client_ip = "127.0.0.1")
 
     # Use argument, if provided, to simulate HTTP Path and query string
     if len(sys.argv) > 1:

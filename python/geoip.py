@@ -3,7 +3,6 @@ import geoip2.database
 
 class GeoIP:
 
-
     def __init__(self, param):
 
         import socket
@@ -29,7 +28,7 @@ class GeoIP:
 
         # Check for loopbacks
         if self.hostname == "localhost" or self.ipv4_address == "127.0.0.1":
-            return None
+            return
 
         # Get City Information
         with geoip2.database.Reader('/var/cache/mmdb/GeoIP2-City.mmdb') as reader:

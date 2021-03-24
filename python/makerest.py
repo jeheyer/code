@@ -12,10 +12,10 @@ def main(request):
 
         if "geoip" in request['path']:
             from geoip import GeoIP
-            from ip_utils import GetClientIP
             ipv4_address = request['path'].split("/")[2]
+            return dict(ip = ipv4_address)
             if not ipv4_address:
-                ipv4_address = GetClientIP()
+                ipv4_address = request['client_ip']
             return vars(GeoIP(ipv4_address))
 
         if "getdnsservers" in request['path']:
@@ -26,15 +26,13 @@ def main(request):
             return GetDNSServersFromToken(token)
 
         if "get_table" in request['path']:
-            data = []
-            params = request['query_string']
+
             if 'database' in params and 'table' in params:
-                db_name = params['database']
-                db_table = params['table']
-                if 'join_table' in params:
-                    db_join_table = params['join_table']
+                db_name = request['query_string']['database']
+                db_table = request['query_string']['table']
+                if 'join_table' in request['query_string']:
+                    db_join_table = request['query_string']['join_table']
   
-                data.append({db_name: db_table})
             else:
                 raise Exception("Must provide database name and table name as arguments")
 
