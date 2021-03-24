@@ -4,7 +4,7 @@ def main(request):
 
     modules = [ "mortgage", "geoip", "get_table" ]
 
-    for _ in modules:
+    try:
 
         if "mortgage" in request['path']:
             from financial import GetPaymentData
@@ -48,5 +48,8 @@ def main(request):
             mysql_database.CloseConnection()
 
             return rows
+
+    except Exception as e:
+        raise Exception(e)
 
     return dict(available_modules = modules)
