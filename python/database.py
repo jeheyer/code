@@ -2,7 +2,14 @@ import mysql.connector
 
 class MySQLDatabase():
 
-    def __init__(self, hostname = "localhost", username = "root", password = "", database = "mysql"):
+    def __init__(self, info = None):
+
+        if info:
+            self.SetInfo(info['hostname'], info['username'], info['password'], info['database'])
+        else:
+            self.SetInfo()
+
+    def SetInfo(self, hostname = "localhost", username = "root", password = "", database = "mysql"):
 
         self.hostname = hostname
         self.username = username

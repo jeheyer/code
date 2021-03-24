@@ -39,15 +39,10 @@ def main(request):
                 raise Exception("Must provide database name and table name as arguments")
 
             from system_tools import GetConfig
-            config = GetConfig('mysql')
-
+            db_info = GetConfig('mysql', db_name)
+            db_info['database'] = db_name
             from database import MySQLDatabase
-            mysql_database = MySQLDatabase(
-                config[db_name]['hostname'],
-                config[db_name]['username'],
-                config[db_name]['password'],
-                db_name
-            )
+            mysql_database = MySQLDatabase(db_info)
             mysql_database.OpenConnection()
             if db_table == "polls":
                 rows = mysql_database.SQLQuery("SELECT * FROM polls,{} WHERE polls.poll_name = '{}' AND id = polls.choice_id".format(db_join_table, db_join_table))

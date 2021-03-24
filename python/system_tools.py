@@ -26,11 +26,14 @@ def GetDNSServersFromToken(token = "testing1234"):
         raise Exception(e)
 
 
-def GetConfig(type):
+def GetConfig(type, key = None):
 
     import configparser
 
     # Read config file
     config = configparser.ConfigParser()
     config.read('/mnt/web/private/cfg/{}.cfg'.format(type))
+
+    if key:
+        return config[key]
     return config
