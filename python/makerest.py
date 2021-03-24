@@ -25,12 +25,14 @@ def main(request):
             return GetDNSServersFromToken(token)
 
         if "get_table" in request['path']:
+            
+            params = request['query_string']
 
-            if 'database' in params and 'table' in request['query_string']:
-                db_name = request['query_string']['database']
-                db_table = request['query_string']['table']
-                if 'join_table' in request['query_string']:
-                    db_join_table = request['query_string']['join_table']
+            if 'database' in params and 'table' in params:
+                db_name = params['database']
+                db_table = params['table']
+                if 'join_table' in params:
+                    db_join_table = params['join_table']
   
             else:
                 raise Exception("Must provide database name and table name as arguments")
