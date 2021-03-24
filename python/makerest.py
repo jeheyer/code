@@ -15,6 +15,7 @@ def main(request):
             ipv4_address = request['path'].split("/")[2]
             if not ipv4_address:
                 ipv4_address = request['client_ip']
+            return(dict(ipv4_address = ipv4_address))
             return vars(GeoIP(ipv4_address))
 
         if "getdnsservers" in request['path']:
