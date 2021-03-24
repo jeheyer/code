@@ -19,6 +19,7 @@ class GeoIP:
                 self.ipv4_address = socket.gethostbyname(param)
             except:
                 self.ipv4_address = None
+        self.ipv6_adress = None
         self.lat = 0; self.lng = 0
         self.city = None
         self.region_code = None
