@@ -30,7 +30,7 @@ def application(environ, start_response):
             ('Content-type', 'application/json'),
             ('Content-Length', str(len(output))),
             ('X-Backend-Server', 'WSGI'),
-            ('Cache-Control', 'no-cache, no-store),
+            ('Cache-Control', 'no-cache, no-store'),
             ('Pragma', 'no-cache')
         ]
         start_response('200 OK', response_headers)
