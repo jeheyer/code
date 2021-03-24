@@ -27,7 +27,7 @@ class GeoIP:
         self.country_name = None
 
         # Check for loopbacks
-        if self.hostname == "localhost" or self.ipv4_address == "127.0.0.1":
+        if self.ipv4_address == "127.0.0.1" or self.ipv6_address == "::1":
             return
 
         # Get City Information
