@@ -10,7 +10,7 @@ class GeoIP:
         if param[0].isnumeric() and param[-1].isnumeric() and len(param.split('.')) == 4:
             self.ipv4_address = param
             try:
-                self.hostname = socket.gethostbyaddr(param)[0]
+                self.hostname = socket.gethostbyaddr(param)[0][0:64]
             except:
                 self.hostname = None
         else:

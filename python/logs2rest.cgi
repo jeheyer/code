@@ -17,7 +17,12 @@ def main():
     #log_reporter.AddLogFile("/var/log/dpkg.log")
 
     # Open Database Connection
-    mysql_database = MySQLDatabase("192.168.249.218", "loggingfun", "87zt9SdJYKBQWD95", "logs")
+    mysql_database = MySQLDatabase({
+       'hostname': "192.168.249.218",
+       'username': "loggingfun",
+       'password': "87zt9SdJYKBQWD95",
+       'database': "logs"
+    })
     mysql_database.OpenConnection()
 
     # Insert all log entries in to the SQL database
