@@ -29,7 +29,7 @@ th,td	{ font-family: arial; text-align: left; font-size:8; border: 1px solid bla
 
 <script>
 
-  fetch("https://python.j5.org/squidread.cgi", { method: 'GET', mode: 'cors' })
+  fetch("https://python.j5.org/makejson.cgi/squidread", { method: 'GET', mode: 'cors' })
   .then(response => {
     if (response.ok)
       return response.json();
