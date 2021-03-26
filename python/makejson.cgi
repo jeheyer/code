@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from makerest import *
+from makejson import *
 import sys, os, json
 
 # Old School CGI Entry Point
@@ -57,7 +57,7 @@ if __name__ == '__main__':
             request = ParseCLI()
 
         data = main(request)
-        output = json.dumps(data, sort_keys=True, indent=2)
+        output = json.dumps(data, indent=2)
 
         print("Content-Length: {}".format(len(output)))
         print("Content-Type: application/json; charset=UTF-8\n")

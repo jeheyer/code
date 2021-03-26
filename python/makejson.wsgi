@@ -1,4 +1,4 @@
-from makerest import *
+from makejson import *
 
 # WSGI entry point
 def application(environ, start_response):
@@ -24,7 +24,7 @@ def application(environ, start_response):
                 request['query_string'][key] = value
 
         data = main(request)
-        output = json.dumps(data, sort_keys=True, indent=2)
+        output = json.dumps(data, indent=2)
 
         response_headers = [
             ('Content-type', 'application/json'),
