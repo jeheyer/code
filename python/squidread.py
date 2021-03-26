@@ -151,10 +151,10 @@ if __name__ == '__main__':
                 datetimestr = datetime.fromtimestamp(int(_['data'][0].split(".")[0]), tz=None)
                 _['data'][0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
                 data.append(dict(zip(fields, _['data'])))
-            return data
-            print("lines read:", total_lines)
-            print("entries processed:", len(data))
-            print("seconds_to_execute:", round((time.time() - start_time), 3))
+        return data
+        print("lines read:", total_lines)
+        print("entries processed:", len(data))
+        print("seconds_to_execute:", round((time.time() - start_time), 3))
 
     except Exception as e:
         if 'REQUEST_METHOD' in os.environ:
