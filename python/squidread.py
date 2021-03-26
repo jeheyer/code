@@ -50,7 +50,7 @@ def ProcessBlob(source_name = None, lines = []):
 
     #now = math.floor(time.time())
     now = 1614968742
-    threshold = now - 3600 * 6
+    threshold = now - 3600 * 3
 
     entries = []
     for l in range(len(lines)-1, 0, -1):
