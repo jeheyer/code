@@ -2,11 +2,15 @@
 
 def main(request):
 
-    modules = [ "mortgage", "geoip", "get_table" ]
+    modules = [ "mortgage", "geoip", "get_table", "squidread"]
 
     if "mortgage" in request['path']:
         from financial import GetPaymentData
         return GetPaymentData(**request['query_string'])
+
+    if "squidread" in request['path']:
+        from squidread import GetSquidData
+        return GetSquidData()
 
     if "geoip" in request['path']:
         from geoip import GeoIP
