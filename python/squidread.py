@@ -50,7 +50,7 @@ def ProcessBlob(source_name = None, lines = []):
 
     #now = math.floor(time.time())
     now = 1614968742
-    threshold = now - 3600 * 3
+    threshold = now - 3600 * 4
 
     entries = []
     for l in range(len(lines)-1, 0, -1):
@@ -151,7 +151,7 @@ if __name__ == '__main__':
                 datetimestr = datetime.fromtimestamp(int(_['data'][0].split(".")[0]), tz=None)
                 _['data'][0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
                 data.append(dict(zip(fields, _['data'])))
-            print(data[0])
+            return data
             print("lines read:", total_lines)
             print("entries processed:", len(data))
             print("seconds_to_execute:", round((time.time() - start_time), 3))
