@@ -72,11 +72,11 @@ def ProcessBlob(source_name = None, lines = []):
 
 def ReadFromFile(file_name):
 
-    import mmap
+    #import mmap
 
     lines = []
-    #f = open(file_name)
-    #return f.readlines()
+    f = open(file_name)
+    return f.readlines()
 
     #with open(file_name, 'r+') as f:
     #    for line in f:
@@ -87,18 +87,21 @@ def ReadFromFile(file_name):
     #    for piece in read_in_chunks(f):
     #        lines.append(piece)
 
-    for line in open(file_name):
-        lines.append(line)
-    return lines
+    #for line in open(file_name):
+    #    lines.append(line)
+    #return lines
+
     #with open(file_name, "r+") as f:
     #    map = mmap.mmap(f.fileno(), 0)
     #    map.close()
 
-    return lines
+    #return lines
 
 def GetSquidData():
 
     from datetime import datetime
+    import time
+    start_time = time.time()
 
     entries = []; total_lines = 0
     for host in ["gcp-prox01-p001", "gcp-prox01-p003"]:
@@ -112,6 +115,13 @@ def GetSquidData():
         datetimestr = datetime.fromtimestamp(int(_['data'][0].split(".")[0]), tz=None)
         _['data'][0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
         data.append(dict(zip(fields, _['data'])))
+
+    return {
+       'lines_read': total_lines,
+       'entries_processed': len(data),
+       'seconds_to_execute': round((time.time() - start_time), 3)
+    }
+
     return data      
 
 if __name__ == '__main__':
