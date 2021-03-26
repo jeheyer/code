@@ -116,13 +116,14 @@ def GetSquidData():
         _['data'][0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
         data.append(dict(zip(fields, _['data'])))
 
+    return data      
+
     return {
        'lines_read': total_lines,
        'entries_processed': len(data),
        'seconds_to_execute': round((time.time() - start_time), 3)
     }
 
-    return data      
 
 if __name__ == '__main__':
 
