@@ -3,6 +3,8 @@ class LogFile():
     def __init__(self, filename, filter = None):
 
         self.filename = filename
+        self.contents = []
+        self.num_lines = 0
         self.ReadFile(filter)
 
     def ReadFile(self, filter = None):
@@ -12,7 +14,6 @@ class LogFile():
         except:
             raise Exception("ERROR: could not read log file '" + self.filename + "'")
 
-        self.contents = []
         for line in fh:
             if filter:    
                 if filter in line:
@@ -21,5 +22,6 @@ class LogFile():
             else:
                 parts = line.split(" ")
                 self.contents.append(parts)
+            self.num_lines += 1
 
         fh.close()

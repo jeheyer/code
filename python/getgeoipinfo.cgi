@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 
-./makerest.cgi geoip
+./makejson.cgi /geoip
 

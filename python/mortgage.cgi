@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-./makerest.cgi /mortgage
+./makejson.cgi /mortgage
