@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+def GetClientIP(env):
+
+    return "127.0.0.1"
+
 def main(request):
 
     modules = [ "mortgage", "geoip", "get_table", "squidread"]
@@ -10,13 +14,17 @@ def main(request):
 
     if "squidread" in request['path']:
         from squidread import GetSquidData
-        return GetSquidData()
+        data = []
+        for host in ["gcp-prox01-p002", "gcp-prox01-p004", "gcp-prox01-p004"]:
+            data.extend(GetSquidData(host))
+        return data
 
     if "geoip" in request['path']:
         from geoip import GeoIP
-        ipv4_address = request['client_ip']
         if '/' in request['path'][1:]:
             ipv4_address = request['path'].split("/")[2]
+        else:
+            ipv4_address = request['client_ip']
         return vars(GeoIP(ipv4_address))
 
     if "getdnsservers" in request['path']:
