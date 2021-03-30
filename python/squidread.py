@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-def GetSquidData(host = "localhost', ** options):
+def GetSquidData(host = "localhost", ** options):
 
     from datetime import datetime
     from logfile import LogFile
@@ -9,20 +9,21 @@ def GetSquidData(host = "localhost', ** options):
     start_time = time.time()
     
     log = LogFile("/web/{}.log".format(host))
-    return log.contents
 
     data = []
     fields = ['timestamp', 'elapsed', 'client_ip', 'code', 'bytes', 'method', 'url', 'rfc931', 'peer_status', 'type']
-    for _ in entries:
-        datetimestr = datetime.fromtimestamp(int(_['data'][0].split(".")[0]), tz=None)
-        _['data'][0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
-        data.append(dict(zip(fields, _['data'])))
+    for _ in log.contents:
+        # Change first entry from timestamp to datetime
+        datetimestr = datetime.fromtimestamp(int(_[0].split(".")[0]), tz=None)
+        _[0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
+        # Change from list to dictionary
+        data.append(dict(zip(fields, _)))
 
-    return data      
+    #return data      
 
     return {
-       'lines_read': total_lines,
-       'entries_processed': len(data),
+       'lines_read': log.num_lines,
+       'entries_processed': len(log.contents),
        'seconds_to_execute': round((time.time() - start_time), 3)
     }
 

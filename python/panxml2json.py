@@ -6,7 +6,7 @@ def ReadDevices():
 
     devices = []
 
-    fh = open("paloaltos.csv", "r")
+    fh = open("/mnt/homes/j5/private/cfg/paloaltos.csv", "r")
     while fh:
         line = fh.readline().rstrip()
         if line:

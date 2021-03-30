@@ -7,18 +7,22 @@ class GeoIP:
 
         import socket
 
-        if param[0].isnumeric() and param[-1].isnumeric() and len(param.split('.')) == 4:
-            self.ipv4_address = param
-            try:
-                self.hostname = socket.gethostbyaddr(param)[0][0:64]
-            except:
-                self.hostname = None
-        else:
+l       if len(param.split('.')) == 4:
+            if param[0].isnumeric() and param[-1].isnumeric():
+                self.ipv4_address = param
+                try:
+                    self.hostname = socket.gethostbyaddr(param)[0][0:64]
+                except:
+                    self.hostname = None
+
+        if not self.ipv4_address:
             self.hostname = param
+            # Try getting IP via DNS Lookup
             try:
                 self.ipv4_address = socket.gethostbyname(param)
             except:
                 self.ipv4_address = None
+
         self.ipv6_address = None
         self.lat = 0; self.lng = 0
         self.city = None
