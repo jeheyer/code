@@ -1,4 +1,5 @@
 
+import ipaddress
 import geoip2.database
 
 class GeoIP:
@@ -7,21 +8,26 @@ class GeoIP:
 
         import socket
 
-l       if len(param.split('.')) == 4:
-            if param[0].isnumeric() and param[-1].isnumeric():
-                self.ipv4_address = param
-                try:
-                    self.hostname = socket.gethostbyaddr(param)[0][0:64]
-                except:
-                    self.hostname = None
+        self.ipv4_address = None
+        try:
+            ip = ipaddress.ip_address(param)
+            self.ipv4_address = str(ip)
+            if ip.is_private or ip.is_reserved:
+                return 
+            else:
+                self.hostname = socket.gethostbyaddr(str(ip))[0][0:64]
+        except:
+            self.hostname = None
 
         if not self.ipv4_address:
-            self.hostname = param
             # Try getting IP via DNS Lookup
             try:
-                self.ipv4_address = socket.gethostbyname(param)
+                self.hostname = param
+                ip = ipaddress.ip_address(socket.gethostbyname(self.hostname))
+                self.ipv4_address = socket.gethostbyname(str(ip))
             except:
                 self.ipv4_address = None
+                return
 
         self.ipv6_address = None
         self.lat = 0; self.lng = 0
