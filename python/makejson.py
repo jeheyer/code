@@ -21,7 +21,7 @@ def main(request):
 
     if "geoip" in request['path']:
         from geoip import GeoIP
-        if '/' in request['path'][1:]:
+        if '/' in request['path'][1:] and not request['path'][-1] == '/':
             ipv4_address = request['path'].split("/")[2]
         else:
             ipv4_address = request['client_ip']
