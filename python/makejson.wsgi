@@ -12,6 +12,8 @@ def application(environ, start_response):
         'client_ip': environ.get('HTTP_X_REAL_IP', None)
     }
   
+    response_headers = [ ('Content-type', 'text/plain') ]
+
     try:
 
         if not request['client_ip']:
@@ -38,7 +40,6 @@ def application(environ, start_response):
 
     except:
 
-        response_headers = [ ('Content-type', 'text/plain') ]
         start_response('500 Internal Server Error', response_headers)
         error = traceback.format_exc()
         return [ str(error).encode('utf-8') ]
