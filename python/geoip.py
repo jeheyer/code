@@ -30,12 +30,9 @@ class GeoIP:
                 return
 
         self.ipv6_address = None
-        self.lat = 0; self.lng = 0
-        self.city = None
-        self.region_code = None
-        self.region_name = None
-        self.country_code = None
-        self.country_name = None
+        self.lat = 0; self.lng = 0; self.city = None
+        self.region_code = None; self.region_name = None
+        self.country_code = None; self.country_name = None
 
         # Check for loopbacks
         if self.ipv4_address == "127.0.0.1" or self.ipv6_address == "::1":
