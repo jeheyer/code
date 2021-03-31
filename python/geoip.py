@@ -29,7 +29,7 @@ class GeoIP:
                 self.ipv4_address = None
                 return
 
-        self.ipv6_address = None
+        self.ipv6_address = "::0"
         self.lat = 0; self.lng = 0; self.city = None
         self.region_code = None; self.region_name = None
         self.country_code = None; self.country_name = None
