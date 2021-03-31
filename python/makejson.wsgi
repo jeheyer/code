@@ -1,24 +1,16 @@
 from makejson import *
-from http_utils import GetClientIP
+from http_utils import *
 
 # WSGI entry point
 def application(environ, start_response):
 
     import traceback, json
 
-    request = {  
-        'host': environ.get('HTTP_HOST', 'localhost'),
-        'path': environ.get('REQUEST_URI', '/'),
-        'query_string': {},
-    }
-  
-    request['client_ip'] = GetClientIP(environ)
+    request = vars(http_request(environ))
+
     response_headers = [ ('Content-type', 'text/plain') ]
 
     try:
-
-        if not request['client_ip']:
-            request['client_ip'] = environ['REMOTE_ADDR']
 
         if '?' in request['path']:
             request['path'], query_string = environ.get('REQUEST_URI', '/').split('?')
@@ -32,7 +24,6 @@ def application(environ, start_response):
         response_headers = [
             ('Content-type', 'application/json'),
             ('Content-Length', str(len(output))),
-            ('X-Backend-Server', 'WSGI'),
             ('Cache-Control', 'no-cache, no-store'),
             ('Pragma', 'no-cache')
         ]
