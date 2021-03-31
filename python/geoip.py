@@ -8,7 +8,7 @@ class GeoIP:
 
         import socket
 
-        self.ipv4_address = None; self.ipv6_address = None
+        self.ipv4_address = None; self.ipv6_address = "::"
 
         try:
             ip = ipaddress.ip_address(param)
