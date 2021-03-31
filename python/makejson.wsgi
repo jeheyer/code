@@ -1,4 +1,5 @@
 from makejson import *
+from http_utils import GetClientIP
 
 # WSGI entry point
 def application(environ, start_response):
@@ -9,9 +10,9 @@ def application(environ, start_response):
         'host': environ.get('HTTP_HOST', 'localhost'),
         'path': environ.get('REQUEST_URI', '/'),
         'query_string': {},
-        'client_ip': environ.get('HTTP_X_REAL_IP', None)
     }
   
+    request['client_ip'] = GetClientIP(environ)
     response_headers = [ ('Content-type', 'text/plain') ]
 
     try:

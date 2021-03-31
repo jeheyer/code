@@ -1,5 +1,13 @@
 
-def GetClientIP(env_vars):
+class http_request():
+
+   def __init__(self, env_vars = None):
+      self.host = env_vars.get('HTTP_HOST', 'localhost')
+      self.path = env_vars.get('REQUEST_URI', '/')
+      self.query_string = {}
+      self.client_ip = GetClientIP(env_vars)
+
+def GetClientIP(env_vars = None):
 
     import socket
 

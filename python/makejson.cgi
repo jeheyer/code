@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from makejson import *
-from http_utils import GetClientIP
+from http_utils import *
 
 import sys, os, json
 
@@ -11,13 +11,7 @@ def ParseCGI():
  
     import cgi
 
-    request = {
-        'host': os.environ.get('HTTP_HOST', 'localhost'),
-        'path': os.environ.get('REQUEST_URI', '/').split('?')[0],
-        'query_string': {}
-    }
-
-    request['client_ip'] = GetClientIP(os.environ)
+    request = vars(http_request(os.environ))
 
     query_fields_objects = cgi.FieldStorage()
 
