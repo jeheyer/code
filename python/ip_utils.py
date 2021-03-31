@@ -1,7 +1,7 @@
 from __future__ import print_function
 import os
 import math
-import socket
+#import socket
 
 class IP_Address:
 
@@ -36,30 +36,24 @@ class IP_Address:
         return str(self.as_string)
 
 
-def GetClientIP():
+def GetClientIP(env_vars):
 
-    # Don't have HTTP headers, so just return localhost
-    if not 'REQUEST_METHOD' in os.environ:
-        return "127.0.0.1"
+    import socket
 
-    # By default, use GCI REMOTE_ADDR value
-    client_ip = os.environ.get('REMOTE_ADDR', "127.0.0.1")
+    if env_vars.get('HTTP_X_REAL_IP', None):
+        return env_vars['HTTP_X_REAL_IP']
 
-    # Check for X-Real-IP and X-Fowarded-For headers
-    x_real_ip = os.environ.get('HTTP_X_REAL_IP', None)
-    x_fwd_for = os.environ.get('HTTP_X_FORWARDED_FOR', None)
-
-    # Prefer X-Real-IP header
-    if x_real_ip:
-        client_ip = x_real_ip
-    elif x_fwd_for:
+    if env_vars.get('HTTP_X_FORWARDED_FOR', None):
+        x_fwd_for = env_vars['HTTP_X_FORWARDED_FOR']
         if ", " in x_fwd_for:
             # Get a list of IPs addresses used by this web server hostname
-            server_ips = socket.gethostbyname(os.environ.get('HTTP_HOST', "localhost"))
+            server_ips = socket.gethostbyname(env_vars.get('HTTP_HOST', "localhost"))
             x_fwd_for_ips =  x_fwd_for.split(", ")
-            for x in range(len(x_fwd_for_ips)):
-                if x_fwd_for_ips[x] in server_ips:
+            for _ in range(len(x_fwd_for_ips)):
+                if x_fwd_for_ips[_] in server_ips:
                     # Use last IP address before the IP of this web server
-                    client_ip = x_fwd_for_ips[x-1]
+                    return x_fwd_for_ips[_-1]
 
-    return client_ip
+    # Last resort
+    return env_vars.get('REMOTE_ADDR', "127.0.0.1")
+

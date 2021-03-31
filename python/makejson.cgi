@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from makejson import *
+from http_utils import GetClientIP
+
 import sys, os, json
 
 # Old School CGI Entry Point
@@ -12,12 +14,10 @@ def ParseCGI():
     request = {
         'host': os.environ.get('HTTP_HOST', 'localhost'),
         'path': os.environ.get('REQUEST_URI', '/').split('?')[0],
-        'query_string': {},
-        'client_ip': os.environ.get('HTTP_X_REAL_IP', None)
+        'query_string': {}
     }
 
-    if not request['client_ip']:
-        request['client_ip'] = os.environ.get('REMOTE_ADDR', "127.0.0.1")
+    request['client_ip'] = GetClientIP(os.environ)
 
     query_fields_objects = cgi.FieldStorage()
 
@@ -59,8 +59,8 @@ if __name__ == '__main__':
         data = main(request)
         output = json.dumps(data, indent=2)
 
-        print("Content-Length: {}".format(len(output)+1))
-        print("Content-Type: application/json; charset=UTF-8\n")
+        print("Content-Length: {}".format(len(output)))
+        print("Content-Type: application/json; charset=UTF-8")
         print(output)
 
     except Exception as e:
