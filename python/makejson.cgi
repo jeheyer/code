@@ -59,9 +59,9 @@ if __name__ == '__main__':
         data = main(request)
         output = json.dumps(data, indent=2)
 
-        print("Content-Length: {}".format(len(output)))
-        print("Content-Type: application/json; charset=UTF-8")
-        print("\n" + output)
+        print("Content-Length: {}".format(len(output)+1))
+        print("Content-Type: application/json; charset=UTF-8\n")
+        print(output)
 
     except Exception as e:
         print("Status: 500\nContent-Type: text/plain; charset=UTF-8\n")
