@@ -1,3 +1,9 @@
+// Parse get parameters
+var get_params = {}
+location.search.substr(1).split("&").forEach(function(item) {
+  get_params[item.split("=")[0]] = item.split("=")[1];
+}); 
+
 const MakeAjaxCall = async (url, options) => {
 
   if (options == undefined)
