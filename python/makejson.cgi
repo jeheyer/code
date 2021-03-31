@@ -54,6 +54,7 @@ if __name__ == '__main__':
         output = json.dumps(data, indent=2)
 
         print("Content-Length: {}".format(len(output)+1))
+        print("Cache-Control: no-cache, no-store")
         print("Content-Type: application/json; charset=UTF-8\n")
         print(output)
 
