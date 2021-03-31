@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
         print("Content-Length: {}".format(len(output)))
         print("Content-Type: application/json; charset=UTF-8")
-        print(output)
+        print("\n" + output)
 
     except Exception as e:
         print("Status: 500\nContent-Type: text/plain; charset=UTF-8\n")
