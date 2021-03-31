@@ -8,7 +8,8 @@ class GeoIP:
 
         import socket
 
-        self.ipv4_address = None
+        self.ipv4_address = None; self.ipv6_address = None
+
         try:
             ip = ipaddress.ip_address(param)
             self.ipv4_address = str(ip)
@@ -29,7 +30,6 @@ class GeoIP:
                 self.ipv4_address = None
                 return
 
-        self.ipv6_address = "::0"
         self.lat = 0; self.lng = 0; self.city = None
         self.region_code = None; self.region_name = None
         self.country_code = None; self.country_name = None
@@ -61,9 +61,9 @@ class GeoIP:
             except:
                 return
             if response:
-                self.asn = response.autonomous_system_number
-                self.org = response.autonomous_system_organization
-                self.isp = response.isp
+                self.isp_name = response.isp
+                self.isp_asn = response.autonomous_system_number
+                self.isp_org = response.autonomous_system_organization
 
     def __str__(self):
 
