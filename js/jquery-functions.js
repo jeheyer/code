@@ -54,4 +54,3 @@ function FillTable(table_id, data) {
         $(`#${table_id}`).append(row_html);
     });
 }
-
