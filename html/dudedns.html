@@ -79,8 +79,8 @@ function PlotDNSResolvers(dns_resolvers = []) {
         location_info.lat = data.lat + random_offset;
         location_info.lng = data.lng + random_offset;
         location_info.details = `<b>DNS Resolver #${i+1}</b><br>${data.ipv4_address}<br>`;
-        if (data.isp_asi)
-          location_info.details += `<abbr title="ASN ${data.isp_asn} / ${data.isp_org}">${data.isp_isp}</abbr><br>`;
+        if (data.isp_name)
+          location_info.details += `<abbr title="ASN ${data.isp_asn}">${data.isp_name}</abbr><br>`;
         if (data.city)
           location_info.details += `${data.city}`;
         if (data.region_code) {
@@ -107,7 +107,7 @@ const tokenRequest = new Request("/getdnsservers/" + token, {
   cache: 'no-cache',
 });
 
-let dns_resolvers = [];
+//let dns_resolvers = [];
 
 fetch(tokenRequest)
 .then(response => {
