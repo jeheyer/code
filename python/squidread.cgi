@@ -57,9 +57,9 @@ def ReadLocalFile(filename, threshold, filter = None):
 fields = ['timestamp', 'elapsed', 'client_ip', 'code', 'bytes', 'method', 'url', 'rfc931', 'peer_status', 'type']
 
 #now = math.floor(time.time())
-now = 1616878438
-hours = 8
-threshold = now - 3600 * hours
+#now = 1616878438
+now = 1616788830
+threshold = now - 3600 * 4
 
 from datetime import datetime
 
@@ -70,8 +70,8 @@ data = []
 files = ['gcp-prox01-p001.log','gcp-prox01-p002.log', 'gcp-prox01-p003.log', 'gcp-prox01-p004.log', 'gcp-prox01-p005.log']
 client_ips = {}
 for file in files:
-    lines = ReadLocalFile("/web/" + file, threshold)
-    #lines = ReadWebFile("https://j5-org.storage.googleapis.com/temp/" + file, threshold)
+    #lines = ReadLocalFile("/web/" + file, threshold)
+    lines = ReadWebFile("https://j5-org.storage.googleapis.com/temp/" + file, threshold)
     print("lines read from {}: {}".format(file, len(lines)))
     for _ in range(len(lines)-1, 0, -1):
         parts = lines[_]
