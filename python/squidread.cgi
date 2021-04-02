@@ -60,14 +60,14 @@ def main():
     fields = ['timestamp', 'elapsed', 'client_ip', 'code', 'bytes', 'method', 'url', 'rfc931', 'peer_status', 'type']
 
     #now = math.floor(time.time())
-    now = 1616878438
-    threshold = now - 3600 * 12
+    now = 1617381723
+    threshold = now - 7200
 
     data = []
     files = ['gcp-prox01-p001.log','gcp-prox01-p002.log', 'gcp-prox01-p003.log', 'gcp-prox01-p004.log', 'gcp-prox01-p005.log']
     client_ips = {}
     for file in files:
-        lines = ReadLocalFile("/web/" + file, threshold, "10.213.")
+        lines = ReadLocalFile("/mnt/web/buckets/j5-org/temp/" + file, threshold)
         #lines = ReadWebFile("http://j5-org.storage.googleapis.com/temp/" + file, threshold)
         print("lines read from {}: {}".format(file, len(lines)))
         for i in range(len(lines)-1, 0, -1):
