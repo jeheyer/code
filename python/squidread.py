@@ -46,15 +46,15 @@ def ReadLocalFile(filename, time_range, filter = None):
         raise Exception("ERROR: could not read log file '" + filename + "'")
     
     for line in fh:
-        parts = line.split()
+        #parts = line.split()
         #lines.append(parts)
-        timestamp = float(parts[0])
+        timestamp = float(line.split()[0])
         if timestamp >= time_range[0] and timestamp <= time_range[1]:
             if filter:    
                 if filter in line:
-                   lines.append(parts)
+                   lines.append(line.split())
             else:
-                lines.append(parts)
+                lines.append(line.split())
     
     return lines
 
