@@ -61,7 +61,7 @@ def main():
 
     #now = math.floor(time.time())
     now = 1617381723
-    threshold = now - 7200
+    threshold = now - 3600 * 4
 
     data = []
     files = ['gcp-prox01-p001.log','gcp-prox01-p002.log', 'gcp-prox01-p003.log', 'gcp-prox01-p004.log', 'gcp-prox01-p005.log']
