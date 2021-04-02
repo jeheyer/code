@@ -58,7 +58,7 @@ fields = ['timestamp', 'elapsed', 'client_ip', 'code', 'bytes', 'method', 'url',
 
 #now = math.floor(time.time())
 now = 1616878438
-hours = 6
+hours = 8
 threshold = now - 3600 * hours
 
 from datetime import datetime
@@ -93,10 +93,9 @@ print("seconds_to_execute:", round((time.time() - start_time), 3))
 
 print("Unique client IPs:", len(client_ips), "\nTop 10 client IPs and hit count:")
 sorted_client_ips = sorted(client_ips.items(), key=lambda item: item[1], reverse = True)
-for i in range(0,10):
+for i in range(0,5):
     client_ip = sorted_client_ips[i]
     print(client_ip[0] ,":", client_ip[1])
 
 import random
-
 print(random.choice(data))
