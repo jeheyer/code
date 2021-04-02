@@ -1,137 +1,102 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3 
 
-def ReadFromHTTPS(hostname, path):
+import time
+
+def ReadWebFile(url, threshold):
 
     import http.client
-    #import ssl
+    import ssl
 
-    lines = []
-
-    try: 
-        #ssl_context = ssl._create_unverified_context()
-        #conn = http.client.HTTPSConnection(hostname, port = 443, timeout = 3, context = ssl_context)
-        conn = http.client.HTTPConnection(hostname, port = 80, timeout = 3)
-        conn.request(method = "GET", url = path)
-        resp = conn.getresponse()
-        lines = resp.read().decode("utf-8").rstrip().splitlines()
-    except Exception as e:
-        return e        
-    conn.close()
-    return lines
-
-def ReadFromGoogleCloudStorage(bucket_name, file_name):
-
-    from google.cloud import storage
-
-    lines = []
-
+    timeout = 5
+    
     try:
-        storage_client = storage.Client()
-        bucket = storage_client.bucket(bucket_name)
-        blob = bucket.blob(file_name)
-        return blob.download_as_string().decode("utf-8").rstrip().splitlines()
-        #out_file = "/var/tmp/" + file_name.split("/")[-1]
-        #blob.download_to_filename(out_file)
-        #print(out_file)
+        [proto, _] = url.split("://")
+        hostname = _.split("/")[0]
+        path = _[len(hostname):]
+        if proto == "https":
+            ssl_context = ssl._create_unverified_context()
+            conn = http.client.HTTPSConnection(hostname, port = 443, timeout = timeout, context = ssl_context)
+        else:
+            conn = http.client.HTTPConnection(hostname, port = 80, timeout = timeout)
+        
+        conn.request(method = "GET", url = path)  
+        resp = conn.getresponse()
+        all_lines = resp.read().decode("utf-8").rstrip().splitlines()
+            
     except Exception as e:
-        raise(e)
+        return e      
 
+    conn.close()
+    
+    lines = []
+    for _ in all_lines:
+        if float(_.split(" ")[0]) > threshold:
+            lines.append(_.split())
+    
     return lines
 
-def ReadFromS3(bucket_name, file_name):
+def ReadLocalFile(filename, threshold, filter = None):
+    
+    lines = []
+    
+    try:
+        fh = open(filename, "r")
+    except:
+        raise Exception("ERROR: could not read log file '" + filename + "'")
+    
+    for line in fh:
+        if float(line.split(" ")[0]) > threshold:
+            if filter:    
+                if filter in line:
+                   lines.append(line.split())
+            else:
+                lines.append(line.split())
+    
+    return lines
 
-    import boto3
-    return None
+fields = ['timestamp', 'elapsed', 'client_ip', 'code', 'bytes', 'method', 'url', 'rfc931', 'peer_status', 'type']
 
-def ProcessBlob(source_name = None, lines = []):
+#now = math.floor(time.time())
+now = 1616878438
+hours = 4
+threshold = now - 3600 * hours
 
-    from time import time
-    from math import floor
+from datetime import datetime
 
-    #now = math.floor(time.time())
-    now = 1614968742
-    threshold = now - 3600 * 6
+print("Content-Type: text/plain\n")
 
-    entries = []
-    for l in range(len(lines)-1, 0, -1):
-        line = lines[l]
-        parts = line.split()
+start_time = time.time()
+data = []
+files = ['gcp-prox01-p001.log','gcp-prox01-p002.log', 'gcp-prox01-p003.log', 'gcp-prox01-p004.log', 'gcp-prox01-p005.log']
+client_ips = {}
+for file in files:
+    lines = ReadLocalFile("/web/" + file, threshold)
+    #lines = ReadWebFile("https://j5-org.storage.googleapis.com/temp/" + file, threshold)
+    print("lines read from {}: {}".format(file, len(lines)))
+    for _ in range(len(lines)-1, 0, -1):
+        parts = lines[_]
         if int(parts[0].split('.')[0]) > threshold:
-            entry = {'reporter': source_name, 'data': parts}
-            #for i in range(0,len(fields)):
-            #    if i == 0:
-            #        datetimestr = datetime.fromtimestamp(int(parts[0].split(".")[0]), tz=None)
-            #        entry['timestamp'] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
-            #    else:
-            #        entry[fields[i]] = parts[i]
-            entries.append(entry)
+            client_ip = parts[2]
+            if client_ip in client_ips:
+                client_ips[client_ip] += 1
+            else:
+                client_ips[client_ip] = 1
+            #entry = {'reporter': file, 'data': line}
+            datetimestr = datetime.fromtimestamp(int(parts[0].split(".")[0]), tz=None)
+            parts[0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
+            data.append(dict(zip(fields, parts)))
         else:
             break
 
-    return entries
+print("Total lines read:", len(data))
+print("seconds_to_execute:", round((time.time() - start_time), 3))
 
-def ReadFromFile(file_name):
+print("Unique client IPs:", len(client_ips), "\nTop 10 client IPs and hit count:")
+sorted_client_ips = sorted(client_ips.items(), key=lambda item: item[1], reverse = True)
+for i in range(0,10):
+    client_ip = sorted_client_ips[i]
+    print(client_ip[0] ,":", client_ip[1])
 
-    import mmap
+import random
 
-    lines = []
-    #f = open(file_name)
-    #return f.readlines()
-
-    #with open(file_name, 'r+') as f:
-    #    for line in f:
-    #        lines.append(line)
-    #return lines
-
-    #with open(file_name, 'r') as f:
-    #    for piece in read_in_chunks(f):
-    #        lines.append(piece)
-
-    for line in open(file_name):
-        lines.append(line)
-    return lines
-    #with open(file_name, "r+") as f:
-    #    map = mmap.mmap(f.fileno(), 0)
-    #    map.close()
-
-    return lines
-
-
-if __name__ == '__main__':
-
-    import sys, os, json, traceback, time
-    from datetime import datetime
-
-    sys.stderr = sys.stdout
-
-    start_time = time.time()
-
-    try:
-        entries = []; total_lines = 0
-        for host in ["gcp-prox01-p001", "gcp-prox01-p003"]:
-            lines = ReadFromFile("/web/" + host + ".log")
-            #lines = ReadFromHTTPS("j5-org.storage.googleapis.com", "/temp/" + host + ".log")
-            #lines = ReadFromGoogleCloudStorage("j5-org", "temp/" + host + ".log")
-            #lines = ReadFromGoogleCloudStorage("otc-core-network-prod", "squid/logs/" + host + ".log")
-            total_lines += len(lines)
-            entries.extend(ProcessBlob(host, lines))
-        
-        if True:
-            data = []
-            print("Content-Type: text/json; charset=UTF-8\n")
-            fields = ['timestamp', 'elapsed', 'client_ip', 'code', 'bytes', 'method', 'url', 'rfc931', 'peer_status', 'type']
-            for _ in entries:
-                datetimestr = datetime.fromtimestamp(int(_['data'][0].split(".")[0]), tz=None)
-                _['data'][0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
-                data.append(dict(zip(fields, _['data'])))
-            print(data[0])
-            print("lines read:", total_lines)
-            print("entries processed:", len(data))
-            print("seconds_to_execute:", round((time.time() - start_time), 3))
-
-    except Exception as e:
-        if 'REQUEST_METHOD' in os.environ:
-            print("Status: 500\nContent-Type: text/plain; charset=UTF-8\n")
-        traceback.print_exc(file=sys.stdout, limit = 3)
-
-
+random.choice(data)
