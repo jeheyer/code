@@ -57,8 +57,7 @@ def ReadLocalFile(filename, threshold, filter = None):
 fields = ['timestamp', 'elapsed', 'client_ip', 'code', 'bytes', 'method', 'url', 'rfc931', 'peer_status', 'type']
 
 #now = math.floor(time.time())
-#now = 1616878438
-now = 1616788830
+now = 1616878438
 threshold = now - 3600 * 4
 
 from datetime import datetime
