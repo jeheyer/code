@@ -7,7 +7,7 @@ def application(environ, start_response):
 
     try:
 
-        data = GetData()
+        data, reporters = GetData()
         output = json.dumps(data[0:100])
 
         response_headers = [
