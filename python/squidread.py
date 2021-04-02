@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-def ReadWebFile(url, threshold):
+def ReadWebFile(url, time_range):
 
     import http.client
     import ssl
@@ -33,7 +33,7 @@ def ReadWebFile(url, threshold):
     
     return lines
 
-def ReadLocalFile(filename, threshold, filter = None):
+def ReadLocalFile(filename, time_range, filter = None):
     
     lines = []
     
@@ -44,7 +44,8 @@ def ReadLocalFile(filename, threshold, filter = None):
     
     for line in fh:
         parts = line.split()
-        if float(parts[0]) > threshold:
+        timestamp = float(parts[0])
+        if timestamp >= time_range[0] and timestamp < time_range[1]:
             if filter:    
                 if filter in line:
                    lines.append(parts)
@@ -58,15 +59,15 @@ def GetData():
     from datetime import datetime
 
     #now = math.floor(time.time())
-    now = 1617381723
-    threshold = now - 3600 * 4
+    now = 1617379777
+    time_range = (now - 14400, now)
 
     data = []
     client_ips = {}
     reporters = {}
     files = ['gcp-prox01-p001.log','gcp-prox01-p002.log', 'gcp-prox01-p003.log', 'gcp-prox01-p004.log', 'gcp-prox01-p005.log']
     for file in files:
-        lines = ReadLocalFile("/mnt/web/buckets/j5-org/temp/" + file, threshold)
+        lines = ReadLocalFile("/mnt/web/buckets/j5-org/temp/" + file, time_range)
         #lines = ReadWebFile("http://j5-org.storage.googleapis.com/temp/" + file, threshold)
         #print("lines read from {}: {}".format(file, len(lines)))
         reporters[file] = len(lines)
