@@ -36,7 +36,9 @@ def ReadWebFile(url, time_range):
 def ReadLocalFile(filename, time_range, filter = None):
     
     lines = []
-    
+    f = open(filename)
+    return f.readlines()    
+
     try:
         fh = open(filename, "r")
     except:
@@ -44,13 +46,14 @@ def ReadLocalFile(filename, time_range, filter = None):
     
     for line in fh:
         parts = line.split()
-        timestamp = float(parts[0])
-        if timestamp >= time_range[0] and timestamp <= time_range[1]:
-            if filter:    
-                if filter in line:
-                   lines.append(parts)
-            else:
-                lines.append(parts)
+        lines.append(parts)
+        #timestamp = float(parts[0])
+        #if timestamp >= time_range[0] and timestamp <= time_range[1]:
+        #    if filter:    
+        #        if filter in line:
+        #           lines.append(parts)
+        #    else:
+        #        lines.append(parts)
     
     return lines
 
@@ -60,7 +63,7 @@ def GetData():
 
     #now = math.floor(time.time())
     now = 1617379601
-    time_range = (now - 120, now)
+    time_range = (now - 3600, now)
 
     data = []
     client_ips = {}
@@ -71,20 +74,21 @@ def GetData():
         #lines = ReadWebFile("http://j5-org.storage.googleapis.com/temp/" + file, threshold)
         #print("lines read from {}: {}".format(file, len(lines)))
         reporters[file] = len(lines)
-        for i in range(len(lines)-1, 0, -1):
-            _ = lines[i]
-        #for _ in lines:
-            #print(_[0])
-            #parts = lines[_]
-          #  if int(parts[0].split('.')[0]) > threshold:
-            client_ip = _[2]
-            if client_ip in client_ips:
-                client_ips[client_ip] += 1
-            else:
-                client_ips[client_ip] = 1
-            #entry = {'reporter': file, 'data': line}
-            _.insert(0, file)
-            data.append(_)
+        for line in lines:
+        #for _ in range(len(lines)-1, 0, -1):
+            #_ = lines[i]
+            _ = line.split()
+            #lines.append(parts)
+            timestamp = float(_[0])
+            if timestamp >= time_range[0] and timestamp <= time_range[1]:
+                client_ip = _[2]
+                if client_ip in client_ips:
+                    client_ips[client_ip] += 1
+                else:
+                    client_ips[client_ip] = 1
+                #entry = {'reporter': file, 'data': line}
+                _.insert(0, file)
+                data.append(_)
 
     newest_first = sorted(data, key=lambda x: x[0], reverse=True)
     fields = ['reporter','timestamp','elapsed','client_ip','code','bytes','method','url','rfc931','peer_status','type']
