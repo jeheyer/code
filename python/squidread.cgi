@@ -95,15 +95,17 @@ def main():
 
 if __name__ == '__main__':
 
-    import time
+    import time, os, json
 
     start_time = time.time()
 
-    print("Content-Type: text/plain\n")
     data = main()
-    print("Total lines read:", len(data))
-    print("seconds_to_execute:", round((time.time() - start_time), 3))
 
-    import random
-    print(data[0])
-    print(data[-1])
+    if 'REQUEST_METHOD' in os.environ:
+        print("Content-Type: application/json\n")
+        print(json.dumps(data[0:100]))
+    else:
+        print("Total lines read:", len(data))
+        print("seconds_to_execute:", round((time.time() - start_time), 3))
+        print(data[0])
+        print(data[-1])
