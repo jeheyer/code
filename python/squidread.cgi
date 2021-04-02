@@ -95,23 +95,30 @@ def main():
 
 if __name__ == '__main__':
 
-    import time, os, json
+    import sys, time, os, json, traceback
+
+    sys.stderr = sys.stdout
 
     start_time = time.time()
 
-    data = main()
+    try:
+        data = main()
 
-    if 'REQUEST_METHOD' in os.environ:
-        output = json.dumps(data, indent=2)
-        print("Status: 200")
-        print("Content-Length: {}".format(len(output)+1))
-        print("Cache-Control: no-cache")
-        print("Content-Type: application/json; charset=UTF-8\n")
-        print(output)
-    else:
-        print("Status: 200")
-        print("Content-Type: text/plain; charset=UTF-8\n")
-        print("Total lines read:", len(data))
-        print("seconds_to_execute:", round((time.time() - start_time), 3))
-        print(data[0])
-        print(data[-1])
+        if 'REQUEST_METHOD' in os.environ:
+            output = json.dumps(data, indent=2)
+            print("Status: 200")
+            print("Content-Length: {}".format(len(output)+1))
+            print("Cache-Control: no-cache")
+            print("Content-Type: application/json; charset=UTF-8\n")
+            print(output)
+        else:
+            print("Status: 200")
+            print("Content-Type: text/plain; charset=UTF-8\n")
+            print("Total lines read:", len(data))
+            print("seconds_to_execute:", round((time.time() - start_time), 3))
+            print(data[0])
+            print(data[-1])
+
+    except Exception as e:
+        print("Status: 500\nContent-Type: text/plain; charset=UTF-8\n")
+        traceback.print_exc(file=sys.stdout, limit=3)
