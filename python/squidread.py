@@ -63,11 +63,13 @@ def GetData():
 
     data = []
     client_ips = {}
+    reporters = {}
     files = ['gcp-prox01-p001.log','gcp-prox01-p002.log', 'gcp-prox01-p003.log', 'gcp-prox01-p004.log', 'gcp-prox01-p005.log']
     for file in files:
         lines = ReadLocalFile("/mnt/web/buckets/j5-org/temp/" + file, threshold)
         #lines = ReadWebFile("http://j5-org.storage.googleapis.com/temp/" + file, threshold)
         #print("lines read from {}: {}".format(file, len(lines)))
+        reporters[file] = len(lines)
         for i in range(len(lines)-1, 0, -1):
             _ = lines[i]
         #for _ in lines:
@@ -92,5 +94,5 @@ def GetData():
         _[1] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
         new.append(dict(zip(fields, _)))
 
-    return new
+    return new, reporters
 

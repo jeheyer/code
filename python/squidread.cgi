@@ -11,7 +11,7 @@ if __name__ == '__main__':
     start_time = time.time()
 
     try:
-        data = GetData()
+        data, reporters = GetData()
 
         if 'REQUEST_METHOD' in os.environ:
             output = json.dumps(data[0:500], indent=2)
@@ -25,8 +25,10 @@ if __name__ == '__main__':
             print("Content-Type: text/plain; charset=UTF-8\n")
             print("Total lines read:", len(data))
             print("seconds_to_execute:", round((time.time() - start_time), 3))
-            print(data[0])
-            print(data[-1])
+            for reporter, hitcount in reporters.items():
+                print(reporter, ":", hitcount)
+            for _ in data:
+                print(_['timestamp'], _['reporter'])
 
     except Exception as e:
         print("Status: 500\nContent-Type: text/plain; charset=UTF-8\n")
