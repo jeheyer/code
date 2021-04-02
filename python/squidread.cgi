@@ -58,7 +58,7 @@ fields = ['timestamp', 'elapsed', 'client_ip', 'code', 'bytes', 'method', 'url',
 
 #now = math.floor(time.time())
 now = 1616878438
-threshold = now - 3600 * 4
+threshold = now - 3600 
 
 from datetime import datetime
 
