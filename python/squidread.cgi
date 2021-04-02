@@ -99,4 +99,4 @@ for i in range(0,10):
 
 import random
 
-random.choice(data)
+print(random.choice(data))
