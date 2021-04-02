@@ -108,6 +108,7 @@ if __name__ == '__main__':
         print("Content-Type: application/json; charset=UTF-8\n")
         print(output)
     else:
+        print("Content-Type: text/plain; charset=UTF-8\n")
         print("Total lines read:", len(data))
         print("seconds_to_execute:", round((time.time() - start_time), 3))
         print(data[0])
