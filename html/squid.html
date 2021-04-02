@@ -36,6 +36,8 @@ th,td	{ font-family: arial; text-align: left; font-size: 6; border: 1px solid bl
     })
     .then(data => {
 
+      console.log(`Received ${data.length} rows of data from backend`);
+
       // Set alternating table row background colors
       $(document).ready(function(){
         $("table tr:even").css("background-color", "#fefefe");
