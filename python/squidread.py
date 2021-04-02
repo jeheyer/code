@@ -60,7 +60,7 @@ def GetData():
 
     #now = math.floor(time.time())
     now = 1617379777
-    time_range = (now - 14400, now)
+    time_range = (now - 120, now)
 
     data = []
     client_ips = {}

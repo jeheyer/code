@@ -27,8 +27,8 @@ if __name__ == '__main__':
             print("seconds_to_execute:", round((time.time() - start_time), 3))
             for reporter, hitcount in reporters.items():
                 print(reporter, ":", hitcount)
-            #for _ in data:
-            #    print(_['timestamp'], _['reporter'])
+            for _ in data:
+                print(_['timestamp'], _['reporter'])
             print(data[0])
             print(data[-1])
 
