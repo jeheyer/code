@@ -69,8 +69,8 @@ data = []
 files = ['gcp-prox01-p001.log','gcp-prox01-p002.log', 'gcp-prox01-p003.log', 'gcp-prox01-p004.log', 'gcp-prox01-p005.log']
 client_ips = {}
 for file in files:
-    #lines = ReadLocalFile("/web/" + file, threshold)
-    lines = ReadWebFile("http://j5-org.storage.googleapis.com/temp/" + file, threshold)
+    lines = ReadLocalFile("/web/" + file, threshold)
+    #lines = ReadWebFile("http://j5-org.storage.googleapis.com/temp/" + file, threshold)
     print("lines read from {}: {}".format(file, len(lines)))
     for _ in range(len(lines)-1, 0, -1):
         parts = lines[_]
