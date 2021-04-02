@@ -105,7 +105,7 @@ if __name__ == '__main__':
         data = main()
 
         if 'REQUEST_METHOD' in os.environ:
-            output = json.dumps(data[0:1000], indent=2)
+            output = json.dumps(data[0:25], indent=2)
             print("Status: 200")
             print("Content-Length: {}".format(len(output)+1))
             print("Cache-Control: no-cache")
