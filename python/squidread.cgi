@@ -67,7 +67,7 @@ def main():
     for file in files:
         lines = ReadLocalFile("/mnt/web/buckets/j5-org/temp/" + file, threshold)
         #lines = ReadWebFile("http://j5-org.storage.googleapis.com/temp/" + file, threshold)
-        print("lines read from {}: {}".format(file, len(lines)))
+        #print("lines read from {}: {}".format(file, len(lines)))
         for i in range(len(lines)-1, 0, -1):
             _ = lines[i]
         #for _ in lines:
