@@ -80,10 +80,11 @@ def GetData():
             else:
                 client_ips[client_ip] = 1
             #entry = {'reporter': file, 'data': line}
+            _.append(file)
             data.append(_)
 
     newest_first = sorted(data, key=lambda x: x[0], reverse=True)
-    fields = ['timestamp', 'elapsed', 'client_ip', 'code', 'bytes', 'method', 'url', 'rfc931', 'peer_status', 'type']
+    fields = ['timestamp', 'elapsed', 'client_ip', 'code', 'bytes', 'method', 'url', 'rfc931', 'peer_status', 'type', 'reporter']
 
     new = []
     for _ in newest_first:
