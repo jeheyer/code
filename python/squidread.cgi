@@ -58,7 +58,7 @@ fields = ['timestamp', 'elapsed', 'client_ip', 'code', 'bytes', 'method', 'url',
 
 #now = math.floor(time.time())
 now = 1616878438
-hours = 4
+hours = 6
 threshold = now - 3600 * hours
 
 from datetime import datetime
