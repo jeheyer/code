@@ -35,9 +35,9 @@ def ReadWebFile(url, time_range):
 
 def ReadLocalFile(filename, time_range, filter = None):
     
-    lines = []
-    f = open(filename)
-    return f.readlines()    
+    #lines = []
+    #f = open(filename)
+    #return f.readlines()    
 
     try:
         fh = open(filename, "r")
@@ -47,13 +47,13 @@ def ReadLocalFile(filename, time_range, filter = None):
     for line in fh:
         parts = line.split()
         lines.append(parts)
-        #timestamp = float(parts[0])
-        #if timestamp >= time_range[0] and timestamp <= time_range[1]:
-        #    if filter:    
-        #        if filter in line:
-        #           lines.append(parts)
-        #    else:
-        #        lines.append(parts)
+        timestamp = float(parts[0])
+        if timestamp >= time_range[0] and timestamp <= time_range[1]:
+            if filter:    
+                if filter in line:
+                   lines.append(parts)
+            else:
+                lines.append(parts)
     
     return lines
 
@@ -74,10 +74,10 @@ def GetData():
         #lines = ReadWebFile("http://j5-org.storage.googleapis.com/temp/" + file, threshold)
         #print("lines read from {}: {}".format(file, len(lines)))
         reporters[file] = len(lines)
-        for line in lines:
-        #for _ in range(len(lines)-1, 0, -1):
-            #_ = lines[i]
-            _ = line.split()
+        3for line in lines:
+        for _ in range(len(lines)-1, 0, -1):
+            _ = lines[i]
+            #_ = line.split()
             #lines.append(parts)
             timestamp = float(_[0])
             if timestamp >= time_range[0] and timestamp <= time_range[1]:
