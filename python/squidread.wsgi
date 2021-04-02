@@ -8,7 +8,7 @@ def application(environ, start_response):
     try:
 
         data = GetData()
-        output = json.dumps(data, indent=2)
+        output = json.dumps(data[0:25], indent=2)
 
         response_headers = [
             ('Content-type', 'application/json'),
