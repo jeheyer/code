@@ -61,7 +61,7 @@ def main():
 
     #now = math.floor(time.time())
     now = 1616878438
-    threshold = now - 3600 * 4
+    threshold = now - 3600 * 12
 
     data = []
     files = ['gcp-prox01-p001.log','gcp-prox01-p002.log', 'gcp-prox01-p003.log', 'gcp-prox01-p004.log', 'gcp-prox01-p005.log']
@@ -70,8 +70,9 @@ def main():
         lines = ReadLocalFile("/web/" + file, threshold, "10.213.")
         #lines = ReadWebFile("http://j5-org.storage.googleapis.com/temp/" + file, threshold)
         print("lines read from {}: {}".format(file, len(lines)))
-        #for _ in range(len(lines)-1, 0, -1):
-        for _ in lines:
+        for i in range(len(lines)-1, 0, -1):
+            _ = lines[i]
+        #for _ in lines:
             #print(_[0])
             #parts = lines[_]
           #  if int(parts[0].split('.')[0]) > threshold:
@@ -98,4 +99,5 @@ if __name__ == '__main__':
     print("seconds_to_execute:", round((time.time() - start_time), 3))
 
     import random
-    print(random.choice(data))
+    print(data[0])
+    print(data[-1])
