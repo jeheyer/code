@@ -45,7 +45,7 @@ def ReadLocalFile(filename, time_range, filter = None):
     for line in fh:
         parts = line.split()
         timestamp = float(parts[0])
-        if timestamp >= time_range[0] and timestamp < time_range[1]:
+        if timestamp >= time_range[0] and timestamp <= time_range[1]:
             if filter:    
                 if filter in line:
                    lines.append(parts)
