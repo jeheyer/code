@@ -59,7 +59,7 @@ def GetData():
     from datetime import datetime
 
     #now = math.floor(time.time())
-    now = 1617379777
+    now = 1617379601
     time_range = (now - 120, now)
 
     data = []
