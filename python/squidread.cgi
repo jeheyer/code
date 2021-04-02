@@ -102,8 +102,11 @@ if __name__ == '__main__':
     data = main()
 
     if 'REQUEST_METHOD' in os.environ:
-        print("Content-Type: application/json\n")
-        print(json.dumps(data[0:100]))
+        output = json.dumps(data, indent=2)
+        print("Content-Length: {}".format(len(output)+1))
+        print("Cache-Control: no-cache")
+        print("Content-Type: application/json; charset=UTF-8\n")
+        print(output)
     else:
         print("Total lines read:", len(data))
         print("seconds_to_execute:", round((time.time() - start_time), 3))
