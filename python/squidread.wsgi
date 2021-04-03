@@ -4,11 +4,12 @@ from squidread import *
 def application(environ, start_response):
 
     import traceback, json
+    from random import sample
 
     try:
 
         data, reporters = GetData()
-        output = json.dumps(data[0:50], indent=2)
+        output = json.dumps(sample(data, 50), indent=2)
 
         response_headers = [
             ('Content-type', 'application/json'),
