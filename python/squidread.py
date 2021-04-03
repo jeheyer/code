@@ -85,7 +85,7 @@ def GetData():
     client_ips = {}
     reporters = {}
     for hostname in hostnames:
-        lines = ReadLocalFile("/mnt/web/buckets/j5-org/temp/" + hostname + ".log", time_range, "DENIED")
+        lines = ReadLocalFile("/mnt/web/buckets/j5-org/temp/" + hostname + ".log", time_range)
         #lines = ReadWebFile("http://j5-org.storage.googleapis.com/temp/" + hostname + ".log", time_range)
         #print("lines read from {}: {}".format(file, len(lines)))
         reporters[hostname] = len(lines)
