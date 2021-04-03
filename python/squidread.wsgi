@@ -14,7 +14,7 @@ def application(environ, start_response):
             ('Cache-Control', 'no-cache')
         ]
         start_response('200 OK', response_headers)
-        data, reporters = GetData()
+        data, reporters, client_ips, codes = GetData()
         output = json.dumps(sample(data, 50), indent=2)
         return [ output.encode('utf-8') ]
 
