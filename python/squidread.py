@@ -74,7 +74,7 @@ def GetData():
 
     #now = math.floor(time.time())
     now = 1617379601
-    time_range = (now - 7200, now)
+    time_range = (now - 3600, now)
 
     hostnames = []
     for _ in range(1,5):
