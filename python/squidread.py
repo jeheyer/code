@@ -60,11 +60,11 @@ def ReadLocalFile(filename, time_range, filter = None):
         else:
             if filter:    
                 if filter in line:
-                   #lines.append(line.split())
-                   lines.append(line)
+                   lines.append(line.split())
+                   #lines.append(line)
             else:
-                #lines.append(line.split())
-                lines.append(line)
+                lines.append(line.split())
+                #lines.append(line)
     
     return lines
 
@@ -74,7 +74,7 @@ def GetData():
 
     #now = math.floor(time.time())
     now = 1617379601
-    time_range = (now - 600, now)
+    time_range = (now - 7200, now)
 
     hostnames = []
     for _ in range(1,5):
@@ -82,32 +82,45 @@ def GetData():
 
     fields = ['reporter','timestamp','elapsed','client_ip','code','bytes','method','url','rfc931','peer_status','type']
 
-    data = []
+    entries = []
     client_ips = {}
     reporters = {}
     for hostname in hostnames:
-        lines = ReadLocalFile("/mnt/web/buckets/j5-org/temp/" + hostname + ".log", time_range)
+        _ = ReadLocalFile("/mnt/web/buckets/j5-org/temp/" + hostname + ".log", time_range)
         #lines = ReadWebFile("http://j5-org.storage.googleapis.com/temp/" + hostname + ".log", time_range)
-        #print("lines read from {}: {}".format(file, len(lines)))
-        reporters[hostname] = len(lines)
+        reporters[hostname] = len(_)
+        print(reporters[hostname])
+        entries.extend(_)
         #for line in lines:
-        for i in range(len(lines)-1, 0, -1):
+        #for i in range(len(lines)-1, 0, -1):
             #_ = lines[i]
-            _ = lines[i].split()
+            #_ = lines[i].split()
             #lines.append(parts)
-            
-            
-            client_ip = _[2]
-            if client_ip in client_ips:
-                client_ips[client_ip] += 1
-            else:
-                client_ips[client_ip] = 1
-            #entry = {'reporter': file, 'data': line}
-            _.insert(0, hostname)
-            #data.append(_)
-            datetimestr = datetime.fromtimestamp(int(_[1].split('.')[0]), tz=None)
-            _[1] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
-            data.append(dict(zip(fields, _)))
+    #return data[0:3], reporters
+    #newest_first = sorted(data, key=lambda x: x[0], reverse=True)
+    #return newest_first[0:3], reporters
+    #data = []
+    return entries, reporters
+
+    newest_first = sorted(entries, key=lambda x: x[0], reverse=True)
+    return newest_first, reporters
+    data = []
+    #for i in range(len(entries)-1, 0, -1):
+    for _ in newest_first:
+        #print(entries[i])
+        #_ = entries[i]
+        #print(_[0])
+        client_ip = _[2]
+        if client_ip in client_ips:
+            client_ips[client_ip] += 1
+        else:
+            client_ips[client_ip] = 1
+        #entry = {'reporter': file, 'data': line}
+        #_.insert(0, hostname)
+        #data.append(_)
+        datetimestr = datetime.fromtimestamp(int(_[0][0:10]), tz=None)
+        _[1] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
+        data.append(dict(zip(fields, _)))
 
     return data, reporters
     newest_first = sorted(data, key=lambda x: x[0], reverse=True)
