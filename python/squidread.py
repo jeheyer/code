@@ -36,9 +36,9 @@ def ReadWebFile(url, time_range, filter = None):
         else:
             if filter:    
                 if filter in line:
-                   lines.append(line.split())
+                   lines.append(line)
             else:
-                lines.append(line.split())
+                lines.append(line)
 
     return lines
 
@@ -86,8 +86,8 @@ def GetData():
     client_ips = {}
     reporters = {}
     for hostname in hostnames:
-        lines = ReadLocalFile("/mnt/web/buckets/j5-org/temp/" + hostname + ".log", time_range)
-        #lines = ReadWebFile("http://j5-org.storage.googleapis.com/temp/" + hostname + ".log", time_range)
+        #lines = ReadLocalFile("/mnt/web/buckets/j5-org/temp/" + hostname + ".log", time_range)
+        lines = ReadWebFile("http://j5-org.storage.googleapis.com/temp/" + hostname + ".log", time_range)
         #print("lines read from {}: {}".format(file, len(lines)))
         reporters[hostname] = len(lines)
         #for line in lines:
