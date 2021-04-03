@@ -46,9 +46,6 @@ def ReadLocalFile(filename, time_range, filter = None):
     
     lines = []
 
-    #f = open(filename)
-    #return f.readlines()    
-
     try:
         fh = open(filename, "r")
     except:
