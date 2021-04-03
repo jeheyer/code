@@ -5,6 +5,7 @@ from squidread import *
 if __name__ == '__main__':
 
     import sys, time, os, json, traceback
+    from random import sample
 
     sys.stderr = sys.stdout
 
@@ -30,6 +31,7 @@ if __name__ == '__main__':
             #for _ in data:
             #    print(_['timestamp'], _['reporter'])
             print(data[0])
+            print(sample(data, 1))
             print(data[-1])
 
     except Exception as e:

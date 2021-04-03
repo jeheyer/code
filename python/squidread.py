@@ -48,8 +48,13 @@ def ReadLocalFile(filename, time_range, filter = None):
     for line in fh:
         #parts = line.split()
         #lines.append(parts)
-        timestamp = float(line.split()[0])
-        if timestamp >= time_range[0] and timestamp <= time_range[1]:
+        #timestamp = float(line.split()[0])
+        timestamp = int(line[:10])
+        if timestamp <  time_range[0]:
+            continue
+        elif timestamp > time_range[1]:
+            break
+        else:
             if filter:    
                 if filter in line:
                    lines.append(line.split())
@@ -64,7 +69,7 @@ def GetData():
 
     #now = math.floor(time.time())
     now = 1617379601
-    time_range = (now - 3600, now)
+    time_range = (now - 7200, now)
 
     data = []
     client_ips = {}
