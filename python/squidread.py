@@ -69,32 +69,35 @@ def GetData():
 
     #now = math.floor(time.time())
     now = 1617379601
-    time_range = (now - 3600, now)
+    time_range = (now - 14400, now)
+
+    hostnames = []
+    for _ in range(1,5):
+        hostnames.append('gcp-prox01-p00{}'.format(_))
 
     data = []
     client_ips = {}
     reporters = {}
-    files = ['gcp-prox01-p001.log','gcp-prox01-p002.log', 'gcp-prox01-p003.log', 'gcp-prox01-p004.log', 'gcp-prox01-p005.log']
-    for file in files:
-        lines = ReadLocalFile("/mnt/web/buckets/j5-org/temp/" + file, time_range)
+    for hostname in hostnames:
+        lines = ReadLocalFile("/mnt/web/buckets/j5-org/temp/" + hostname + ".log", time_range)
         #lines = ReadWebFile("http://j5-org.storage.googleapis.com/temp/" + file, threshold)
         #print("lines read from {}: {}".format(file, len(lines)))
-        reporters[file] = len(lines)
+        reporters[hostname] = len(lines)
         #for line in lines:
         for i in range(len(lines)-1, 0, -1):
             _ = lines[i]
             #_ = line.split()
             #lines.append(parts)
-            timestamp = float(_[0])
-            if timestamp >= time_range[0] and timestamp <= time_range[1]:
-                client_ip = _[2]
-                if client_ip in client_ips:
-                    client_ips[client_ip] += 1
-                else:
-                    client_ips[client_ip] = 1
-                #entry = {'reporter': file, 'data': line}
-                _.insert(0, file)
-                data.append(_)
+            
+            
+            client_ip = _[2]
+            if client_ip in client_ips:
+                client_ips[client_ip] += 1
+            else:
+                client_ips[client_ip] = 1
+            #entry = {'reporter': file, 'data': line}
+            _.insert(0, hostname)
+            data.append(_)
 
     newest_first = sorted(data, key=lambda x: x[0], reverse=True)
     fields = ['reporter','timestamp','elapsed','client_ip','code','bytes','method','url','rfc931','peer_status','type']
