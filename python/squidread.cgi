@@ -12,7 +12,7 @@ if __name__ == '__main__':
     start_time = time.time()
 
     try:
-        data, reporters = GetData()
+        data, reporters, client_ips, codes = GetData()
 
         if 'REQUEST_METHOD' in os.environ:
             output = json.dumps(sample(data, 50), indent=2)
@@ -33,6 +33,8 @@ if __name__ == '__main__':
             print(data[0])
             print(sample(data, 1))
             print(data[-1])
+            print("unique client IPs:", len(client_ips))
+            print("Codes:", codes)
 
     except Exception as e:
         print("Status: 500\nContent-Type: text/plain; charset=UTF-8\n")
