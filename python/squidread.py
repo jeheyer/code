@@ -105,6 +105,7 @@ def GetData():
     #return entries, reporters
     
     newest_first = sorted(entries, key=lambda x: x[0:10], reverse=True)
+    del entries
     #return newest_first, reporters
     data = []
     #for i in range(len(entries)-1, 0, -1):
