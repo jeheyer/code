@@ -15,7 +15,7 @@ if __name__ == '__main__':
         data, reporters, client_ips, codes = GetData()
 
         if 'REQUEST_METHOD' in os.environ:
-            output = json.dumps(sample(data, 50), indent=2)
+            output = json.dumps(sample(data, 50))
             print("Status: 200")
             print("Content-Length: {}".format(len(output)+1))
             print("Cache-Control: no-cache")

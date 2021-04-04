@@ -131,6 +131,7 @@ def GetData():
         _[0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
         data.append(dict(zip(fields, _)))
 
+    del newest_first
     return data, reporters, client_ips, codes
 
 
