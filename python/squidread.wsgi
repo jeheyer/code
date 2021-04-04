@@ -9,7 +9,7 @@ def application(environ, start_response):
     try:
 
         data, reporters, client_ips, codes = GetData()
-        output = json.dumps(sample(data, 50))
+        output = json.dumps(data[0:500])
         response_headers = [
             ('Content-type', 'application/json'),
             ('Content-Length', str(len(output))),
