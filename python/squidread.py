@@ -76,7 +76,7 @@ def GetData():
 
     #now = math.floor(time.time())
     now = 1617379601
-    time_range = (now - 3600, now)
+    time_range = (now - 604800, now)
 
     hostnames = []
     for _ in range(1,5):
@@ -87,7 +87,7 @@ def GetData():
     entries = []
     reporters = {}; client_ips = {}; usernames = {}; codes = {}
     for hostname in hostnames:
-        filter = "MISS"
+        filter = "HIT"
         _ = ReadLocalFile("/mnt/web/buckets/j5-org/temp/" + hostname + ".log", time_range, filter)
         #lines = ReadWebFile("http://j5-org.storage.googleapis.com/temp/" + hostname + ".log", time_range)
         reporters[hostname] = len(_)
