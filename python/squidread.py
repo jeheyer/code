@@ -65,16 +65,21 @@ def ReadLocalFile(filename, time_range, filter = None):
 
 def AnalyzeLine(line,filter = None):
     
+    from datetime import datetime
     fields = ['timestamp','elapsed','client_ip','code','bytes','method','url','rfc931','peer_status','type']
 
     if filter:    
         if filter in line:
             #lines.append(line.split())
             _ = line.split()
+            datetimestr = datetime.fromtimestamp(int(_[0][0:10]), tz=None)
+            _[0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
             return dict(zip(fields, _))
     else:
         #lines.append(line.split())
         _ = line.split()
+        datetimestr = datetime.fromtimestamp(int(_[0][0:10]), tz=None)
+        _[0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
         return dict(zip(fields, _))
     return 
   
@@ -113,8 +118,8 @@ def GetData():
         #    _[0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
         #    entries.append(dict(zip(fields, _)))
 
-    entries = sorted(entries, key=lambda x: x['timestamp'], reverse=True)
-    return entries, reporters, client_ips, codes
+    #entries = sorted(entries, key=lambda x: x['timestamp'], reverse=True)
+    #return entries, reporters, client_ips, codes
             #lines.append(parts)
     #return data[0:3], reporters
     #newest_first = sorted(data, key=lambda x: x[0], reverse=True)
@@ -122,8 +127,9 @@ def GetData():
     #data = []
     #return entries, reporters
     #return entries, reporters, client_ips, codes
-    newest_first = sorted(entries, key=lambda x: x[0:10], reverse=True)
+    newest_first = sorted(entries, key=lambda x: x['timestamp'], reverse=True)
     del entries
+    return newest_first, reporters, client_ips, codes
     #return newest_first, reporters, client_ips, codes
     #return newest_first, reporters
     data = []
