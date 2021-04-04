@@ -26,25 +26,22 @@ def ReadWebFile(url, time_range, filter = None):
 
     conn.close()
     
-    lines = []
+    matches = []
+
     for line in all_lines:
         timestamp = int(line[:10])
         if timestamp <  time_range[0]:
             continue
-        elif timestamp > time_range[1]:
+        if timestamp >  time_range[1]:
             break
-        else:
-            if filter:    
-                if filter in line:
-                   lines.append(line)
-            else:
-                lines.append(line)
+        if AnalyzeLine(line, filter):
+            matches.append(line)
 
-    return lines
+    return matches
 
 def ReadLocalFile(filename, time_range, filter = None):
     
-    lines = []
+    matches = []
 
     try:
         fh = open(filename, "r")
@@ -55,19 +52,24 @@ def ReadLocalFile(filename, time_range, filter = None):
         timestamp = int(line[:10])
         if timestamp <  time_range[0]:
             continue
-        elif timestamp > time_range[1]:
+        if timestamp >  time_range[1]:
             break
-        else:
-            if filter:    
-                if filter in line:
-                   #lines.append(line.split())
-                   lines.append(line)
-            else:
-                #lines.append(line.split())
-                lines.append(line)
+        if AnalyzeLine(line, filter):
+            matches.append(line)
     
-    return lines
+    return matches
 
+def AnalyzeLine(line,filter = None):
+
+    if filter:    
+        if filter in line:
+            #lines.append(line.split())
+             return line
+    else:
+        #lines.append(line.split())
+        return line
+    return 
+  
 def GetData():
 
     from datetime import datetime
@@ -85,7 +87,8 @@ def GetData():
     entries = []
     reporters = {}; client_ips = {}; usernames = {}; codes = {}
     for hostname in hostnames:
-        _ = ReadLocalFile("/mnt/web/buckets/j5-org/temp/" + hostname + ".log", time_range)
+        filter = None
+        _ = ReadLocalFile("/mnt/web/buckets/j5-org/temp/" + hostname + ".log", time_range, filter)
         #lines = ReadWebFile("http://j5-org.storage.googleapis.com/temp/" + hostname + ".log", time_range)
         reporters[hostname] = len(_)
         #print(reporters[hostname])
@@ -100,7 +103,7 @@ def GetData():
     #return newest_first[0:3], reporters
     #data = []
     #return entries, reporters
-    #newest_first = sorted(entries, key=lambda x: x[0], reverse=True)
+    
     newest_first = sorted(entries, key=lambda x: x[0:10], reverse=True)
     #return newest_first, reporters
     data = []
