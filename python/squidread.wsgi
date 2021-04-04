@@ -8,14 +8,14 @@ def application(environ, start_response):
 
     try:
 
+        data, reporters, client_ips, codes = GetData()
+        output = json.dumps(sample(data, 50), indent=2)
         response_headers = [
             ('Content-type', 'application/json'),
-            #('Content-Length', str(len(output))),
+            ('Content-Length', str(len(output))),
             ('Cache-Control', 'no-cache')
         ]
         start_response('200 OK', response_headers)
-        data, reporters, client_ips, codes = GetData()
-        output = json.dumps(sample(data, 50), indent=2)
         return [ output.encode('utf-8') ]
 
     except:
