@@ -126,10 +126,10 @@ def GetData():
     #return newest_first[0:3], reporters
     #data = []
     #return entries, reporters
+    #return entries, reporters, client_ips, codes
+    entries = sorted(entries, key=lambda x: x['timestamp'], reverse=True)
+    #del entries
     return entries, reporters, client_ips, codes
-    newest_first = sorted(entries, key=lambda x: x['timestamp'], reverse=True)
-    del entries
-    return newest_first, reporters, client_ips, codes
     #return newest_first, reporters, client_ips, codes
     #return newest_first, reporters
     data = []
