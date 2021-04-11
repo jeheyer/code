@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
         if os.environ.get('REQUEST_METHOD', 'GET') == 'POST':
             cookie_string = os.environ.get('HTTP_COOKIE', None)
-            if not cookie_name in cookie_string:
+            if cookie_string and not cookie_name in cookie_string:
                 choice_id = int(form['choice_id'].value)
                 if choice_id != 0:
                     main(poll_db, poll_name, choice_id) 
