@@ -31,19 +31,22 @@ if __name__ == '__main__':
     try:
 
         form = cgi.FieldStorage()
+        poll_db = form['poll_db'].value
         poll_name = form['poll_name'].value
-    
+        poll_desc = form['poll_desc'].value
+        poll_url = form['poll_url'].value
+
         if os.environ.get('REQUEST_METHOD','GET') == 'POST':
-            poll_db = form['poll_db'].value
+            cookie_name = poll_db + "-" + poll_name
             choice_id = int(form['choice_id'].value)
             if choice_id != 0:
                 main(poll_db, poll_name, choice_id) 
-                cookie_expiration = time.time() + 3600
-                print(f"Set-Cookie: alreadvoted=True")
+                cookie_options = "Max-Age=86400;SameSite=Strict;Secure"
 
-        poll_desc = form['poll_desc'].value
-        options = f"poll_name={poll_name}&poll_disc={poll_desc}"
-        print(f"Status: 302\nLocation: {form['poll_url'].value}?{options}\n")
+        print("Status: 302")
+        if cookie_name:
+            print(f"Set-Cookie: {cookie_name}=1;{cookie_options}")
+        print(f"Location: {poll_url}?poll_name={poll_name}&poll_desc={poll_desc}\n")
 
     except Exception as e:
         print("Status: 500\nContent-Type: text/plain; charset=UTF-8\n")
