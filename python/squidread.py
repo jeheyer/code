@@ -72,14 +72,14 @@ def AnalyzeLine(line,filter = None):
         if filter in line:
             #lines.append(line.split())
             _ = line.split()
-            #datetimestr = datetime.fromtimestamp(int(_[0][0:10]), tz=None)
-            #_[0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
+            datetimestr = datetime.fromtimestamp(int(_[0][0:10]), tz=None)
+            _[0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
             return dict(zip(fields, _))
     else:
         #lines.append(line.split())
         _ = line.split()
-        #datetimestr = datetime.fromtimestamp(int(_[0][0:10]), tz=None)
-        #_[0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
+        datetimestr = datetime.fromtimestamp(int(_[0][0:10]), tz=None)
+        _[0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
         return dict(zip(fields, _))
     return 
   
@@ -89,7 +89,7 @@ def GetData():
 
     #now = math.floor(time.time())
     now = 1617379601
-    time_range = (now - 3600 , now)
+    time_range = (now - 3600 * 6, now)
 
     hostnames = []
     for _ in range(1,5):
