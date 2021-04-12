@@ -72,14 +72,14 @@ def AnalyzeLine(line,filter = None):
         if filter in line:
             #lines.append(line.split())
             _ = line.split()
-            datetimestr = datetime.fromtimestamp(int(_[0][0:10]), tz=None)
-            _[0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
+            #datetimestr = datetime.fromtimestamp(int(_[0][0:10]), tz=None)
+            #_[0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
             return dict(zip(fields, _))
     else:
         #lines.append(line.split())
         _ = line.split()
-        datetimestr = datetime.fromtimestamp(int(_[0][0:10]), tz=None)
-        _[0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
+        #datetimestr = datetime.fromtimestamp(int(_[0][0:10]), tz=None)
+        #_[0] = datetimestr.strftime("%d-%m-%y %H:%M:%S")
         return dict(zip(fields, _))
     return 
   

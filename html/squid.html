@@ -61,12 +61,11 @@ th,td	{ font-family: arial; text-align: left; font-size: 6; border: 1px solid bl
           let value = ''
           if (key == 'timestamp') {
             value = obj[key];
-            /*
             const timestamp = parseInt(value.slice(0, 10)) * 1000;
             const msec = value.slice(11, 14);
             const d = new Date(timestamp).toLocaleDateString("en-US");
             const t = new Date(timestamp).toLocaleTimeString("en-US");
-            value = d + " " + t; */
+            value = d + " " + t; 
           } else {
             value = obj[key];
           }
