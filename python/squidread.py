@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 def ReadWebFile(url, time_range, filter = None):
 
     import http.client
