@@ -50,13 +50,12 @@ if __name__ == '__main__':
         else:
             request = ParseCLI()
 
-        data = main(request)
-        output = json.dumps(data, indent=2)
+        json_data = json.dumps(main(request), indent=2)
 
-        print("Content-Length: {}".format(len(output)+1))
+        print("Content-Length: {}".format(len(json_data)+1))
         print("Cache-Control: no-cache")
         print("Content-Type: application/json; charset=UTF-8\n")
-        print(output)
+        print(json_data)
 
     except Exception as e:
         print("Status: 500\nContent-Type: text/plain; charset=UTF-8\n")
