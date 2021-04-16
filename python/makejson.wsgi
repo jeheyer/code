@@ -24,7 +24,7 @@ def application(environ, start_response):
         response_headers = [
             ('Content-type', 'application/json'),
             ('Content-Length', str(len(output))),
-            ('Cache-Control', 'no-cache')
+            ('Cache-Control', 'max-age=120')
         ]
         start_response('200 OK', response_headers)
         return [ output.encode('utf-8') ]

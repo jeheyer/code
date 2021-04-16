@@ -53,7 +53,7 @@ if __name__ == '__main__':
         json_data = json.dumps(main(request), indent=2)
 
         print("Content-Length: {}".format(len(json_data)+1))
-        print("Cache-Control: no-cache")
+        print("Cache-Control: max-age=120")
         print("Content-Type: application/json; charset=UTF-8\n")
         print(json_data)
 
