@@ -52,7 +52,7 @@ def main(request):
         if db_table == "polls":
             rows = mysql_database.SQLQuery("SELECT * FROM polls,{} WHERE polls.poll_name = '{}' AND id = polls.choice_id".format(db_join_table, db_join_table))
         else:
-            rows = mysql_database.GetTable(db_table,"ORDER BY id")
+            rows = mysql_database.GetTable(db_table)
         mysql_database.CloseConnection()
         return rows
 
