@@ -50,7 +50,7 @@ if __name__ == '__main__':
         else:
             request = ParseCLI()
 
-        json_data = json.dumps(main(request), indent=2)
+        json_data = json.dumps(main(request), indent=2, default=str)
 
         print("Content-Length: {}".format(len(json_data)+1))
         print("Cache-Control: max-age=120")
