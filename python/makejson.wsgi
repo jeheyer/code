@@ -19,7 +19,7 @@ def application(environ, start_response):
                 request['query_string'][key] = value
 
         data = main(request)
-        output = json.dumps(data, indent=2)
+        output = json.dumps(data, indent=2, default=str)
 
         response_headers = [
             ('Content-type', 'application/json'),
