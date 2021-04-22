@@ -43,6 +43,7 @@ def main(request):
                 db_join_table = params['join_table']
         else:
             raise Exception("Must provide database name and table name as arguments")
+
         from system_tools import GetConfig
         db_info = GetConfig('mysql', db_name)
         db_info['database'] = db_name
@@ -51,6 +52,8 @@ def main(request):
         mysql_database.OpenConnection()
         if db_table == "polls":
             rows = mysql_database.SQLQuery("SELECT * FROM polls,{} WHERE polls.poll_name = '{}' AND id = polls.choice_id".format(db_join_table, db_join_table))
+        if db_table == "graffiti":
+            rows = mysql_database.SQLQuery("SELECT * FROM graffiti WHERE board_name = '{}'".format(board_name))
         else:
             rows = mysql_database.GetTable(db_table)
         mysql_database.CloseConnection()
