@@ -61,31 +61,33 @@ sleep(150);
 
 function PlotDNSResolvers(dns_resolvers = []) {
 
-  for (let i = 0; i < dns_resolvers.length; i++) {
-
-    fetch("https://python.j5.org/geoip/" + dns_resolvers[i], { method: 'GET', mode: 'cors' })
-    .then(response => {
-      if (response.ok)
-        return response.json();
-    })
-    .then(data => {
-            
-      if (data.country_code) {
+  let url = "https://python.j5.org/geoip";
+  for (let i = 0; i < dns_resolvers.length; i++) 
+      url = "/" + dns_resolvers[i];
+  
+  fetch(url, { method: 'GET', mode: 'cors' })
+  .then(response => {
+    if (response.ok)
+      return response.json();
+  })
+  .then(data => {
+    for (const geoip of data) {     
+      if (geoip.country_code) {
         // Create and fill in location Marker
         let location_info = {};
-        location_info.title = data.ipv4_address;
+        location_info.title = geoip.ipv4_address;
         random_offset = Math.round(Math.random() * 10) / 2000;
         random_offset *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
-        location_info.lat = data.lat + random_offset;
-        location_info.lng = data.lng + random_offset;
-        location_info.details = `<b>DNS Resolver #${i+1}</b><br>${data.ipv4_address}<br>`;
-        if (data.isp_name)
-          location_info.details += `<abbr title="ASN ${data.isp_asn}">${data.isp_name}</abbr><br>`;
-        if (data.city)
-          location_info.details += `${data.city}`;
-        if (data.region_code) {
-          location_info.details += `, <abbr title="${data.region_name}">${data.region_code}</abbr>`;
-          location_info.details += ` <abbr title="${data.country_name}">${data.country_code}</abbr>`;
+        location_info.lat = geoip.lat + random_offset;
+        location_info.lng = geoip.lng + random_offset;
+        location_info.details = `<b>DNS Resolver #${i+1}</b><br>${geoip.ipv4_address}<br>`;
+        if (geoip.isp_name)
+          location_info.details += `<abbr title="ASN ${geoip.isp_asn}">${geoip.isp_name}</abbr><br>`;
+        if (geoip.city)
+          location_info.details += `${geoip.city}`;
+        if (geoip.region_code) {
+          location_info.details += `, <abbr title="${geoip.region_name}">${geoip.region_code}</abbr>`;
+          location_info.details += ` <abbr title="${geoip.country_name}">${geoip.country_code}</abbr>`;
         }
 
         // Plot marker on map
@@ -96,8 +98,8 @@ function PlotDNSResolvers(dns_resolvers = []) {
         map.panToBounds(bounds);
 
       }
-    });
-  }
+    }
+  });
 }
 
 // Prep Main API Call
