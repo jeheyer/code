@@ -51,9 +51,11 @@ def main(request):
         mysql_database = MySQLDatabase(db_info)
         mysql_database.OpenConnection()
         if db_table == "polls":
-            rows = mysql_database.SQLQuery("SELECT * FROM polls,{} WHERE polls.poll_name = '{}' AND id = polls.choice_id".format(db_join_table, db_join_table))
-        if db_table == "graffiti":
-            rows = mysql_database.SQLQuery("SELECT * FROM graffiti WHERE board_name = '{}' ORDER BY timestamp DESC".format(params['board_name']))
+            sql_query = f"SELECT * FROM polls,{db_join_table} WHERE polls.poll_name = '{db_join_table}' AND id = polls.choice_id"
+            rows = mysql_database.SQLQuery(sql_query)
+        elif db_table == "graffiti":
+            sql_query = f"SELECT * FROM graffiti WHERE board_name = '{params['board_name']}' ORDER BY timestamp DESC"
+            rows = mysql_database.SQLQuery(sql_query)
         else:
             rows = mysql_database.GetTable(db_table)
         mysql_database.CloseConnection()
