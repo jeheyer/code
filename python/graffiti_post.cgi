@@ -11,7 +11,8 @@ def main(db_name, board_name, name, text):
     mysql_database.OpenConnection()
     table_name = "graffiti"
 
-    sql_insert = f"INSERT INTO {table_name} VALUES ('{board_name}', {name}, {text})"
+    sql_insert = f"INSERT INTO {table_name} ('board_name', 'timestamp', 'name', 'text') VALUES ('{board_name}', CURRENT_TIMESTAMP, '{name}', '{text}')"
+
     mysql_database.SQLQuery(sql_insert)
     mysql_database.CloseConnection()
 
@@ -29,6 +30,11 @@ if __name__ == '__main__':
         text = form['text'].value
         cookie_name = "graffiti-" + board_name
         cookie_options = None
+
+        if not name:
+            name = "Anonymous Coward"
+        if not text:
+            text = "I have nothing to say"
 
         if os.environ.get('REQUEST_METHOD', 'GET') == 'POST':
             cookie_string = os.environ.get('HTTP_COOKIE', None)
