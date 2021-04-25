@@ -12,7 +12,7 @@ def main(db_name, board_name, name, text):
     mysql_database = MySQLDatabase(db_info)
     mysql_database.OpenConnection()
     table_name = "graffiti"
-    sql_insert = f"INSERT INTO '{table_name}' ('board_name', 'timestamp', 'name', 'text') VALUES ('{board_name}', CURRENT_TIMESTAMP, '{name}', '{text}')"
+    sql_insert = f"INSERT INTO {table_name} (`board_name`,`name`,`text`) VALUES ('{board_name}','{name}','{text}');"
     mysql_database.SQLQuery(sql_insert)
     mysql_database.CloseConnection()
 
@@ -24,23 +24,31 @@ if __name__ == '__main__':
 
     try:
 
-        form = cgi.FieldStorage()
-        board_name = form['board_name'].value
-        name = form['name'].value
-        text = form['text'].value
+        if os.environ.get('REQUEST_METHOD', 'GET') == 'POST':
+            form = cgi.FieldStorage()
+            board_name = form['board_name'].value
+        else:
+            form = {'board_name': "Test"}
+            board_name = form['board_name']
+
+        if 'name' in form:
+            name = form['name'].value
+        else:
+            name = "Anonymous Coward"
+        if 'text' in form:
+            text = form['text'].value
+        else:
+           text = "I have nothing to say"
+  
         cookie_name = "graffiti-" + board_name
         cookie_options = None
 
-        if not name:
-            name = "Anonymous Coward"
-        if not text:
-            text = "I have nothing to say"
+        main("primus", board_name, name, text) 
 
         if os.environ.get('REQUEST_METHOD', 'GET') == 'POST':
-            cookie_string = os.environ.get('HTTP_COOKIE', None)
             #if cookie_string and not cookie_name in cookie_string:
-            main("primus", board_name, name, text) 
-            cookie_options = "Max-Age=300;SameSite=Strict;Secure"
+            cookie_string = os.environ.get('HTTP_COOKIE', None)
+        cookie_options = "Max-Age=300;SameSite=Strict;Secure"
 
         print("Status: 302")
         if cookie_options:
