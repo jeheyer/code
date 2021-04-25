@@ -45,7 +45,7 @@ if __name__ == '__main__':
         print("Status: 302")
         if cookie_options:
             print(f"Set-Cookie: {cookie_name}=1;{cookie_options}")
-        print(f"Location: graffiti.html?board_name={board_name}\n")
+        print(f"Location: https://www.bastardboat.com/graffiti.html?board_name={board_name}\n")
 
     except Exception as e:
         print("Status: 500\nContent-Type: text/plain; charset=UTF-8\n")
