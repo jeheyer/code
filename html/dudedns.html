@@ -63,7 +63,7 @@ function PlotDNSResolvers(dns_resolvers = []) {
 
   let url = "https://python.j5.org/geoip";
   for (let i = 0; i < dns_resolvers.length; i++) 
-      url = "/" + dns_resolvers[i];
+      url += "/" + dns_resolvers[i];
   
   fetch(url, { method: 'GET', mode: 'cors' })
   .then(response => {
