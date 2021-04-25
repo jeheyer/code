@@ -2,17 +2,17 @@
 
 def main(db_name, board_name, name, text):
 
+    // Get database configuration info
     from system_tools import GetConfig
     db_info = GetConfig('mysql', db_name)
     db_info['database'] = db_name
 
+    // Do database call
     from database import MySQLDatabase
     mysql_database = MySQLDatabase(db_info)
     mysql_database.OpenConnection()
     table_name = "graffiti"
-
     sql_insert = f"INSERT INTO '{table_name}' ('board_name', 'timestamp', 'name', 'text') VALUES ('{board_name}', CURRENT_TIMESTAMP, '{name}', '{text}')"
-
     mysql_database.SQLQuery(sql_insert)
     mysql_database.CloseConnection()
 
@@ -38,9 +38,9 @@ if __name__ == '__main__':
 
         if os.environ.get('REQUEST_METHOD', 'GET') == 'POST':
             cookie_string = os.environ.get('HTTP_COOKIE', None)
-            if cookie_string and not cookie_name in cookie_string:
-                main("primus", board_name, name, text) 
-                cookie_options = "Max-Age=300;SameSite=Strict;Secure"
+            #if cookie_string and not cookie_name in cookie_string:
+            main("primus", board_name, name, text) 
+            cookie_options = "Max-Age=300;SameSite=Strict;Secure"
 
         print("Status: 302")
         if cookie_options:
