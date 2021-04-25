@@ -2,12 +2,12 @@
 
 def main(db_name, board_name, name, text):
 
-    // Get database configuration info
+    # Get database configuration info
     from system_tools import GetConfig
     db_info = GetConfig('mysql', db_name)
     db_info['database'] = db_name
 
-    // Do database call
+    # Do database call
     from database import MySQLDatabase
     mysql_database = MySQLDatabase(db_info)
     mysql_database.OpenConnection()
