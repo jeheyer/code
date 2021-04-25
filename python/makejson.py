@@ -23,10 +23,11 @@ def main(request):
         from geoip import GeoIP
         geoips = []
         if '/' in request['path'][1:] and not request['path'][-1] == '/':
-            ipv4_address = request['path'].split("/")[2]
+            ip_list = request['path'].replace("/geoip/", "").split('/')
         else:
-            ipv4_address = request['client_ip']
-        geoips.append(vars(GeoIP(ipv4_address)))
+            ip_list = [request['client_ip']]
+        for _ in ip_list:
+            geoips.append(vars(GeoIP(_)))
         return geoips
 
     if "getdnsservers" in request['path']:
