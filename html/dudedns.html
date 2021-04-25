@@ -80,7 +80,7 @@ function PlotDNSResolvers(dns_resolvers = []) {
         random_offset *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
         location_info.lat = geoip.lat + random_offset;
         location_info.lng = geoip.lng + random_offset;
-        location_info.details = `<b>DNS Resolver #${i+1}</b><br>${geoip.ipv4_address}<br>`;
+        location_info.details = `<b>DNS Resolver</b><br>${geoip.ipv4_address}<br>`;
         if (geoip.isp_name)
           location_info.details += `<abbr title="ASN ${geoip.isp_asn}">${geoip.isp_name}</abbr><br>`;
         if (geoip.city)
