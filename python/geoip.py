@@ -49,6 +49,7 @@ class Host:
 
         self.ipv4_address = None
         self.ipv6_address = None
+        self.hostname = None
         self.is_routable = False
 
         try:
@@ -58,12 +59,13 @@ class Host:
                 return 
             else:
                 self.is_routable = True
-                self.hostname = socket.gethostbyaddr(str(ip))[0][0:64]
+                # Try to get reverse DNS hostname
+                #self.hostname = socket.gethostbyaddr(str(ip))[0][0:64]
         except:
             self.hostname = None
 
         if not self.ipv4_address:
-            # Try getting IP via DNS Lookup
+            # Try getting IP via forward DNS Lookup
             try:
                 self.hostname = param
                 ip = ipaddress.ip_address(socket.gethostbyname(self.hostname))
