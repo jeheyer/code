@@ -20,15 +20,13 @@ def main(request):
         return data
 
     if "geoip" in request['path']:
-        from geoip import GeoIP
+        from geoip import GeoIPList
         geoips = []
         if '/' in request['path'][1:] and not request['path'][-1] == '/':
             ip_list = request['path'].replace("/geoip/", "").split('/')
         else:
             ip_list = [request['client_ip']]
-        for _ in ip_list:
-            geoips.append(vars(GeoIP(_)))
-        return geoips
+        return GeoIPList(ip_list).geoips
 
     if "getdnsservers" in request['path']:
         from system_tools import GetDNSServersFromToken

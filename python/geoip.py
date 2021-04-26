@@ -1,14 +1,55 @@
+class GeoIPList:
 
-import ipaddress
-import geoip2.database
 
-class GeoIP:
+    def __init__(self, ip_list):
+
+        import geoip2.database
+        
+        self.geoips = []
+
+        city_reader = geoip2.database.Reader('/var/cache/mmdb/GeoIP2-City.mmdb')
+        isp_reader = geoip2.database.Reader('/var/cache/mmdb/GeoIP2-ISP.mmdb')
+
+        for _ in ip_list:
+            geoip = Host(_)
+            if geoip.is_routable:
+                try:
+                    # Get City Information
+                    response = city_reader.city(geoip.ipv4_address)
+                except:
+                    continue
+                if response:
+                    geoip.lat = round(response.location.latitude, 4)
+                    geoip.lng = round(response.location.longitude, 4)
+                    geoip.city = response.city.name
+                    geoip.country_code = response.country.iso_code.upper()
+                    geoip.country_name = response.country.name
+                    if len(response.subdivisions) > 0:
+                        geoip.region_code = str(response.subdivisions[0].iso_code)
+                        geoip.region_name = str(response.subdivisions[0].name)
+                try:
+                    # Get ISP Information
+                    response = isp_reader.isp(geoip.ipv4_address)
+                except:
+                    continue
+                if response:
+                    geoip.isp_name = response.isp
+                    geoip.isp_asn = response.autonomous_system_number
+                    geoip.isp_org = response.autonomous_system_organization
+            self.geoips.append(vars(geoip))
+        city_reader.close()
+        isp_reader.close()
+
+class Host:
 
     def __init__(self, param):
 
+        import ipaddress
         import socket
 
-        self.ipv4_address = None; self.ipv6_address = None
+        self.ipv4_address = None
+        self.ipv6_address = None
+        self.is_routable = False
 
         try:
             ip = ipaddress.ip_address(param)
@@ -16,6 +57,7 @@ class GeoIP:
             if ip.is_private or ip.is_reserved:
                 return 
             else:
+                self.is_routable = True
                 self.hostname = socket.gethostbyaddr(str(ip))[0][0:64]
         except:
             self.hostname = None
@@ -30,43 +72,4 @@ class GeoIP:
                 self.ipv4_address = None
                 return
 
-        self.lat = 0; self.lng = 0; self.city = None
-        self.region_code = None; self.region_name = None
-        self.country_code = None; self.country_name = None
 
-        # Check for loopbacks
-        if self.ipv4_address == "127.0.0.1" or self.ipv6_address == "::1":
-            return
-
-        # Get City Information
-        with geoip2.database.Reader('/var/cache/mmdb/GeoIP2-City.mmdb') as reader:
-            try:
-                response = reader.city(self.ipv4_address)
-            except:
-                return
-            if response:
-                self.lat = round(response.location.latitude, 4)
-                self.lng = round(response.location.longitude, 4)
-                self.city = response.city.name
-                self.country_code = response.country.iso_code.upper()
-                self.country_name = response.country.name
-                if len(response.subdivisions) > 0:
-                    self.region_code = str(response.subdivisions[0].iso_code)
-                    self.region_name = str(response.subdivisions[0].name)
-
-        # Get ISP information
-        with geoip2.database.Reader('/var/cache/mmdb/GeoIP2-ISP.mmdb') as reader:
-            try:
-                response = reader.isp(self.ipv4_address)
-            except:
-                return
-            if response:
-                self.isp_name = response.isp
-                self.isp_asn = response.autonomous_system_number
-                self.isp_org = response.autonomous_system_organization
-
-    def __str__(self):
-
-        import json
-
-        return json.dumps(vars(self))
