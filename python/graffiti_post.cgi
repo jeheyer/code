@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-def main(db_name, board_name, name, text):
+def main(db_name, wall_name, name, text):
 
     # Get database configuration info
     from system_tools import GetConfig
@@ -12,7 +12,7 @@ def main(db_name, board_name, name, text):
     mysql_database = MySQLDatabase(db_info)
     mysql_database.OpenConnection()
     table_name = "graffiti"
-    sql_insert = f"INSERT INTO {table_name} (`board_name`,`name`,`text`) VALUES ('{board_name}','{name}','{text}');"
+    sql_insert = f"INSERT INTO {table_name} (`wall_name`,`name`,`text`) VALUES ('{wall_name}','{name}','{text}');"
     mysql_database.SQLQuery(sql_insert)
     mysql_database.CloseConnection()
 
@@ -26,10 +26,10 @@ if __name__ == '__main__':
 
         if os.environ.get('REQUEST_METHOD', 'GET') == 'POST':
             form = cgi.FieldStorage()
-            board_name = form['board_name'].value
+            wall_name = form['wall_name'].value
         else:
-            form = {'board_name': "Test"}
-            board_name = form['board_name']
+            form = {'wall_name': "Test"}
+            board_name = form['wall_name']
 
         if 'name' in form:
             name = form['name'].value
@@ -40,10 +40,10 @@ if __name__ == '__main__':
         else:
            text = "I have nothing to say"
   
-        cookie_name = "graffiti-" + board_name
+        cookie_name = "graffiti-" + wall_name
         cookie_options = None
 
-        main("primus", board_name, name, text) 
+        main("primus", wall_name, name, text) 
 
         if os.environ.get('REQUEST_METHOD', 'GET') == 'POST':
             #if cookie_string and not cookie_name in cookie_string:
@@ -53,7 +53,7 @@ if __name__ == '__main__':
         print("Status: 302")
         if cookie_options:
             print(f"Set-Cookie: {cookie_name}=1;{cookie_options}")
-        print(f"Location: https://www.bastardboat.com/graffiti.html?board_name={board_name}\n")
+        print(f"Location: https://www.bastardboat.com/graffiti.html?wall_name={wall_name}\n")
 
     except Exception as e:
         print("Status: 500\nContent-Type: text/plain; charset=UTF-8\n")
