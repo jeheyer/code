@@ -32,6 +32,7 @@ if __name__ == '__main__':
             wall = form['wall']
 
         db_name = form['db_name'].value
+        graffiti_url = form['graffiti_url'].value
 
         if 'name' in form:
             name = form['name'].value
