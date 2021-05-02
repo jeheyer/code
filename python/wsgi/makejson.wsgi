@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(1, '../lib/')
+sys.path.insert(0, '../lib/')
 
 from makejson import *
 from http_utils import *
