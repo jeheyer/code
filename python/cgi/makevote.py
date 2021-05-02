@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 def main(db_name, poll_name, choice_id = 0):
+
+    import sys
+    sys.path.insert(1, '../lib/')
 
     from system_tools import GetConfig
     db_info = GetConfig('mysql', db_name)
