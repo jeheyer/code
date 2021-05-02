@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 def main(db_name, wall, name, text):
+
+    import sys
+    sys.path.insert(1, '../lib/')
 
     # Get database configuration info
     from system_tools import GetConfig
