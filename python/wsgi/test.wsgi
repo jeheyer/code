@@ -6,7 +6,7 @@ def application(environ, start_response):
     output = u''
     output += u'sys.version = %s\n' % repr(sys.version)
     output += u'sys.prefix = %s\n' % repr(sys.prefix)
-    output += sys.path[0]
+    output += sys.path
 
     response_headers = [('Content-type', 'text/plain'),
                         ('Content-Length', str(len(output)))]
