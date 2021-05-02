@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import sys, os
-#sys.path.append(r'/mnt/web/www/code/python/lib')
 sys.path.append(os.path.join(os.path.dirname(sys.path[0]),'lib'))
 
 from makejson import *
