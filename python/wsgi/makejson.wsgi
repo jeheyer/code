@@ -1,7 +1,8 @@
 import sys
 #sys.path.insert(0, '../lib/')
 #sys.path.append('../lib')
-sys.path.append(r'/mnt/web/www/code/python/lib')
+#sys.path.append(r'/mnt/web/www/code/python/lib')
+sys.path.append(r'lib')
 
 from makejson import *
 from http_utils import *
