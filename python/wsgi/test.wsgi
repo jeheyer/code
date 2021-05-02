@@ -1,5 +1,6 @@
 import sys
-sys.path.append(r'/mnt/web/www/code/python/lib')
+#sys.path.append(r'/mnt/web/www/code/python/lib')
+sys.path.append(os.path.join(os.path.dirname(sys.path[0]),'lib'))
 
 def application(environ, start_response):
     status = '200 OK'
