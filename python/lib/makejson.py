@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-
-import sys
-sys.path.insert(1, '../lib/')
+# -*- coding: utf-8 -*-
 
 def main(request):
+
+    import sys
+    sys.path.insert(1, '../lib/')
 
     modules = [ "mortgage", "geoip", "get_table", "squidread"]
 
