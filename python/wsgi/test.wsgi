@@ -1,4 +1,5 @@
 import sys
+sys.path.append(r'/mnt/web/www/code/python/lib')
 
 def application(environ, start_response):
     status = '200 OK'
@@ -6,8 +7,8 @@ def application(environ, start_response):
     output = u''
     output += u'sys.version = %s\n' % repr(sys.version)
     output += u'sys.prefix = %s\n' % repr(sys.prefix)
-    output += sys.path[0]
-    output += sys.path[1]
+    for _ in sys.path:
+       output += ":" + _
 
     response_headers = [('Content-type', 'text/plain'),
                         ('Content-Length', str(len(output)))]
