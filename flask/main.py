@@ -1,21 +1,24 @@
 #!/usr/bin/env python3
 
 from flask import Flask, jsonify, request
-##from flask import jsonify
-#from flask import request 
-from flask_cors import CORS
+#from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+#CORS(app)
 
-@app.route('/<path>')
+@app.route("/", defaults={"path": ""})
+@app.route('/<string:path>')
+@app.route("/<path:path>")
 
 def index(path):
-    host = request.host.split(':')[0]
-    path = "/" + path
-    query_string = request.args
-    d = {'host': host, 'path': path, 'query_string': query_string}
-    return jsonify(d)
+    req_info = {
+        'host': request.host.split(':')[0],
+        'path': "/" + path,
+        'query_string': request.args,
+        'user_agent': request.user_agent.string,
+        'remote_addr': request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    }
+    return jsonify(req_info)
 
 if __name__ == '__main__':
     app.run()
