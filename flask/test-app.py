@@ -15,8 +15,7 @@ def index(path):
         'host': request.host.split(':')[0],
         'path': "/" + path,
         'query_string': request.args,
-        'user_agent': request.user_agent.string,
-        'remote_addr': request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+        'user_agent': request.user_agent.string
     }
     return jsonify(req_info)
 
