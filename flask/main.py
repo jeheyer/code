@@ -7,7 +7,7 @@ app = Flask(__name__)
 #CORS(app)
 
 @app.route("/", defaults = {'path': ""})
-@app.route("<string:path>")
+@app.route("/<string:path>")
 @app.route("/<path:path>")
 
 def index(path):
