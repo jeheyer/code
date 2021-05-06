@@ -13,6 +13,7 @@ app = Flask(__name__)
 def index(path):
     req_info = {
         'host': request.host.split(':')[0],
+        'port': request.host.split(':')[1],
         'path': "/" + path,
         'query_string': request.args,
         'user_agent': request.user_agent.string
