@@ -12,4 +12,4 @@ if __name__ == "__main__":
     for key in _:
         query_params[key] = str(_[key].value)
     print("Content-type: text\plain\n\n")
-    print(query_params)
+    print(path)
