@@ -1,5 +1,5 @@
 
-class http_request():
+class HTTPRequest():
 
    from urllib import parse
 
