@@ -6,9 +6,11 @@ def application(environ, start_response):
     server_port = environ.get('SERVER_PORT', 80)
     #path = environ.get('REQUEST_URI', '/').split('?')[0]
     path = environ.get('SCRIPT_URL', '/')
-
-    query_params = dict(parse.parse_qsl(parse.urlsplit(environ['REQUEST_URI']).query))
-    output = str(path)
+    query_params = {}
+    if '?' in environ.get('REQUEST_URI', '/'):
+        query_params = dict(parse.parse_qsl(parse.urlsplit(environ['REQUEST_URI']).query))
+        
+    output = str(query_params)
     response_headers = [
             ('Content-type', 'text/plain'),
             ('Cache-Control', 'no-cache, no-store'),
