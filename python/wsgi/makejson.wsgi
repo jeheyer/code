@@ -11,6 +11,7 @@ from http_utils import *
 def application(environ, start_response):
 
     import traceback, json
+    from urllib import parse
 
     request = vars(http_request(environ))
 
@@ -18,11 +19,12 @@ def application(environ, start_response):
 
     try:
 
-        if '?' in request['path']:
-            request['path'], query_string = environ.get('REQUEST_URI', '/').split('?')
-            for _ in environ.get('QUERY_STRING', None).split('&'):
-                [key, value] = _.split('=')
-                request['query_string'][key] = value
+        if '?' in request['request_uri']:
+            request['query_string'] = dict(parse.parse_qsl(parse.urlsplit(request['request_uri']).query))
+            #request['path'], query_string = environ.get('REQUEST_URI', '/').split('?')
+            #for _ in environ.get('QUERY_STRING', None).split('&'):
+            #    [key, value] = _.split('=')
+            #    request['query_string'][key] = value
 
         data = main(request)
         output = json.dumps(data, indent=2, default=str)
