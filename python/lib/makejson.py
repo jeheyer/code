@@ -4,12 +4,12 @@
 def main(request):
 
     import sys
-    sys.path.insert(1, '../lib/')
+    #sys.path.insert(1, '../lib/')
 
     modules = [ "mortgage", "geoip", "get_table", "squidread"]
 
     if "mortgage" in request['path']:
-        from financial import GetPaymentData
+        from lib.financial import GetPaymentData
         return GetPaymentData(**request['query_string'])
 
     if "squidread" in request['path']:
@@ -20,7 +20,7 @@ def main(request):
         return data
 
     if "geoip" in request['path']:
-        from geoip import GeoIPList
+        from lib.geoip import GeoIPList
         geoips = []
         if '/' in request['path'][1:] and not request['path'][-1] == '/':
             ip_list = request['path'].replace("/geoip/", "").split('/')
@@ -29,7 +29,7 @@ def main(request):
         return GeoIPList(ip_list).geoips
 
     if "getdnsservers" in request['path']:
-        from system_tools import GetDNSServersFromToken
+        from lib.system_tools import GetDNSServersFromToken
         token = request['path'].split("/")[2]
         if not token:
              token = "testing1234"
@@ -45,10 +45,10 @@ def main(request):
         else:
             raise Exception("Must provide database name and table name as arguments")
 
-        from system_tools import GetConfig
+        from lib.system_tools import GetConfig
         db_info = GetConfig('mysql', db_name)
         db_info['database'] = db_name
-        from database import MySQLDatabase
+        from lib.database import MySQLDatabase
         mysql_database = MySQLDatabase(db_info)
         mysql_database.OpenConnection()
         if db_table == "polls":
@@ -82,6 +82,8 @@ def ParseCGI():
 # Called via CLI
 def ParseCLI():
 
+    import sys
+
     request = dict(host = "localhost", path = "/", query_string = {}, client_ip = "127.0.0.1")
 
     # Use argument, if provided, to simulate HTTP Path and query string
@@ -98,7 +100,7 @@ def ParseCLI():
 # Old School CGI Entry Point
 if __name__ == '__main__':
 
-    import os, json, traceback
+    import sys, os, json, traceback
 
     sys.stderr = sys.stdout
 
