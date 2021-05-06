@@ -11,14 +11,12 @@ from http_utils import *
 def application(environ, start_response):
 
     import traceback, json
-    #from urllib import parse
-
-    http_request = vars(HTTPRequest(environ))
 
     response_headers = [ ('Content-type', 'text/plain') ]
 
     try:
 
+        http_request = vars(HTTPRequest(environ))
         #if '?' in request['request_uri']:
         #    request['query_string'] = dict(parse.parse_qsl(parse.urlsplit(request['request_uri']).query))
             #request['path'], query_string = environ.get('REQUEST_URI', '/').split('?')
