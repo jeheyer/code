@@ -13,20 +13,20 @@ def application(environ, start_response):
     import traceback, json
     from urllib import parse
 
-    request = vars(http_request(environ))
+    http_request = vars(http_request(environ))
 
     response_headers = [ ('Content-type', 'text/plain') ]
 
     try:
 
-        if '?' in request['request_uri']:
-            request['query_string'] = dict(parse.parse_qsl(parse.urlsplit(request['request_uri']).query))
+        #if '?' in request['request_uri']:
+        #    request['query_string'] = dict(parse.parse_qsl(parse.urlsplit(request['request_uri']).query))
             #request['path'], query_string = environ.get('REQUEST_URI', '/').split('?')
             #for _ in environ.get('QUERY_STRING', None).split('&'):
             #    [key, value] = _.split('=')
             #    request['query_string'][key] = value
 
-        data = main(request)
+        data = main(http_request)
         output = json.dumps(data, indent=2, default=str)
 
         response_headers = [
