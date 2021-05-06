@@ -1,6 +1,8 @@
 
 class http_request():
 
+   from urllib import parse
+
    def __init__(self, env_vars = None):
       self.host = env_vars.get('HTTP_HOST', 'localhost')
       self.path = env_vars.get('SCRIPT_URL', '/')
