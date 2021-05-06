@@ -12,6 +12,6 @@ def application(environ, start_response):
             ('Cache-Control', 'no-cache, no-store'),
             ('Pragma', 'no-cache')
     ]
-    start_response('200 OK')
+    start_response('200 OK', response_headers)
     return [ output.encode('utf-8') ]
 
