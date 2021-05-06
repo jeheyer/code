@@ -3,8 +3,9 @@ class http_request():
 
    def __init__(self, env_vars = None):
       self.host = env_vars.get('HTTP_HOST', 'localhost')
-      self.path = env_vars.get('REQUEST_URI', '/')
-      self.query_string = {}
+      self.path = env_vars.get('SCRIPT_URL', '/')
+      self.request_uri = env_vars.get('REQUEST_URI', '/')
+      self.query_string = dict(parse.parse_qsl(parse.urlsplit(self.request_uri).query))
       self.client_ip = GetClientIP(env_vars)
 
 def GetClientIP(env_vars = None):
