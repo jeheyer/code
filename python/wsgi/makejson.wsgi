@@ -11,9 +11,9 @@ from http_utils import *
 def application(environ, start_response):
 
     import traceback, json
-    from urllib import parse
+    #from urllib import parse
 
-    http_request = vars(http_request(environ))
+    http_request = vars(HTTPRequest(environ))
 
     response_headers = [ ('Content-type', 'text/plain') ]
 
