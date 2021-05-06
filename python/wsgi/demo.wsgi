@@ -6,3 +6,12 @@ def application(environ, start_response):
     server_port = environ.get('SERVER_PORT', 80)
     path = environ.get('REQUEST_URI', '/').split('?')[0]
     query_params = dict(parse.parse_qsl(parse.urlsplit(environ['REQUEST_URI']).query))
+    output = path
+    response_headers = [
+            ('Content-type', 'text/plain'),
+            ('Cache-Control', 'no-cache, no-store'),
+            ('Pragma', 'no-cache')
+    ]
+    start_response('200 OK')
+    return [ output.encode('utf-8') ]
+
