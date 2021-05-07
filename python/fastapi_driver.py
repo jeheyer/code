@@ -18,7 +18,10 @@ def root(path, req: Request):
     http_request.host = req.headers['host'].split(':')[0]
     http_request.path = "/" + path
     http_request.query_string = dict(req.query_params)
-    http_request.client_ip = req.client[0]
+    if 'x-real-ip' in req.headers:
+        http_request.client_ip = req.headers['x-real-ip']
+    else:
+        http_request.client_ip = req.client[0]
 
     try:
 
