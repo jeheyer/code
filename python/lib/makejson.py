@@ -3,10 +3,13 @@
 
 def main(request):
 
-    import sys
+    #import sys
     #sys.path.insert(1, '../lib/')
 
-    modules = [ "mortgage", "geoip", "get_table", "squidread", "getdnsservers"]
+    modules = [ "mortgage", "geoip", "get_table", "squidread", "getdnsservers", "test"]
+
+    if "test" in request['path']:
+        return(request)
 
     if "mortgage" in request['path']:
         from lib.financial import GetPaymentData
