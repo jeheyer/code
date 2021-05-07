@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-#import sys, os
-#sys.path.append(os.path.join(os.path.dirname(sys.path[0]),'lib'))
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(sys.path[0]),'lib'))
 
 from lib.makejson import *
 from lib.http_utils import *
