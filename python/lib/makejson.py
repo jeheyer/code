@@ -6,7 +6,7 @@ def main(request):
     import sys
     #sys.path.insert(1, '../lib/')
 
-    modules = [ "mortgage", "geoip", "get_table", "squidread"]
+    modules = [ "mortgage", "geoip", "get_table", "squidread", "getdnsservers"]
 
     if "mortgage" in request['path']:
         from lib.financial import GetPaymentData

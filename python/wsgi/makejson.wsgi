@@ -17,13 +17,6 @@ def application(environ, start_response):
     try:
 
         http_request = vars(HTTPRequest(environ))
-        #if '?' in request['request_uri']:
-        #    request['query_string'] = dict(parse.parse_qsl(parse.urlsplit(request['request_uri']).query))
-            #request['path'], query_string = environ.get('REQUEST_URI', '/').split('?')
-            #for _ in environ.get('QUERY_STRING', None).split('&'):
-            #    [key, value] = _.split('=')
-            #    request['query_string'][key] = value
-
         data = main(http_request)
         output = json.dumps(data, indent=2, default=str)
 
