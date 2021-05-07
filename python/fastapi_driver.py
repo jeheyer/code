@@ -21,7 +21,7 @@ def root(path, req: Request):
     if 'x-real-ip' in req.headers:
         http_request.client_ip = req.headers['x-real-ip']
     else:
-        http_request.client_ip = req.client[0]
+        http_request.client_ip = req.client.host
 
     try:
 
