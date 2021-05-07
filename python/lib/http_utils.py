@@ -6,7 +6,7 @@ class HTTPRequest():
       from urllib import parse
 
       self.host = env_vars.get('HTTP_HOST', 'localhost')
-      self.path = env_vars.get('SCRIPT_URL', '/')
+      self.path = env_vars.get('SCRIPT_URI', '/').split('?')[0]
       self.request_uri = env_vars.get('REQUEST_URI', '/')
       self.query_string = dict(parse.parse_qsl(parse.urlsplit(str(self.request_uri)).query))
       self.client_ip = GetClientIP(env_vars)
