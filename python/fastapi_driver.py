@@ -18,10 +18,12 @@ def root(path, req: Request):
     http_request.host = req.headers['host'].split(':')[0]
     http_request.path = "/" + path
     http_request.query_string = dict(req.query_params)
+    http_request.client_ip = dict(req.query_params)
 
     try:
 
-        data = main(vars(http_request))
+        #data = main(vars(http_request))
+        data = vars(req)
         #return JSONResponse(
         ##    headers = {'Cache-Control': "no-cache, no-store", 'Pragma': "no-cache"},
         ##    content =  jsonable_encoder(data)
