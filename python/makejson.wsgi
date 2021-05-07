@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import sys, os
+#import sys, os
 #sys.path.append(os.path.join(os.path.dirname(sys.path[0]),'lib'))
 
 from lib.makejson import *
@@ -32,5 +32,4 @@ def application(environ, start_response):
     except:
 
         start_response('500 Internal Server Error', response_headers)
-        error = traceback.format_exc()
-        return [ str(error).encode('utf-8') ]
+        return [ str(traceback.format_exc()).encode('utf-8') ]
