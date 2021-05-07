@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(sys.path[0]),'lib'))
+#sys.path.append(os.path.join(os.path.dirname(sys.path[0]),'lib'))
 
-from makejson import *
-from http_utils import *
+from lib.makejson import *
+from lib.http_utils import *
 
 # WSGI entry point
 def application(environ, start_response):
