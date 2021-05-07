@@ -23,7 +23,7 @@ def root(path, req: Request):
     try:
 
         #data = main(vars(http_request))
-        data = vars(req)
+        data = vars(req.scope)
         #return JSONResponse(
         ##    headers = {'Cache-Control': "no-cache, no-store", 'Pragma': "no-cache"},
         ##    content =  jsonable_encoder(data)
