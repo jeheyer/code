@@ -19,6 +19,10 @@ def root(path):
     http_request.host = request.host.split(':')[0]
     http_request.path = "/" + path
     http_request.query_string = request.args
+    if 'x-real-ip' in request.headers:
+        http_request.client_ip = request.headers['x-real-ip']
+    else:
+        http_request.client_ip = request.remote_addr
 
     try:
         data = main(vars(http_request))
