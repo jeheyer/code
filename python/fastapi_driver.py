@@ -37,7 +37,7 @@ def root(path, req: Request):
         return Response(
             media_type = "application/json",
             headers = {'Cache-Control': "no-cache, no-store", 'Pragma': "no-cache"},
-            content =  json.dumps(data, indent=2, default=str)
+            content =  json.dumps(data, default=str)
         )
 
     except:
