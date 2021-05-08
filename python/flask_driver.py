@@ -23,7 +23,7 @@ def root(path):
     if request.environ.get('HTTP_X_REAL_IP', None):
         http_request.client_ip = request.environ['HTTP_X_REAL_IP']
     elif request.environ.get('HTTP_X_FORWARDED_FOR', None):
-        http_request.client_ip = "63.249.99.251"
+        http_request.client_ip = request.environ['HTTP_X_FORWARDED_FOR']
     else:
         http_request.client_ip = request.remote_addr
 
