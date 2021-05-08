@@ -27,8 +27,7 @@ def application(environ, start_response):
             ('Pragma', 'no-cache')
         ]
         start_response('200 OK', response_headers)
-        #return [ output.encode('utf-8') ]
-        return [ "oh".encode('utf-8') ]
+        return [ output.encode('utf-8') ]
 
     except:
 
