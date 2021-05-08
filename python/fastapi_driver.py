@@ -39,7 +39,7 @@ def root(path, req: Request):
             headers = {'Cache-Control': "no-cache, no-store", 'Pragma': "no-cache"},
             content =  json.dumps(data, indent=2, default=str)
         )
-        
+
     except:
         return Response(status_code = 500, content = traceback.format_exc())
 
