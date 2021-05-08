@@ -118,7 +118,7 @@ function ShowLoanData() {
 
   (async() => {
 
-    url = "https://python.j5.org/mortgage?" + location.search.substr(1);
+    url = "https://python.j5.org/flask/mortgage?" + location.search.substr(1);
 
     const ajax_request = new Request(url, {method: 'GET', mode: 'cors', cache: 'no-cache'});
 
