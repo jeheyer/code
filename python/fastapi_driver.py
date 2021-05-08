@@ -11,7 +11,8 @@ app = FastAPI()
 @app.get("/{path:path}")
 def root(path, req: Request):
 
-    import traceback, json
+    import traceback
+    import json
     from fastapi.responses import Response
     #from fastapi.responses JSONResponse
     #from fastapi.encoders import jsonable_encoder
