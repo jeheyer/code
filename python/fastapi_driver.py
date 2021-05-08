@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from fastapi import FastAPI, Request
 from lib.http_utils import *
 from lib.makejson import *
