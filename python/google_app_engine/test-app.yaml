@@ -1,0 +1,6 @@
+runtime: python38
+env: flex
+entrypoint: test-app:app
+#env: standard
+#runtime_config:
+#  python_version: 3
