@@ -1,0 +1,7 @@
+runtime: python38
+#entrypoint: main:app
+env: standard
+#handlers:
+#- url: /
+#  http_headers:
+#    Access-Control-Allow-Origin: https://code.j5.org/*
