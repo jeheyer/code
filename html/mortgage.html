@@ -120,12 +120,12 @@ function ShowLoanData() {
 
     url = "https://websites-270319.uc.r.appspot.com/mortgage?" + location.search.substr(1);
 
-    const ajax_request = new Request(url, {method: 'GET', mode: 'cors', cache: 'no-cache'});
+    const ajax_request = new Request(url, {method: 'GET', mode: 'no-cors', cache: 'no-cache'});
 
     fetch(ajax_request)
     .then(response => {
       if (!response.ok) {
-        throw new TypeError(`Could not retreive GeoIP info for ${session_data.public_ip}`);
+        throw new TypeError(`AJAX call failed: ${ajax_request.url}`);
       }
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
