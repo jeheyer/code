@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, request
 
 app = Flask(__name__)
 
 @app.route("/")
 def ShowRequest():
 
-    import traceback, jsonpickle
+    import traceback
 
     try:
-        return jsonify(jsonpickle.encode(request)), 200
+        return str(vars(request)), 200, {'Content-Type': "text/plain"}
 
     except:
         return format(traceback.format_exc()), 500, {'Content-Type': "text/plain"}

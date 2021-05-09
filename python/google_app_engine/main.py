@@ -30,6 +30,7 @@ def root(path):
     try:
         data = main(vars(http_request))
         return jsonify(data), 200, {'Access-Control-Allow-Origin': "*"}
+        #return jsonify(data), 200
 
     except:
         return format(traceback.format_exc()), 500,  {'Content-Type': "text/plain"}

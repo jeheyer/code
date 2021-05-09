@@ -1,6 +1,7 @@
 runtime: python38
-#entrypoint: main:app
-env: standard
+#entrypoint: python test-app.py
+entrypoint: uwsgi --http :$PORT --wsgi-file main.py --callable application
+#env: standard
 #handlers:
 #- url: /
 #  http_headers:

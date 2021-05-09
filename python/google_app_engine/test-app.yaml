@@ -1,6 +1,9 @@
 runtime: python38
-env: flex
+env: standard
 entrypoint: test-app:app
+#handlers:
+#- url: /
+#  script: test-app.app
 #env: standard
 #runtime_config:
 #  python_version: 3
