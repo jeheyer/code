@@ -155,8 +155,8 @@ function ShowLoanData() {
       FillTable("payment_table", loanData.paymentBreakdown);
 
     })
-    .catch((error) => {
-      console.error(error);
+    .catch((message) => {
+      console.error(message);
     });
   })();
 }
