@@ -118,14 +118,15 @@ function ShowLoanData() {
 
   (async() => {
 
-    url = "https://websites-270319.uc.r.appspot.com/mortgage?" + location.search.substr(1);
+    //const url = "https://websites-270319.uc.r.appspot.com/mortgage?" + location.search.substr(1);
+    const url = "https://python.j5.org/mortgage?" + location.search.substr(1);
 
-    const ajax_request = new Request(url, {method: 'GET', mode: 'no-cors', cache: 'no-cache'});
+    const ajax_request = new Request(url, {method: 'GET', mode: 'cors', cache: 'no-cache'});
 
     fetch(ajax_request)
       .then(response => {
         if (!response.ok) {
-          throw new TypeError(`AJAX call failed: ${ajax_request.url}`);
+          throw new Error('Network response was not ok');
         }
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
@@ -143,8 +144,9 @@ function ShowLoanData() {
         // Fill Form with values being used
         let LoanTableFields = []
         LoanTableFields =  [ "loanAmount", "interestRate", "years", "startYear", "startMonth" ];
-        for (const field of LoanTableFields)
+        for (const field of LoanTableFields) {
           document.querySelector("#" + field).value = loanData[field];
+        }
         LoanTableFields = [ "monthlyPayment", "sumOfPayments", "sumOfInterestPayments" ];
         for (const field of LoanTableFields) {
           value = loanData[field];
@@ -155,9 +157,7 @@ function ShowLoanData() {
         FillTable("payment_table", loanData.paymentBreakdown);
 
       })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+      .catch(error => console.error(error));
   })();
 }
 
