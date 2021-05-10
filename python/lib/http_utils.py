@@ -20,6 +20,10 @@ def GetClientIP(env_vars = None):
     if 'HTTP_X_REAL_IP' in env_vars:
         return env_vars['HTTP_X_REAL_IP']
 
+    # AWS Lambda
+    if 'requestContext' in env_vars: 
+        return env_vars['requestContext']['identity']['sourceIp']
+
     # Google App Engine
     if 'HTTP_X_APPENGINE_USER_IP' in env_vars:
         return env_vars['HTTP_X_APPENGINE_USER_IP']
