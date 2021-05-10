@@ -7,8 +7,8 @@ class GeoIPList:
         
         self.geoips = []
 
-        city_reader = geoip2.database.Reader('/var/cache/mmdb/GeoIP2-City.mmdb')
-        isp_reader = geoip2.database.Reader('/var/cache/mmdb/GeoIP2-ISP.mmdb')
+        city_reader = geoip2.database.Reader('/tmp/GeoIP2-City.mmdb')
+        isp_reader = geoip2.database.Reader('/tmp/GeoIP2-ISP.mmdb')
 
         for _ in ip_list:
             geoip = Host(_)
