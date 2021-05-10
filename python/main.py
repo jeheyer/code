@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-#import sys, os
-#sys.path.append(os.path.join(os.path.dirname(sys.path[0]),'lib'))
-
 from lib.makejson import *
 from lib.http_utils import *
 
@@ -18,7 +15,7 @@ def application(environ, start_response):
 
         http_request = vars(HTTPRequest(environ))
         data = main(http_request)
-        output = json.dumps(data, indent=2, default=str)
+        output = json.dumps(data, default=str)
 
         response_headers = [
             ('Access-Control-Allow-Origin', '*'),

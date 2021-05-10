@@ -135,3 +135,32 @@ def ReadFromFile(file_name):
 
     #return lines
 
+def ReadInput(file_name: str) -> (list, str):
+
+    lines = []
+    f = open(file_name)
+    lines = f.readlines()
+
+    file_ext = file_name.split(".")[-1]
+
+    return (lines, file_ext)
+
+def ConvertToDict(contents: list, file_type: str) -> list:
+
+    data = []
+    if file_type == "csv":
+        for line in contents:
+            line = line.rstrip()
+            print(line)
+            parts = line.split(",")
+            obj = {}
+            for i in range(0,len(parts)):
+                obj[i] = parts[i]
+            data.append(obj)
+
+    return data
+
+def main():
+    data, file_type = ReadInput("test.csv")
+    return ConvertToDict(data, "csv")
+

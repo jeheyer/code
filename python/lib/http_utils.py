@@ -24,7 +24,7 @@ def GetClientIP(env_vars = None):
     if 'HTTP_X_APPENGINE_USER_IP' in env_vars:
         return env_vars['HTTP_X_APPENGINE_USER_IP']
 
-    if 'HTTP_X_FORWARDED_FOR' in env_vars
+    if 'HTTP_X_FORWARDED_FOR' in env_vars:
         x_fwd_for = env_vars['HTTP_X_FORWARDED_FOR']
         if ", " in x_fwd_for:
             # Get a list of IPs addresses used by this web server hostname
