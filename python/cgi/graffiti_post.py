@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-def main(db_name, wall, name, text):
+def main(db_name, wall, name, text, client_ip = None):
 
     import sys
     sys.path.insert(1, '../lib/')
@@ -16,7 +16,10 @@ def main(db_name, wall, name, text):
     mysql_database = MySQLDatabase(db_info)
     mysql_database.OpenConnection()
     table_name = "graffiti"
-    sql_insert = f"INSERT INTO {table_name} (`wall`,`name`,`text`) VALUES ('{wall}','{name}','{text}');"
+    if client_ip:
+        sql_insert = f"INSERT INTO {table_name} (`wall`,`name`,`text`,`client_ip`) VALUES ('{wall}','{name}','{text}','{client_ip}';"
+    else:
+        sql_insert = f"INSERT INTO {table_name} (`wall`,`name`,`text`) VALUES ('{wall}','{name}','{text}');"
     mysql_database.SQLQuery(sql_insert)
     mysql_database.CloseConnection()
 
@@ -46,7 +49,7 @@ if __name__ == '__main__':
             text = form['text'].value
         else:
            text = "I have nothing to say"
-  
+
         cookie_name = "graffiti-" + wall
         cookie_options = None
 
