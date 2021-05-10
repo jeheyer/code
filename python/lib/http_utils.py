@@ -10,15 +10,21 @@ class HTTPRequest():
       self.request_uri = env_vars.get('REQUEST_URI', '/')
       self.query_string = dict(parse.parse_qsl(parse.urlsplit(str(self.request_uri)).query))
       self.client_ip = GetClientIP(env_vars)
+      self.user_agent = env_vars.get('HTTP_USER_AGENT', 'Unknown')
 
 def GetClientIP(env_vars = None):
 
     import socket
 
-    if env_vars.get('HTTP_X_REAL_IP', None):
+    # Nginx
+    if 'HTTP_X_REAL_IP' in env_vars:
         return env_vars['HTTP_X_REAL_IP']
 
-    if env_vars.get('HTTP_X_FORWARDED_FOR', None):
+    # Google App Engine
+    if 'HTTP_X_APPENGINE_USER_IP' in env_vars:
+        return env_vars['HTTP_X_APPENGINE_USER_IP']
+
+    if 'HTTP_X_FORWARDED_FOR' in env_vars
         x_fwd_for = env_vars['HTTP_X_FORWARDED_FOR']
         if ", " in x_fwd_for:
             # Get a list of IPs addresses used by this web server hostname
