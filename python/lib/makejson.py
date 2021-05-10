@@ -25,7 +25,7 @@ def main(request):
     if "geoip" in request['path']:
         from lib.geoip import GeoIPList
         geoips = []
-        if '/' in request['path'][1:] and not request['path'][-1] == '/':
+        if '/' in request['path'][6:] and not request['path'][-1] == '/':
             ip_list = request['path'].replace("/geoip/", "").split('/')
         else:
             ip_list = [request['client_ip']]
