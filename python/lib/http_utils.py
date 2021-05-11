@@ -15,7 +15,14 @@ class HTTPRequest():
         self.server_software = env_vars.get('SERVER_SOFTWARE', 'Unknown')
 
         self.client_ip = GetClientIP(env_vars)
-        self.client_proto = env_vars.get('HTTP_X_FORWARDED_PROTO', 'http')
+
+        self.client_using_https = False
+        if self.server_port == 443:
+            self.client_using_https = True
+        if env_vars.get('HTTP_X_FORWARDED_PROTO', 'http') == "https":
+            self.client_using_https = True
+        if env_vars.get('HTTPS', False):
+            self.client_using_https = True
 
         # Google App Engine
         if 'HTTP_X_APPENGINE_USER_IP' in env_vars:
