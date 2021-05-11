@@ -1,16 +1,26 @@
 
 class HTTPRequest():
 
-   def __init__(self, env_vars = {}):
+    def __init__(self, env_vars = {}):
 
-      from urllib import parse
+        from urllib import parse
 
-      self.host = env_vars.get('HTTP_HOST', 'localhost')
-      self.path = env_vars.get('REQUEST_URI', '/').split('?')[0]
-      self.request_uri = env_vars.get('REQUEST_URI', '/')
-      self.query_string = dict(parse.parse_qsl(parse.urlsplit(str(self.request_uri)).query))
-      self.client_ip = GetClientIP(env_vars)
-      self.user_agent = env_vars.get('HTTP_USER_AGENT', 'Unknown')
+        self.host = env_vars.get('HTTP_HOST', 'localhost')
+        self.path = env_vars.get('REQUEST_URI', '/').split('?')[0]
+        self.request_uri = env_vars.get('REQUEST_URI', None)
+        self.request_uri = env_vars.get('RAW_URI', None)
+        self.query_string = dict(parse.parse_qsl(parse.urlsplit(str(self.request_uri)).query))
+        self.server_software = env_vars.get('SERVER_SOFTWARE', 'Unknown')
+
+        self.client_ip = GetClientIP(env_vars)
+
+        # Google App Engine
+        if 'HTTP_X_APPENGINE_USER_IP' in env_vars:
+            self.client_city = env_vars.get('HTTP_X_APPENGINE_CITY', None)
+            self.client_region = env_vars.get('HTTP_X_APPENGINE_REGION', None)
+            self.client_country = env_vars.get('HTTP_X_APPENGINE_COUNTRY', None)
+
+        self.user_agent = env_vars.get('HTTP_USER_AGENT', 'Unknown')
 
 def GetClientIP(env_vars = None):
 
