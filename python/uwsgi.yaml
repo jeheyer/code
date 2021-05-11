@@ -1,2 +1,4 @@
+service: default
 runtime: python38
+env: standard
 entrypoint: uwsgi --http :$PORT --wsgi-file main.py --callable application

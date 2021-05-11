@@ -1,0 +1,3 @@
+service: flask
+runtime: python38
+env: standard
