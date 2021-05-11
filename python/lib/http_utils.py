@@ -10,9 +10,11 @@ class HTTPRequest():
         self.request_uri = env_vars.get('REQUEST_URI', None)
         self.request_uri = env_vars.get('RAW_URI', None)
         self.query_string = dict(parse.parse_qsl(parse.urlsplit(str(self.request_uri)).query))
+        self.server_port = env_vars.get('SERVER_PORT', 0)
         self.server_software = env_vars.get('SERVER_SOFTWARE', 'Unknown')
 
         self.client_ip = GetClientIP(env_vars)
+        self.client_proto = env_vars.get('HTTP_X_FORWARDED_PROTO', 'http')
 
         # Google App Engine
         if 'HTTP_X_APPENGINE_USER_IP' in env_vars:
