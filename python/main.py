@@ -49,7 +49,7 @@ def root(path):
     http_request.host = request.host.split(':')[0]
     http_request.path = "/" + path
     http_request.query_string = request.args
-    http_request.request = str(vars(request))
+    #http_request.request = str(vars(request))
     
     #if request.environ.get('HTTP_X_REAL_IP', None):
     #    http_request.client_ip = request.environ['HTTP_X_REAL_IP']
