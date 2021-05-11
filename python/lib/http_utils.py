@@ -8,7 +8,8 @@ class HTTPRequest():
         self.host = env_vars.get('HTTP_HOST', 'localhost')
         self.path = env_vars.get('REQUEST_URI', '/').split('?')[0]
         self.request_uri = env_vars.get('REQUEST_URI', None)
-        self.request_uri = env_vars.get('RAW_URI', None)
+        if not self.request_uri:
+            self.request_uri = env_vars.get('RAW_URI', self.path)
         self.query_string = dict(parse.parse_qsl(parse.urlsplit(str(self.request_uri)).query))
         self.server_port = env_vars.get('SERVER_PORT', 0)
         self.server_software = env_vars.get('SERVER_SOFTWARE', 'Unknown')
