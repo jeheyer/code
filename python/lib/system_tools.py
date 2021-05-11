@@ -1,7 +1,7 @@
 
 def GetDNSServersFromToken(token = "testing1234"):
 
-    from logfile import LogFile
+    #from logfile import LogFile
     import re
 
     try:
@@ -160,7 +160,31 @@ def ConvertToDict(contents: list, file_type: str) -> list:
 
     return data
 
-def main():
-    data, file_type = ReadInput("test.csv")
-    return ConvertToDict(data, "csv")
+class LogFile():
+
+    def __init__(self, filename, filter = None):
+
+        self.filename = filename
+        self.contents = []
+        self.num_lines = 0
+        self.ReadFile(filter)
+
+    def ReadFile(self, filter = None):
+
+        try:
+            fh = open(self.filename,"r")
+        except:
+            raise Exception("ERROR: could not read log file '" + self.filename + "'")
+
+        for line in fh:
+            if filter:    
+                if filter in line:
+                    parts = line.split(" ")
+                    self.contents.append(parts)
+            else:
+                parts = line.split(" ")
+                self.contents.append(parts)
+            self.num_lines += 1
+
+        fh.close()
 
