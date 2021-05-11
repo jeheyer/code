@@ -8,9 +8,6 @@ def main(request):
 
     modules = [ "mortgage", "geoip", "get_table", "squidread", "getdnsservers", "test"]
 
-    if "test" in request['path']:
-        return(request)
-
     if "mortgage" in request['path']:
         from lib.financial import GetPaymentData
         return GetPaymentData(**request['query_string'])
@@ -65,7 +62,10 @@ def main(request):
         mysql_database.CloseConnection()
         return rows
 
-    return dict(available_modules = modules)
+    if "test" in request['path']:
+        return(request)
+    else:
+        return dict(available_modules = modules)
 
 # CGI Entry Point
 def ParseCGI():
