@@ -25,7 +25,7 @@ def lambda_handler(event, context):
 
     try:
         data = main(http_request)
-        http_response.statusCode = 200
+        http_response['statusCode'] = 200
         if type(data) == dict:
             http_response['headers']['Content-Type'] = "application/json"
             body = json.dumps(data)

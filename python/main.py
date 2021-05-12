@@ -63,7 +63,7 @@ def root(path):
         response_headers = {
            'Access-Control-Allow-Origin': '*',
            'Cache-Control': 'no-cache, no-store',
-            'Pragma': 'no-cache'
+           'Pragma': 'no-cache'
         }
         return jsonify(data), response_headers
 
