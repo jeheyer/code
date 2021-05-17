@@ -16,7 +16,8 @@ th,td	{ font-family: arial; text-align: left; font-size: 6; border: 1px solid bl
 </head>
 <body>
 
-<script src="../js/jquery.min.js"></script>
+<!-- jQuery required to perform Table population -->
+<script src="https://code.j5.org/js/jquery.min.js"></script>
 
 <table id="data_table">
 <caption></caption>
@@ -27,11 +28,18 @@ th,td	{ font-family: arial; text-align: left; font-size: 6; border: 1px solid bl
 
 <script>
 
-  //let url = "https://python.j5.org/squidread.cgi";
-  let url = "https://python.j5.org/squidread.wsgi";
-  fetch(url, { method: 'GET', mode: 'cors' })
-  .then(response => {
-    if (response.ok)
+const url = "https://squidlogs-dot-otc-core-network-prod-4aea.appspot.com/";
+
+fetch(url, { method: 'GET', mode: 'cors' })
+  fetch(ajax_request)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new TypeError("Did not receive JSON from AJAX call");
+      }
       return response.json();
     })
     .then(data => {
@@ -76,6 +84,8 @@ th,td	{ font-family: arial; text-align: left; font-size: 6; border: 1px solid bl
         $(`#data_table`).append(row_html);
       });
     })
+  })
+})();
 
 </script>
 </body>
