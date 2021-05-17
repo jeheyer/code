@@ -84,9 +84,11 @@ def AnalyzeLine(line,filter = None):
 def GetData():
 
     from datetime import datetime
+    from time import time
+    from math import floor
 
-    #now = math.floor(time.time())
-    now = 1617379601
+    now = floor(time())
+    #now = 1617379601
     time_range = (now - 3600 * 6, now)
 
     hostnames = []

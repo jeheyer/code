@@ -13,7 +13,7 @@ def main(request):
         return GetPaymentData(**request['query_string'])
 
     if "squidread" in request['path']:
-        from squidread import GetSquidData
+        from lib.squidread import GetSquidData
         data = []
         for host in ["gcp-prox01-p002", "gcp-prox01-p004", "gcp-prox01-p004"]:
             data.extend(GetSquidData(host))
