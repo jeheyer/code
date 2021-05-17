@@ -28,11 +28,12 @@ th,td	{ font-family: arial; text-align: left; font-size: 6; border: 1px solid bl
 
 <script>
 
-const url = "https://squidlogs-dot-otc-core-network-prod-4aea.appspot.com/";
+(async() => {
 
-fetch(url, { method: 'GET', mode: 'cors' })
-  fetch(ajax_request)
-    .then(response => {
+  const url = "https://squidlogs-dot-otc-core-network-prod-4aea.appspot.com/";
+
+  fetch(url)
+   .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -83,8 +84,7 @@ fetch(url, { method: 'GET', mode: 'cors' })
         row_html += "</tr>";
         $(`#data_table`).append(row_html);
       });
-    })
-  })
+    });
 })();
 
 </script>
