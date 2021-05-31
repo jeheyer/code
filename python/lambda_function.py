@@ -10,12 +10,13 @@ def lambda_handler(event, context):
     http_request = {
         'host': event['headers']['host'],
         'path': event['path'],
-        'query_string': event['queryStringParameters']
+        'query_string': event['queryStringParameters'],
+        'client_ip': event['headers']['x-forwarded-for']
     }
 
     http_response = {
         'statusCode': None,
-        'response_headers': { 
+        'headers': { 
             'Content-Type': "text/plain",
             'Cache-Control': "no-cache, no-store",
             'Pragma': "no-cache"
@@ -28,9 +29,9 @@ def lambda_handler(event, context):
         http_response['statusCode'] = 200
         if type(data) == dict:
             http_response['headers']['Content-Type'] = "application/json"
-            body = json.dumps(data)
+            http_response['body'] = json.dumps(data)
         else:
-            body = format(data)
+            http_response['body'] = format(data)
  
     except Exception as e:
 
