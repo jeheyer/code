@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 
+import sys
+sys.path.insert(1, '../lib/')
+
 from squidread import *
 
 if __name__ == '__main__':
 
     import sys, time, os, json, traceback
     from random import sample
+
 
     sys.stderr = sys.stdout
 

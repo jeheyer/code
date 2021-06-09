@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 
-import os
-import sys
-import io
-import json
+import sys, os, json
 
 def main():
     if 'REQUEST_METHOD' in os.environ:
@@ -23,4 +20,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    quit()
