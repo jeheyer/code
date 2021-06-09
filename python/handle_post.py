@@ -8,7 +8,7 @@ def application(environ, start_response):
     try:
 
         x = "https://www.bastardboat.com/pollresults.html"
-        start_response('301', 'Location: ' + x)
+        start_response(301, 'Location: ' + x)
         return [ ]
 
     except:
