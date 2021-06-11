@@ -23,8 +23,8 @@ def application(environ, start_response):
         if "graffiti_post" in path:
             fields = request.parse_formvars(environ)
             for _ in ['db_name','wall','name','text','graffiti_url']:
-                inputs[_] = fields.get(_, None)
-                if inputs[_] = "":
+                inputs[_] = fields.get(_, "")
+                if inputs[_] == "":
                     inputs[_] = None
             GraffitiPost(inputs['db_name'], inputs['wall'], inputs['name'], inputs['text'])
             redirect_url = f"{inputs['graffiti_url']}?wall={inputs['wall']}"
