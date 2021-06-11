@@ -27,7 +27,7 @@ def application(environ, start_response):
             GraffitiPost(inputs['db_name'], inputs['wall'], inputs['name'], inputs['text'])
             redirect_url = f"{inputs['graffiti_url']}?wall={inputs['wall']}"
 
-        start_response(302, ('Location', redirect_url))
+        start_response(302, [('Location', redirect_url)])
         return []
 
     except:
@@ -35,4 +35,3 @@ def application(environ, start_response):
         response_headers = [ ('Content-type', 'text/plain') ]
         start_response('500 Internal Server Error', response_headers)
         return [ str(traceback.format_exc()).encode('utf-8') ]
-
