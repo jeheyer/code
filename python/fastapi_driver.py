@@ -13,7 +13,7 @@ def root(path, req: Request):
 
     from fastapi.responses import Response, JSONResponse
     from fastapi.encoders import jsonable_encoder
-    import traceback, json
+    import traceback
 
     http_request = HTTPRequest()
     http_request.host = req.headers['host'].split(':')[0]
