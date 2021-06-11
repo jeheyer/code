@@ -24,10 +24,10 @@ def application(environ, start_response):
             fields = request.parse_formvars(environ)
             for _ in ['db_name','wall','name','text','graffiti_url']:
                 inputs[_] = fields.get(_, "")
-                if inputs['name'] == "":
-                    inputs['name'] = "Anonymous Coward"
-                if inputs['text'] == "":
-                    inputs['text'] = "I have nothing to say"
+            if inputs['name'] == "":
+                inputs['name'] = "Anonymous Coward"
+            if inputs['text'] == "":
+                inputs['text'] = "I have nothing to say"
             GraffitiPost(inputs['db_name'], inputs['wall'], inputs['name'], inputs['text'])
             redirect_url = f"{inputs['graffiti_url']}?wall={inputs['wall']}"
 
