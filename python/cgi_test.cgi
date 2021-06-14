@@ -31,7 +31,7 @@ if __name__ == "__main__":
     try:
         output = main()
         print("Content-Type: text/json; charset=UTF-8\n")
-        print(json.dumps(output), indent=2)
+        print(json.dumps(output, indent=2))
 
     except Exception as e:
         print("Status: 500\nContent-Type: text/plain\n")
