@@ -9,14 +9,12 @@ def main():
     output = {}
  
     if 'REQUEST_METHOD' in os.environ:
-
-        for _ in ['SERVER_PROTOCOL', 'SERVER_PORT', 'HTTP_HOST', 'HTTP_X_REAL_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR', 'REQUEST_METHOD', 'SCRIPT_URL']:
-            output[_] =  os.environ.get(_, '')
-        
+        output = dict(os.environ)
         form = cgi.FieldStorage()
+        form_data = {}
         for key in form:
-            output[key] = str(form[key].value)
-        return dict(os.environ)
+            form_data[key] = str(form[key].value)
+        return output.update(form_data)
     else:
         quit("Call me via the web")            
 
