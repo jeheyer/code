@@ -16,7 +16,7 @@ def main():
         form = cgi.FieldStorage()
         for key in form:
             output[key] = str(form[key].value)
-        return output
+        return dict(env)
     else:
         quit("Call me via the web")            
 
