@@ -13,12 +13,11 @@ def main():
         for _ in ['SERVER_PROTOCOL', 'SERVER_PORT', 'HTTP_HOST', 'HTTP_X_REAL_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR', 'REQUEST_METHOD', 'SCRIPT_URL']:
             output[_] =  os.environ.get(_, '')
         
-        query_params = {}
         if os.environ.get('REQUEST_METHOD') == "POST":
             for key in form:
-                query_params[key] = str(form[key].value)
+                output[key] = str(form[key].value)
         else:
-            query_params = dict(cgi.FieldStorage())
+            output += dict(cgi.FieldStorage())
         return output
     else:
         quit("Call me via the web")            
