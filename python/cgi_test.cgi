@@ -14,7 +14,8 @@ def main():
         form_data = {}
         for key in form:
             form_data[key] = str(form[key].value)
-        return output.update(form_data)
+        output.update(form_data)
+        return output
     else:
         quit("Call me via the web")            
 
