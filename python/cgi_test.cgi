@@ -19,6 +19,7 @@ def main():
                 query_params[key] = str(form[key].value)
         else:
             query_params = dict(cgi.FieldStorage())
+        return output
     else:
         quit("Call me via the web")            
 
