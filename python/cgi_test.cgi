@@ -17,7 +17,7 @@ def main():
             for key in form:
                 output[key] = str(form[key].value)
         else:
-            output += dict(cgi.FieldStorage())
+            output.update(dict(cgi.FieldStorage()))
         return output
     else:
         quit("Call me via the web")            
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     try:
         output = main()
         print("Content-Type: text/json; charset=UTF-8\n")
-        print(json.dumps(output))
+        print(json.dumps(output), indent=2)
 
     except Exception as e:
         print("Status: 500\nContent-Type: text/plain\n")
