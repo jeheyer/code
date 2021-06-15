@@ -11,20 +11,19 @@ class HTTPRequest():
         if not self.request_uri:
             self.request_uri = env_vars.get('RAW_URI', self.path)
         self.query_string = dict(parse.parse_qsl(parse.urlsplit(str(self.request_uri)).query))
-        self.server_port = env_vars.get('SERVER_PORT', 0)
+        self.server_port = env_vars.get('SERVER_PORT', 80)
         self.server_protocol = env_vars.get('SERVER_PROTOCOL', None)
         self.server_software = env_vars.get('SERVER_SOFTWARE', 'Unknown')
 
         self.client_ip = GetClientIP(env_vars)
 
+        # Check for HTTPS on the Front end
         self.front_end_https = False
         if env_vars.get('HTTP_X_FORWARDED_PROTO', 'http') == "https":
             self.front_end_https = True
         if env_vars.get('HTTP_X_FORWARDED_SSL', False):
             self.front_end_https = True
-        if env_vars.get('HTTPS', False):
-            self.front_end_https = True
-        if self.server_port == 443:
+        if env_vars.get('HTTPS', False) == True or self.server_port == 443:
             self.front_end_https = True
 
         # Google App Engine
