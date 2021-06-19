@@ -3,6 +3,7 @@
 
 from paste import request
 from lib.web_apps import *
+from lib.http_utils import *
 
 # WSGI entry point
 def application(environ, start_response):
