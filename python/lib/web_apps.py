@@ -11,7 +11,7 @@ def GraffitiPost(db_name: str, wall: str, name: str = "Anonymous Coward", text: 
     mysql_database.OpenConnection()
     table_name = "graffiti"
     if client_ip:
-        sql_insert = f"INSERT INTO {table_name} (`wall`,`name`,`text`,`client_ip`) VALUES ('{wall}','{name}','{text}','{client_ip}';"
+        sql_insert = f"INSERT INTO {table_name} (`wall`,`name`,`text`,`client_ip`) VALUES ('{wall}','{name}','{text}','{client_ip}');"
     else:
         sql_insert = f"INSERT INTO {table_name} (`wall`,`name`,`text`) VALUES ('{wall}','{name}','{text}');"
     mysql_database.SQLQuery(sql_insert)
