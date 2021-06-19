@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 from flask import Flask
 from lib.http_utils import *
@@ -29,7 +30,7 @@ def root(path):
 
     try:
         data = main(vars(http_request))
-        return jsonify(data)
+        return jsonify(data), 200, {'Content-Type': "application/json"}
 
     except:
         return format(traceback.format_exc()), 500,  {'Content-Type': "text/plain"}
