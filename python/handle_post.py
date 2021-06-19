@@ -28,7 +28,7 @@ def application(environ, start_response):
                 inputs['name'] = "Anonymous Coward"
             if inputs['text'] == "":
                 inputs['text'] = "I have nothing to say"
-            client_ip = "127.0.0.1"
+            client_ip = GetClientIP(environ)
             GraffitiPost(inputs['db_name'], inputs['wall'], inputs['name'], inputs['text'], client_ip)
             redirect_url = f"{inputs['graffiti_url']}?wall={inputs['wall']}"
 
