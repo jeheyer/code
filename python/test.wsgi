@@ -6,7 +6,7 @@ def application(environ, start_response):
 
     try:
 
-        output = json.dumps(environ, default=str)
+        output = json.dumps(environ, default=str, indent=2)
 
         response_headers = [
             ('Content-type', 'application/json'),
