@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-# WSGI entry point
 def application(environ, start_response):
 
     import traceback, json
