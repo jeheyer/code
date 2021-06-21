@@ -16,7 +16,7 @@ def root(path):
     from flask import request, jsonify
     import traceback
 
-    http_request = HTTPRequest()
+    http_request = HTTPRequest(request.environ)
     http_request.host = request.host.split(':')[0]
     http_request.path = "/" + path
     http_request.query_string = request.args

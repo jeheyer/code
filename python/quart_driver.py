@@ -6,6 +6,7 @@ from lib.http_utils import *
 from lib.makejson import *
 
 app = Quart(__name__)
+app.config['JSON_SORT_KEYS'] = False
 
 @app.route("/", defaults = {'path': ""})
 @app.route("/<string:path>")
@@ -16,7 +17,7 @@ async def root(path):
     from quart import request
     import traceback
 
-    http_request = HTTPRequest(environ)
+    http_request = HTTPRequest()
     http_request.host = request.host.split(':')[0]
     http_request.path = "/" + path
     http_request.query_string = request.args
