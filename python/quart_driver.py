@@ -16,7 +16,7 @@ async def root(path):
     from quart import request
     import traceback
 
-    http_request = HTTPRequest()
+    http_request = HTTPRequest(environ)
     http_request.host = request.host.split(':')[0]
     http_request.path = "/" + path
     http_request.query_string = request.args
