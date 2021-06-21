@@ -4,6 +4,7 @@
 from quart import Quart
 from lib.http_utils import *
 from lib.makejson import *
+import traceback
 
 app = Quart(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -13,9 +14,9 @@ app.config['JSON_SORT_KEYS'] = False
 @app.route("/<path:path>")
 async def root(path):
 
-    from quart.json import jsonify
     from quart import request
-    import traceback
+    from quart.helpers import make_response
+    from quart.json import jsonify
 
     http_request = HTTPRequest()
     http_request.host = request.host.split(':')[0]
