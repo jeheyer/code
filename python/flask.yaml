@@ -1,3 +1,6 @@
 service: flask
 runtime: python38
 env: standard
+entrypoint: uwsgi --http :$PORT --wsgi-file flask_driver.py --callable app --enable-threads
+#entrypoint: gunicorn -w 4 -k uvicorn.workers.UvicornWorker quart_driver:app
+

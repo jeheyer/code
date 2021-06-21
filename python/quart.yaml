@@ -1,0 +1,4 @@
+service: quart
+runtime: python38
+env: standard
+entrypoint: gunicorn -w 4 -k uvicorn.workers.UvicornWorker quart_driver:app
