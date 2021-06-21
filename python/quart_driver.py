@@ -22,10 +22,18 @@ async def root(path):
     http_request.host = request.host.split(':')[0]
     http_request.path = "/" + path
     http_request.query_string = request.args
+
+    for _ in request.headers.items():
+         if _[0] == "User-Agent":
+             http_request.user_agent = _[1]
+         if _[0] == "X-Real-Ip":
+             http_request.client_ip = _[1]
+         if _[0] == "X-Forwarded-Proto" and _[1] == "https":
+             http_request.front_end_https = True
     
     try:
         data = main(vars(http_request))
-        return jsonify(data), 200, {'Content-Type': "application/json"}
+        return jsonify(data), 200
 
     except:
         return format(traceback.format_exc()), 500,  {'Content-Type': "text/plain"}
