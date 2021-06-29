@@ -32,6 +32,12 @@ class HTTPRequest():
             self.client_region = env_vars.get('HTTP_X_APPENGINE_REGION', None)
             self.client_country = env_vars.get('HTTP_X_APPENGINE_COUNTRY', None)
 
+        # Flask
+        #'host': request.host.split(':')[0],
+        #'path': "/" + path,
+        #'query_string': request.args,
+        #request.user_agent.string
+
         self.user_agent = env_vars.get('HTTP_USER_AGENT', 'Unknown')
 
 def GetClientIP(env_vars = None):
