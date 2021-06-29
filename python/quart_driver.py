@@ -28,11 +28,18 @@ async def root(path):
              http_request.user_agent = _[1]
          if _[0] == "X-Real-Ip":
              http_request.client_ip = _[1]
+         if _[0] == "X-Forwarded-For":
+             http_request.client_ip = _[1].split(",")[-2]
+         if _[0] == "X-Appengine-User-Ip":
+             http_request.client_ip = _[1]
          if _[0] == "X-Forwarded-Proto" and _[1] == "https":
              http_request.front_end_https = True
-    
+         if _[0] == "X-Appengine-Https":
+             http_request.front_end_https = True
+         
     try:
         data = main(vars(http_request))
+        #data = vars(request.headers)
         return jsonify(data), 200
 
     except:
