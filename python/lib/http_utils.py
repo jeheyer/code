@@ -38,6 +38,9 @@ class HTTPRequest():
         #'query_string': request.args,
         #request.user_agent.string
 
+        # FastAPI / Starlette
+        #query_string = dict(req.url.path)
+
         self.user_agent = env_vars.get('HTTP_USER_AGENT', 'Unknown')
 
 def GetClientIP(env_vars = None):
