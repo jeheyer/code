@@ -6,18 +6,16 @@ import os, cgi
 
 def main():
 
-    output = {}
- 
-    if 'REQUEST_METHOD' in os.environ:
-        output = dict(os.environ)
-        form = cgi.FieldStorage()
-        form_data = {}
-        for key in form:
-            form_data[key] = str(form[key].value)
-        output.update(form_data)
-        return output
-    else:
-        quit("Call me via the web")            
+    if not 'REQUEST_METHOD' in os.environ:
+        quit("Call me via the web, please")
+
+    output = dict(os.environ)
+    form = cgi.FieldStorage()
+    form_data = {}
+    for key in form:
+        form_data[key] = str(form[key].value)
+    output.update(form_data)
+    return output
 
 if __name__ == "__main__":
 
@@ -32,5 +30,5 @@ if __name__ == "__main__":
 
     except Exception as e:
         print("Status: 500\nContent-Type: text/plain\n")
-        traceback.print_exc(file=sys.stdout, limit = 3)
+        traceback.print_exc(file=sys.stdout, limit=3)
 
