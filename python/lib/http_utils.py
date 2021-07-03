@@ -1,7 +1,7 @@
 
 class HTTPRequest():
 
-    def __init__(self, env_vars = {}):
+    def __init__(self, env_vars = {}, request = None):
 
         from urllib import parse
 
@@ -14,6 +14,7 @@ class HTTPRequest():
         self.server_port = env_vars.get('SERVER_PORT', 80)
         self.server_protocol = env_vars.get('SERVER_PROTOCOL', None)
         self.server_software = env_vars.get('SERVER_SOFTWARE', 'Unknown')
+        self.user_agent = env_vars.get('HTTP_USER_AGENT', 'Unknown')
 
         self.client_ip = GetClientIP(env_vars)
 
@@ -33,15 +34,12 @@ class HTTPRequest():
             self.client_country = env_vars.get('HTTP_X_APPENGINE_COUNTRY', None)
 
         # Flask
-        #'host': request.host.split(':')[0],
-        #'path': "/" + path,
-        #'query_string': request.args,
-        #request.user_agent.string
+        if request:
+            self.query_string = request.args
 
         # FastAPI / Starlette
         #query_string = dict(req.url.path)
 
-        self.user_agent = env_vars.get('HTTP_USER_AGENT', 'Unknown')
 
 def GetClientIP(env_vars = None):
 
