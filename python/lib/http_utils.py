@@ -40,6 +40,7 @@ class HTTPRequest():
                 if self.server_protocol:
                     self.http_version = self.server_protocol.split('/')[1]
                 self.server_software = env_vars.get('SERVER_SOFTWARE', 'Unknown')
+                self.server_address = env_vars.get('SERVER_ADDR', None)
                 self.server_port = env_vars.get('SERVER_PORT', 80)
                 self.remote_addr = env_vars.get('REMOTE_ADDR', "127.0.0.1")
                 self.headers['user-agent'] = env_vars.get('HTTP_USER_AGENT', 'Unknown')
@@ -66,9 +67,8 @@ class HTTPRequest():
 
             # Quart
             if request and 'quart' in str(request.__class__):
-                #self.vars = str(vars(request))
-                for _ in request.headers.items():
-                    self.headers[_[0].lower()] = _[1]
+                for _ in request.headers.items(): # Convert from list of tuples to dictionary
+                    self.headers[_[0].lower()] = _[1]   
                 self.host = request.host.split(':')[0]
                 self.path = request.path
                 self.query_params = request.args
@@ -79,11 +79,12 @@ class HTTPRequest():
 
             # FastAPI / Starlette 
             if request and 'starlette' in str(request.__class__):
+                self.vars = str(vars(request))
                 self.headers = request.headers
                 self.host = request.headers['host'].split(':')[0]
                 self.path = request.url.path
                 self.query_params = dict(request.query_params)
-                self.remote_addr = request.client.host
+                self.remote_addr = request['client'][0]
                 if 'http_version' in request:
                     self.http_version = request['http_version']
                     self.server_protocol = "HTTP/" + request['http_version']
