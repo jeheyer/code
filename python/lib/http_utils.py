@@ -1,45 +1,73 @@
 
 class HTTPRequest():
 
-    def __init__(self, env_vars = {}, request = None):
+    def __init__(self, env_vars = {}, request = None, lambda_event = None):
 
         from urllib import parse
 
-        self.host = env_vars.get('HTTP_HOST', 'localhost')
-        self.path = env_vars.get('REQUEST_URI', '/').split('?')[0]
-        self.request_uri = env_vars.get('REQUEST_URI', None)
-        if not self.request_uri:
-            self.request_uri = env_vars.get('RAW_URI', self.path)
-        self.query_fields = dict(parse.parse_qsl(parse.urlsplit(str(self.request_uri)).query))
-        self.server_port = env_vars.get('SERVER_PORT', 80)
-        self.server_protocol = env_vars.get('SERVER_PROTOCOL', None)
-        self.server_software = env_vars.get('SERVER_SOFTWARE', 'Unknown')
-        self.user_agent = env_vars.get('HTTP_USER_AGENT', 'Unknown')
-
-        self.client_ip = GetClientIP(env_vars)
-
-        # Check for HTTPS on the Front end
+        self.headers = {}
+        self.client_ip = "127.0.0.1"
         self.front_end_https = False
-        if env_vars.get('HTTP_X_FORWARDED_PROTO', 'http') == "https":
-            self.front_end_https = True
-        if env_vars.get('HTTP_X_FORWARDED_SSL', False):
-            self.front_end_https = True
-        if env_vars.get('HTTPS', False) == True or self.server_port == 443:
-            self.front_end_https = True
 
-        # Google App Engine
-        if 'HTTP_X_APPENGINE_USER_IP' in env_vars:
-            self.client_city = env_vars.get('HTTP_X_APPENGINE_CITY', None)
-            self.client_region = env_vars.get('HTTP_X_APPENGINE_REGION', None)
-            self.client_country = env_vars.get('HTTP_X_APPENGINE_COUNTRY', None)
+        # WSGI & CGI: Parse HTTP environment variables
+        if env_vars:
+            self.host = env_vars.get('HTTP_HOST', 'localhost')
+            self.path = env_vars.get('REQUEST_URI', '/').split('?')[0]
+            self.request_uri = env_vars.get('REQUEST_URI', None)
+            if not self.request_uri:
+                self.request_uri = env_vars.get('RAW_URI', self.path)
+            self.query_fields = dict(parse.parse_qsl(parse.urlsplit(str(self.request_uri)).query))
+            self.server_port = env_vars.get('SERVER_PORT', 80)
+            self.server_protocol = env_vars.get('SERVER_PROTOCOL', None)
+            self.server_software = env_vars.get('SERVER_SOFTWARE', 'Unknown')
+            self.user_agent = env_vars.get('HTTP_USER_AGENT', 'Unknown')
+            self.front_end_https = False
+            if env_vars.get('HTTP_X_FORWARDED_PROTO', 'http') == "https":
+                self.front_end_https = True
+            if env_vars.get('HTTP_X_FORWARDED_SSL', False):
+                self.front_end_https = True
+            if env_vars.get('HTTPS', False) == True or self.server_port == 443:
+                self.front_end_https = True
 
-        # Flask
-        if request:
-            self.query_fields = request.args
+            # Special headers for Google App Engine
+            if 'HTTP_X_APPENGINE_USER_IP' in env_vars:
+                self.client_city = env_vars.get('HTTP_X_APPENGINE_CITY', None)
+                self.client_region = env_vars.get('HTTP_X_APPENGINE_REGION', None)
+                self.client_country = env_vars.get('HTTP_X_APPENGINE_COUNTRY', None)
+                self.client_ip = env_vars.get(['HTTP_X_APPENGINE_USER_IP'], None)
+
+        # AWS Lambda
+        if lambda_event:
+            self.headers =  event['multiValueHeaders'] if 'multiValueHeaders' in event else event['headers']
+            self.host = self.headers['host']
+            self.path = event['path']
+            self.client_ip = event['requestContext']['identity']['sourceIp']
+            self.user_agent = self.headers['user-agent']
+            if self.headers['x-forwarded-proto'] == "https":
+                self.front_end_https = True
+            self.server_port = self.headers['x-forwarded-port']
 
         # FastAPI / Starlette
-        #query_string = dict(req.url.path)
+        if request:
+            #self.vars = str(vars(request))
+            self.headers = request.headers
+            self.host = request.headers['host'].split(':')[0]
+            self.path = request.url.path
+            self.method = request.method
+            self.server_port = request['server'][1]
+            self.server_protocol = "HTTP/" + request['http_version']
+            if request.headers['x-forwarded-proto'] == "https":
+                self.front_end_https = True
+            self.user_agent = request.headers['user-agent']
+            self.query_fields = dict(request.query_params)
+            if 'x-real-ip' in request.headers:
+                self.client_ip = request.headers['x-real-ip']
+            elif 'x-forwarded-for' in request.headers:
+                self.client_ip = request.headers['x-forwarded-for'][-2]
+            else:
+                self.client_ip = request.client.host
 
+        self.client_ip = GetClientIP(env_vars)
 
 def GetClientIP(env_vars = None):
 
