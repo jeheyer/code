@@ -36,7 +36,7 @@ def main(request):
         return GetDNSServersFromToken(token)
 
     if "get_table" in request['path']:
-        params = request['query_string']
+        params = request['query_fields']
         if 'database' in params and 'table' in params:
             db_name = params['database']
             db_table = params['table']
