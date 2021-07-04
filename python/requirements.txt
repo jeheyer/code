@@ -1,6 +1,6 @@
-#flask
+flask
 quart
 google-cloud-storage
-#uwsgi
+uwsgi
 gunicorn
 uvicorn

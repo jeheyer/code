@@ -1,5 +1,7 @@
 dispatch:
-#  - url: "python.gcp.j5.org/*"
-#    service: flask
+  - url: "flask.gcp.j5.org/*"
+    service: flask
+  - url: "quart.gcp.j5.org/*"
+    service: quart
   - url: "python.gcp.j5.org/*"
     service: default
