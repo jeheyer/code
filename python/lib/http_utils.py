@@ -83,7 +83,7 @@ class HTTPRequest():
         # Determine if HTTPS being used on frontend
         if self.headers['x-forwarded-proto'] == "https":
             self.front_end_https = True
-        if 'x-forwarded-ssl' in self.headers or 'x-appengine-https' in self_headers:
+        if 'x-forwarded-ssl' in self.headers or 'x-appengine-https' in self.headers:
             self.front_end_https = True
         if self.server_port == 443 or self.server_port == 8443:
             self.front_end_https = True
@@ -95,7 +95,7 @@ class HTTPRequest():
     def DetermineClientIP(self):
 
         if 'x-appengine-user-ip' in self.headers:
-            return self.headers['x-appengine-user-ip]
+            return self.headers['x-appengine-user-ip']
 
         if 'x-real-ip' in self.headers and self.headers['x-real-ip'] != "127.0.0.1":
             return self.headers['x-real-ip']
