@@ -56,7 +56,10 @@ class HTTPRequest():
             # Special headers for Google App Engine or GCP External HTTP/HTTPS load balancers
             if 'HTTP_X_APPENGINE_USER_IP' in env_vars:
                 self.client_city = env_vars.get('HTTP_X_APPENGINE_CITY', None)
-                self.client_latlong = env_vars.get('HTTP_X_APPENGINE_CITYLATLONG', [0,0])
+                self.client_latlong = env_vars.get('HTTP_X_APPENGINE_CITYLATLONG', None)
+                if self.client_latlong:
+                    self.client_lat = float(self.client_latlong.split(",")[0])
+                    self.client_long = float(self.client_latlong.split(",")[1])
                 self.client_region = env_vars.get('HTTP_X_APPENGINE_REGION', None)
                 self.client_country = env_vars.get('HTTP_X_APPENGINE_COUNTRY', None)
                 self.client_ip = env_vars.get('HTTP_X_APPENGINE_USER_IP', None)
@@ -95,7 +98,10 @@ class HTTPRequest():
             # Google App Engine
             if 'x-appengine-default-version-hostname' in self.headers:
                 self.client_city = self.headers.get('x-appengine-city', None)
-                self.client_latlong = self.headers.get('x-appengine-citylatlong', [0,0])
+                self.client_latlong = self.headers.get('x-appengine-citylatlong', None)
+                if self.client_latlong:
+                    self.client_lat = float(self.client_latlong.split(",")[0])
+                    self.client_long = float(self.client_latlong.split(",")[1])
                 self.client_region = self.headers.get('x-appengine-region', None)
                 self.client_country = self.headers.get('x-appengine-country', None)
 
