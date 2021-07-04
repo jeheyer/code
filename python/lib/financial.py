@@ -5,11 +5,12 @@ import math
 def GetColumn(matrix, column_n):
     return [row[column_n] for row in matrix]
 
-def GetPaymentData(**options):
+def GetPaymentData(options):
 
     from datetime import date
     today = date.today()
 
+    # Fill in default values if field was not provided
     default_values = dict(loanAmount = 200000, years = 30, interestRate = 3.25, startYear = today.year, startMonth = today.month)
     for key, default_value in default_values.items():
         if not key in options:

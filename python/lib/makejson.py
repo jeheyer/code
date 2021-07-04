@@ -10,7 +10,7 @@ def main(request):
 
     if "mortgage" in request['path']:
         from lib.financial import GetPaymentData
-        return GetPaymentData(**request['query_string'])
+        return GetPaymentData(request['query_fields'])
 
     if "squidread" in request['path']:
         from lib.squidread import GetSquidData
