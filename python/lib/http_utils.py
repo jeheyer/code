@@ -82,23 +82,15 @@ class HTTPRequest():
 
     def DetermineClientIP(self):
 
-        import socket
-
-        if 'x-real-ip' in self.headers:
+        if 'x-real-ip' in self.headers and self.headers['x-real-ip'] != "127.0.0.1":
             return self.headers['x-real-ip']
 
         if 'x-forwarded-for' in self.headers:
-            if ", " in self.headers['x-forwarded-for']:
-                return x_fwd_for_ips[-2]
-                # Get a list of IPs addresses used by this web server hostname
-                server_ips = socket.gethostbyname(self.host)
-                x_fwd_for_ips =  x_fwd_for.split(", ")
-                for _ in range(len(x_fwd_for_ips)):
-                    if x_fwd_for_ips[_] in server_ips:
-                        # Use last IP address before the IP of this web server
-                        return x_fwd_for_ips[_]
+            _ = self.headers['x-forwarded-for']
+            if ", " in _:
+                return _.split(", ")[-2]
             else:
-                return self.headers['x-forwarded-for']
+                return _
 
         # Last resort
         return self.remote_addr
