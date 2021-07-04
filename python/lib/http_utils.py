@@ -128,7 +128,7 @@ class HTTPRequest():
         if 'x-real-ip' in self.headers and self.headers['x-real-ip'] != "127.0.0.1":
             return self.headers['x-real-ip']
 
-        if 'x-forwarded-for' in self.headers:
+        if 'x-forwarded-for' in self.headers and self.headers['x-forwarded-for']:
             _ = self.headers['x-forwarded-for']
             if ", " in _:
                 return _.split(", ")[-2]
