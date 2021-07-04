@@ -11,18 +11,26 @@ class HTTPRequest():
 
         # WSGI & CGI: Parse HTTP environment variables
         if env_vars:
+            self.headers = {}
             self.host = env_vars.get('HTTP_HOST', 'localhost')
             self.path = env_vars.get('REQUEST_URI', '/').split('?')[0]
             self.request_uri = env_vars.get('REQUEST_URI', None)
             if not self.request_uri:
                 self.request_uri = env_vars.get('RAW_URI', self.path)
             self.query_fields = dict(parse.parse_qsl(parse.urlsplit(str(self.request_uri)).query))
-            self.server_port = env_vars.get('SERVER_PORT', 80)
+            self.method = env_vars.get('REQUEST_METHOD', 'GET')
             self.server_protocol = env_vars.get('SERVER_PROTOCOL', None)
             self.server_software = env_vars.get('SERVER_SOFTWARE', 'Unknown')
-            self.user_agent = env_vars.get('HTTP_USER_AGENT', 'Unknown')
-            self.front_end_https = False
-            if env_vars.get('HTTP_X_FORWARDED_PROTO', 'http') == "https":
+            self.server_port = env_vars.get('SERVER_PORT', 80)
+            self.remote_addr = env_vars.get('REMOTE_ADDR', "127.0.0.1")
+
+            self.headers['user-agent'] = env_vars.get('HTTP_USER_AGENT', 'Unknown')
+            self.headers['x-forwarded-for'] = env_vars.get('HTTP_X_FORWARDED_FOR', None)
+            self.headers['x-forwarded-proto'] = env_vars.get('HTTP_X_FORWARDED_PROTO', 'http')
+            self.headers['x-forwarded-ssl']  = env_vars.get('HTTP_X_FORWARDED_SSL', False)
+            self.headers['x-forwarded-port'] = env_vars.get('SERVER_PORT', 80)
+
+            if self.headers['x-forwarded-proto'] == "https":
                 self.front_end_https = True
             if env_vars.get('HTTP_X_FORWARDED_SSL', False):
                 self.front_end_https = True
@@ -37,7 +45,7 @@ class HTTPRequest():
                 self.client_ip = env_vars.get(['HTTP_X_APPENGINE_USER_IP'], None)
 
         # AWS Lambda
-        if event:
+        if 'requestContext' in env_vars:
             self.headers =  event['multiValueHeaders'] if 'multiValueHeaders' in event else event['headers']
             self.host = self.headers['host']
             self.path = event['path']
@@ -53,49 +61,41 @@ class HTTPRequest():
             self.headers = request.headers
             self.host = request.headers['host'].split(':')[0]
             self.path = request.url.path
+            self.query_fields = dict(request.query_params)
             self.method = request.method
             self.server_port = request['server'][1]
             self.server_protocol = "HTTP/" + request['http_version']
-            if request.headers['x-forwarded-proto'] == "https":
+            self.remote_addr = self.headers['x-forwarded-for'][-1]
+            if 'x-forwarded-proto' in self.headers and self.headers['x-forwarded-proto'] == "https":
                 self.front_end_https = True
             self.user_agent = request.headers['user-agent']
-            self.query_fields = dict(request.query_params)
             if 'x-real-ip' in request.headers:
                 self.client_ip = request.headers['x-real-ip']
             elif 'x-forwarded-for' in request.headers:
-                self.client_ip = request.headers['x-forwarded-for'][-2]
+                self.client_ip = self.headers['x-forwarded-for'][-2]
             else:
                 self.client_ip = request.client.host
 
-        self.client_ip = GetClientIP(env_vars)
+        if not self.client_ip:
+            self.client_ip = GetClientIP()
 
-def GetClientIP(env_vars = None):
+def GetClientIP():
 
     import socket
 
-    # Nginx
-    if 'HTTP_X_REAL_IP' in env_vars:
-        return env_vars['HTTP_X_REAL_IP']
+    if 'x-real-ip' in self.headers:
+        return self.headers['x-real-ip']
 
-    # AWS Lambda
-    if 'requestContext' in env_vars: 
-        return env_vars['requestContext']['identity']['sourceIp']
-
-    # Google App Engine
-    if 'HTTP_X_APPENGINE_USER_IP' in env_vars:
-        return env_vars['HTTP_X_APPENGINE_USER_IP']
-
-    if 'HTTP_X_FORWARDED_FOR' in env_vars:
-        x_fwd_for = env_vars['HTTP_X_FORWARDED_FOR']
-        if ", " in x_fwd_for:
+    if 'x-forwarded-for' in self.headers:
+        if ", " in self.headers['x-forwarded-for']:
             # Get a list of IPs addresses used by this web server hostname
-            server_ips = socket.gethostbyname(env_vars.get('HTTP_HOST', "localhost"))
+            server_ips = socket.gethostbyname(self.host)
             x_fwd_for_ips =  x_fwd_for.split(", ")
             for _ in range(len(x_fwd_for_ips)):
                 if x_fwd_for_ips[_] in server_ips:
                     # Use last IP address before the IP of this web server
-                    return x_fwd_for_ips[_-1]
+                    return x_fwd_for_ips[-1]
 
     # Last resort
-    return env_vars.get('REMOTE_ADDR', "127.0.0.1")
+    return self.remote_addr
 
