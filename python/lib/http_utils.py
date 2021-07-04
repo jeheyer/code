@@ -58,11 +58,12 @@ class HTTPRequest():
 
         # Quart
         if request and 'quart' in str(request.__class__):
+            self.vars = dict(request.headers)
             for _ in request.headers.items():
                 self.headers[_[0].lower()] = _[1]
             self.host = request.host.split(':')[0]
             self.query_fields = request.args
-            self.remote_addr = self.headers['remote-addr']
+            self.remote_addr = self.headers.get('remote-addr', None)
 
         # FastAPI / Starlette 
         if request and 'starlette' in str(request.__class__):
