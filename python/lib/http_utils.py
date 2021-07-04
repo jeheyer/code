@@ -1,7 +1,7 @@
 
 class HTTPRequest():
 
-    def __init__(self, env_vars = {}, request = None, lambda_event = None):
+    def __init__(self, env_vars = {}, request = None, event = None):
 
         from urllib import parse
 
@@ -37,7 +37,7 @@ class HTTPRequest():
                 self.client_ip = env_vars.get(['HTTP_X_APPENGINE_USER_IP'], None)
 
         # AWS Lambda
-        if lambda_event:
+        if event:
             self.headers =  event['multiValueHeaders'] if 'multiValueHeaders' in event else event['headers']
             self.host = self.headers['host']
             self.path = event['path']
