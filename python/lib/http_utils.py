@@ -6,59 +6,51 @@ class HTTPRequest():
         from urllib import parse
 
         self.headers = {}
+        self.headers['x-forwarded-proto'] = "http"
         self.client_ip = None
         self.front_end_https = False
 
-        # WSGI & CGI: Parse HTTP environment variables
         if env_vars:
-            self.host = env_vars.get('HTTP_HOST', 'localhost')
-            self.path = env_vars.get('REQUEST_URI', '/').split('?')[0]
-            self.request_uri = env_vars.get('REQUEST_URI', None)
-            if not self.request_uri:
-                self.request_uri = env_vars.get('RAW_URI', self.path)
-            self.query_fields = dict(parse.parse_qsl(parse.urlsplit(str(self.request_uri)).query))
-            self.method = env_vars.get('REQUEST_METHOD', 'GET')
-            self.server_protocol = env_vars.get('SERVER_PROTOCOL', None)
-            self.server_software = env_vars.get('SERVER_SOFTWARE', 'Unknown')
-            self.server_port = env_vars.get('SERVER_PORT', 80)
-            self.remote_addr = env_vars.get('REMOTE_ADDR', "127.0.0.1")
 
-            self.headers = {}
-            self.headers['user-agent'] = env_vars.get('HTTP_USER_AGENT', 'Unknown')
-            self.headers['x-forwarded-for'] = env_vars.get('HTTP_X_FORWARDED_FOR', None)
-            self.headers['x-forwarded-proto'] = env_vars.get('HTTP_X_FORWARDED_PROTO', 'http')
-            self.headers['x-forwarded-ssl']  = env_vars.get('HTTP_X_FORWARDED_SSL', False)
-            self.headers['x-forwarded-port'] = env_vars.get('SERVER_PORT', 0)
-            self.headers['x-real-ip'] = env_vars.get('HTTP_X_REAL_IP', "127.0.0.1")
+            if 'requestContext' in env_vars:
+                # AWS Lambda
+                self.headers =  event['multiValueHeaders'] if 'multiValueHeaders' in event else event['headers']
+                self.host = self.headers['host']
+                self.path = event['path']
+                self.method = event['httpMethod']
+                self.client_ip = event['requestContext']['identity']['sourceIp']
 
-            if self.headers['x-forwarded-proto'] == "https":
-                self.front_end_https = True
-            if env_vars.get('HTTP_X_FORWARDED_SSL', False):
-                self.front_end_https = True
-            if env_vars.get('HTTPS', False) == True or self.server_port == 443:
-                self.front_end_https = True
+            else:
+                # Standard WSGI or CGI web server
+                self.host = env_vars.get('HTTP_HOST', 'localhost')
+                self.path = env_vars.get('REQUEST_URI', '/').split('?')[0]
+                self.request_uri = env_vars.get('REQUEST_URI', None)
+                if not self.request_uri:
+                    self.request_uri = env_vars.get('RAW_URI', self.path)
+                self.query_fields = dict(parse.parse_qsl(parse.urlsplit(str(self.request_uri)).query))
+                self.method = env_vars.get('REQUEST_METHOD', 'GET')
+                self.server_protocol = env_vars.get('SERVER_PROTOCOL', None)
+                self.server_software = env_vars.get('SERVER_SOFTWARE', 'Unknown')
+                self.server_port = env_vars.get('SERVER_PORT', 80)
+                self.remote_addr = env_vars.get('REMOTE_ADDR', "127.0.0.1")
+                self.headers['user-agent'] = env_vars.get('HTTP_USER_AGENT', 'Unknown')
+                self.headers['x-forwarded-for'] = env_vars.get('HTTP_X_FORWARDED_FOR', None)
+                self.headers['x-forwarded-proto'] = env_vars.get('HTTP_X_FORWARDED_PROTO', 'http')
+                self.headers['x-forwarded-ssl']  = env_vars.get('HTTP_X_FORWARDED_SSL', False)
+                self.headers['x-forwarded-port'] = env_vars.get('SERVER_PORT', None)
+                self.headers['x-real-ip'] = env_vars.get('HTTP_X_REAL_IP', "127.0.0.1")
 
-            # Special headers for Google App Engine
+            self.server_port = self.headers.get('x-forwarded-port', 0)
+
+            # Special headers for Google App Engine or GCP External HTTP/HTTPS load balancers
             if 'HTTP_X_APPENGINE_USER_IP' in env_vars:
                 self.client_city = env_vars.get('HTTP_X_APPENGINE_CITY', None)
                 self.client_region = env_vars.get('HTTP_X_APPENGINE_REGION', None)
                 self.client_country = env_vars.get('HTTP_X_APPENGINE_COUNTRY', None)
                 self.client_ip = env_vars.get(['HTTP_X_APPENGINE_USER_IP'], None)
 
-        # AWS Lambda
-        if 'requestContext' in env_vars:
-            self.headers =  event['multiValueHeaders'] if 'multiValueHeaders' in event else event['headers']
-            self.host = self.headers['host']
-            self.path = event['path']
-            self.client_ip = event['requestContext']['identity']['sourceIp']
-            self.user_agent = self.headers['user-agent']
-            if self.headers['x-forwarded-proto'] == "https":
-                self.front_end_https = True
-            self.server_port = self.headers['x-forwarded-port']
-
         # FastAPI / Starlette
         if request:
-            #self.vars = str(vars(request))
             self.headers = request.headers
             self.host = request.headers['host'].split(':')[0]
             self.path = request.url.path
@@ -67,15 +59,14 @@ class HTTPRequest():
             self.server_port = request['server'][1]
             self.server_protocol = "HTTP/" + request['http_version']
             self.remote_addr = request.client.host
-            if 'x-forwarded-proto' in self.headers and self.headers['x-forwarded-proto'] == "https":
-                self.front_end_https = True
-            self.user_agent = request.headers['user-agent']
-            #if 'x-real-ip' in request.headers:
-            #    self.client_ip = request.headers['x-real-ip']
-            #elif 'x-forwarded-for' in request.headers:
-            #    self.client_ip = self.headers['x-forwarded-for'][-2]
-            #else:
-            #    self.client_ip = request.client.host
+            
+        self.user_agent = self.headers.get('user-agent', "Unknown")
+
+        # Determine if HTTPS being used on frontend
+        if self.headers['x-forwarded-proto'] == "https" or 'x-forwarded-ssl' in self.headers:
+            self.front_end_https = True
+        if self.server_port == 443 or self.server_port == 8443:
+            self.front_end_https = True
 
         if not self.client_ip:
             self.client_ip = self.DetermineClientIP()
