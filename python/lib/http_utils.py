@@ -53,7 +53,7 @@ class HTTPRequest():
                 self.client_city = env_vars.get('HTTP_X_APPENGINE_CITY', None)
                 self.client_region = env_vars.get('HTTP_X_APPENGINE_REGION', None)
                 self.client_country = env_vars.get('HTTP_X_APPENGINE_COUNTRY', None)
-                #self.client_ip = env_vars.get(['HTTP_X_APPENGINE_USER_IP'], None)
+                self.client_ip = env_vars.get('HTTP_X_APPENGINE_USER_IP', None)
 
         # FastAPI / Starlette
         if request:
@@ -95,3 +95,4 @@ class HTTPRequest():
 
         # Last resort
         return self.remote_addr
+
