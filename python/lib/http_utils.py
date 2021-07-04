@@ -59,8 +59,7 @@ class HTTPRequest():
         # Quart
         if request and 'quart' in str(request.__class__):
             for _ in request.headers.items():
-                key = _[0].lower()
-                self.headers[key] = _[1]
+                self.headers[_[0].lower()] = _[1]
             self.host = request.host.split(':')[0]
             self.query_fields = request.args
             self.remote_addr = self.headers['remote-addr']
@@ -82,7 +81,9 @@ class HTTPRequest():
         self.user_agent = self.headers.get('user-agent', "Unknown")
 
         # Determine if HTTPS being used on frontend
-        if self.headers['x-forwarded-proto'] == "https" or 'x-forwarded-ssl' in self.headers:
+        if self.headers['x-forwarded-proto'] == "https":
+            self.front_end_https = True
+        if 'x-forwarded-ssl' in self.headers or 'x-appengine-https' in self_headers:
             self.front_end_https = True
         if self.server_port == 443 or self.server_port == 8443:
             self.front_end_https = True
@@ -92,6 +93,9 @@ class HTTPRequest():
             self.client_ip = self.DetermineClientIP()
 
     def DetermineClientIP(self):
+
+        if 'x-appengine-user-ip' in self.headers:
+            return self.headers['x-appengine-user-ip]
 
         if 'x-real-ip' in self.headers and self.headers['x-real-ip'] != "127.0.0.1":
             return self.headers['x-real-ip']
