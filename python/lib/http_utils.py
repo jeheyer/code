@@ -28,7 +28,8 @@ class HTTPRequest():
             self.headers['x-forwarded-for'] = env_vars.get('HTTP_X_FORWARDED_FOR', None)
             self.headers['x-forwarded-proto'] = env_vars.get('HTTP_X_FORWARDED_PROTO', 'http')
             self.headers['x-forwarded-ssl']  = env_vars.get('HTTP_X_FORWARDED_SSL', False)
-            self.headers['x-forwarded-port'] = env_vars.get('SERVER_PORT', 80)
+            self.headers['x-forwarded-port'] = env_vars.get('SERVER_PORT', 0)
+            self.headers['x-real-ip'] = env_vars.get('HTTP_X_REAL_IP', "127.0.0.1")
 
             if self.headers['x-forwarded-proto'] == "https":
                 self.front_end_https = True
@@ -65,16 +66,16 @@ class HTTPRequest():
             self.method = request.method
             self.server_port = request['server'][1]
             self.server_protocol = "HTTP/" + request['http_version']
-            self.remote_addr = self.headers['x-forwarded-for'][-1]
+            self.remote_addr = request.client.host
             if 'x-forwarded-proto' in self.headers and self.headers['x-forwarded-proto'] == "https":
                 self.front_end_https = True
             self.user_agent = request.headers['user-agent']
-            if 'x-real-ip' in request.headers:
-                self.client_ip = request.headers['x-real-ip']
-            elif 'x-forwarded-for' in request.headers:
-                self.client_ip = self.headers['x-forwarded-for'][-2]
-            else:
-                self.client_ip = request.client.host
+            #if 'x-real-ip' in request.headers:
+            #    self.client_ip = request.headers['x-real-ip']
+            #elif 'x-forwarded-for' in request.headers:
+            #    self.client_ip = self.headers['x-forwarded-for'][-2]
+            #else:
+            #    self.client_ip = request.client.host
 
         if not self.client_ip:
             self.client_ip = GetClientIP()
@@ -88,13 +89,15 @@ def GetClientIP():
 
     if 'x-forwarded-for' in self.headers:
         if ", " in self.headers['x-forwarded-for']:
+            return x_fwd_for_ips[-2]
             # Get a list of IPs addresses used by this web server hostname
             server_ips = socket.gethostbyname(self.host)
             x_fwd_for_ips =  x_fwd_for.split(", ")
             for _ in range(len(x_fwd_for_ips)):
                 if x_fwd_for_ips[_] in server_ips:
                     # Use last IP address before the IP of this web server
-                    return x_fwd_for_ips[-1]
+                    return x_fwd_for_ips[_]
+            return x_fwd_for_ips[-2]
 
     # Last resort
     return self.remote_addr
