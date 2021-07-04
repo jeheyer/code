@@ -10,7 +10,7 @@ class HTTPRequest():
         self.request_uri = env_vars.get('REQUEST_URI', None)
         if not self.request_uri:
             self.request_uri = env_vars.get('RAW_URI', self.path)
-        self.query_string = dict(parse.parse_qsl(parse.urlsplit(str(self.request_uri)).query))
+        self.query_fields = dict(parse.parse_qsl(parse.urlsplit(str(self.request_uri)).query))
         self.server_port = env_vars.get('SERVER_PORT', 80)
         self.server_protocol = env_vars.get('SERVER_PROTOCOL', None)
         self.server_software = env_vars.get('SERVER_SOFTWARE', 'Unknown')
@@ -35,7 +35,7 @@ class HTTPRequest():
 
         # Flask
         if request:
-            self.query_string = request.args
+            self.query_fields = request.args
 
         # FastAPI / Starlette
         #query_string = dict(req.url.path)
