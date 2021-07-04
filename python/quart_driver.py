@@ -19,7 +19,6 @@ async def root(path):
     from quart.json import jsonify
 
     http_request = HTTPRequest(request = request)
-    http_request.path = "/" + path
 
     try:
         data = main(vars(http_request))
