@@ -10,7 +10,7 @@ def main(request):
 
     if "mortgage" in request['path']:
         from lib.financial import GetPaymentData
-        return GetPaymentData(**request['query_fields'])
+        return GetPaymentData(**request['query_params'])
 
     if "squidread" in request['path']:
         from lib.squidread import GetSquidData
@@ -36,7 +36,7 @@ def main(request):
         return GetDNSServersFromToken(token)
 
     if "get_table" in request['path']:
-        params = request['query_fields']
+        params = request['query_params']
         if 'database' in params and 'table' in params:
             db_name = params['database']
             db_table = params['table']
@@ -75,10 +75,9 @@ def ParseCGI():
     request = vars(http_request(os.environ))
 
     query_fields_objects = cgi.FieldStorage()
-
     for key in query_fields_objects:
         value = query_fields_objects[key].value
-        request['query_string'][key] = str(value)
+        request['query_params'][key] = str(value)
 
     return request
 

@@ -23,7 +23,7 @@ class HTTPRequest():
                 self.host = self.headers['host']
                 self.method = event['httpMethod']
                 self.path = event['path']
-                self.query_fields = event['queryStringParameters']
+                self.query_params = event['queryStringParameters']
                 self.client_ip = event['requestContext']['identity']['sourceIp']
                 self.server_software = "awselb"
 
@@ -35,7 +35,7 @@ class HTTPRequest():
                 self.request_uri = env_vars.get('REQUEST_URI', None)
                 if not self.request_uri:
                     self.request_uri = env_vars.get('RAW_URI', self.path)
-                self.query_fields = dict(parse.parse_qsl(parse.urlsplit(str(self.request_uri)).query))
+                self.query_params = dict(parse.parse_qsl(parse.urlsplit(str(self.request_uri)).query))
                 self.server_protocol = env_vars.get('SERVER_PROTOCOL', None)
                 if self.server_protocol:
                     self.http_version = self.server_protocol.split('/')[1]
@@ -71,7 +71,7 @@ class HTTPRequest():
                     self.headers[_[0].lower()] = _[1]
                 self.host = request.host.split(':')[0]
                 self.path = request.path
-                self.query_fields = request.args
+                self.query_params = request.args
                 self.remote_addr = request.remote_addr
                 self.http_version = request.http_version
                 self.server_protcol = "HTTP/" + request.http_version
@@ -82,7 +82,7 @@ class HTTPRequest():
                 self.headers = request.headers
                 self.host = request.headers['host'].split(':')[0]
                 self.path = request.url.path
-                self.query_fields = dict(request.query_params)
+                self.query_params = dict(request.query_params)
                 self.remote_addr = request.client.host
                 if 'http_version' in request:
                     self.http_version = request['http_version']
