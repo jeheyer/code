@@ -17,14 +17,7 @@ def get_handler(path, req: Request):
     from fastapi.responses import JSONResponse
     from fastapi.encoders import jsonable_encoder
 
-    http_request = HTTPRequest()
-    http_request.host = req.headers['host'].split(':')[0]
-    http_request.path = "/" + path
-    http_request.query_string = dict(req.query_params)
-    if 'x-real-ip' in req.headers:
-        http_request.client_ip = req.headers['x-real-ip']
-    else:
-        http_request.client_ip = req.client.host
+    http_request = HTTPRequest(request = req)
 
     try:
 

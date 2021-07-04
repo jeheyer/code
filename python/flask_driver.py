@@ -13,7 +13,7 @@ app = Flask(__name__)
 @app.route("/<string:path>")
 def root(path):
 
-    http_request = HTTPRequest(request.environ, request)
+    http_request = HTTPRequest(request.environ)
     
     try:
         data = main(vars(http_request))
