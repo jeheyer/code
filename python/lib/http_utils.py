@@ -97,7 +97,8 @@ class HTTPRequest():
                     if x_fwd_for_ips[_] in server_ips:
                         # Use last IP address before the IP of this web server
                         return x_fwd_for_ips[_]
-                return x_fwd_for_ips[-2]
+            else:
+                return self.headers['x-forwarded-for']
 
         # Last resort
         return self.remote_addr
