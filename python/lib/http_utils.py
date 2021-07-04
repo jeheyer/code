@@ -9,6 +9,7 @@ class HTTPRequest():
         self.headers['x-forwarded-proto'] = "http"
         self.client_ip = None
         self.user_agent = None
+        self.remote_addr = None
         self.server_port = None
         self.server_software = "Unknown"
         self.front_end_https = False
@@ -55,8 +56,17 @@ class HTTPRequest():
                 self.client_country = env_vars.get('HTTP_X_APPENGINE_COUNTRY', None)
                 self.client_ip = env_vars.get('HTTP_X_APPENGINE_USER_IP', None)
 
-        # FastAPI / Starlette
-        if request:
+        # Quart
+        if request and 'quart' in str(request.__class__):
+            for _ in request.headers.items():
+                key = _[0].lower()
+                self.headers[key] = _[1]
+            self.host = request.host.split(':')[0]
+            self.query_fields = request.args
+            self.remote_addr = self.headers['remote-addr']
+
+        # FastAPI / Starlette 
+        if request and 'starlette' in str(request.__class__):
             self.headers = request.headers
             self.host = request.headers['host'].split(':')[0]
             self.method = request.method
@@ -94,5 +104,6 @@ class HTTPRequest():
                 return _
 
         # Last resort
-        return self.remote_addr
+        if self.remote_addr:
+            return self.remote_addr
 
