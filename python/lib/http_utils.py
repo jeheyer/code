@@ -14,6 +14,7 @@ class HTTPRequest():
         self.server_software = "Unknown"
         self.front_end_https = False
 
+        # Parse environment variables dictionary
         if env_vars:
 
             if 'requestContext' in env_vars:
@@ -36,6 +37,8 @@ class HTTPRequest():
                     self.request_uri = env_vars.get('RAW_URI', self.path)
                 self.query_fields = dict(parse.parse_qsl(parse.urlsplit(str(self.request_uri)).query))
                 self.server_protocol = env_vars.get('SERVER_PROTOCOL', None)
+                if self.server_protocol:
+                    self.http_version = self.server_protocol.split('/')[1]
                 self.server_software = env_vars.get('SERVER_SOFTWARE', 'Unknown')
                 self.server_port = env_vars.get('SERVER_PORT', 80)
                 self.remote_addr = env_vars.get('REMOTE_ADDR', "127.0.0.1")
@@ -56,35 +59,44 @@ class HTTPRequest():
                 self.client_country = env_vars.get('HTTP_X_APPENGINE_COUNTRY', None)
                 self.client_ip = env_vars.get('HTTP_X_APPENGINE_USER_IP', None)
 
-        # Quart
-        if request and 'quart' in str(request.__class__):
-            self.vars = dict(request.headers)
-            for _ in request.headers.items():
-                self.headers[_[0].lower()] = _[1]
-            self.host = request.host.split(':')[0]
-            self.query_fields = request.args
-            self.remote_addr = self.headers.get('remote-addr', None)
+        # Parse Request object
+        if request:
 
-        # FastAPI / Starlette 
-        if request and 'starlette' in str(request.__class__):
-            self.headers = request.headers
-            self.host = request.headers['host'].split(':')[0]
             self.method = request.method
-            self.path = request.url.path
-            self.query_fields = dict(request.query_params)
-            if 'server' in request:
-                self.server_port = request['server'][1]
-            if 'http_version' in request:
-                self.server_protocol = "HTTP/" + request['http_version']
-            self.remote_addr = request.client.host
+
+            # Quart
+            if request and 'quart' in str(request.__class__):
+                #self.vars = str(vars(request))
+                for _ in request.headers.items():
+                    self.headers[_[0].lower()] = _[1]
+                self.host = request.host.split(':')[0]
+                self.path = request.path
+                self.query_fields = request.args
+                self.remote_addr = request.remote_addr
+                self.http_version = request.http_version
+                self.server_protcol = "HTTP/" + request.http_version
+                self.server_port = request.server[1]
+
+            # FastAPI / Starlette 
+            if request and 'starlette' in str(request.__class__):
+                self.headers = request.headers
+                self.host = request.headers['host'].split(':')[0]
+                self.path = request.url.path
+                self.query_fields = dict(request.query_params)
+                self.remote_addr = request.client.host
+                if 'http_version' in request:
+                    self.http_version = request['http_version']
+                    self.server_protocol = "HTTP/" + request['http_version']
+                if 'server' in request:
+                    self.server_port = request['server'][1]
 
         # Set handy variables
         self.user_agent = self.headers.get('user-agent', "Unknown")
 
-        # Determine if HTTPS being used on frontend
-        if self.headers['x-forwarded-proto'] == "https":
+        # Check various ways of indicating HTTPS is being used on frontend
+        if self.headers['x-forwarded-proto'] == "https" or 'x-forwarded-ssl' in self.headers:
             self.front_end_https = True
-        if 'x-forwarded-ssl' in self.headers or 'x-appengine-https' in self.headers:
+        if self.headers.get('x-appengine-https', "off") == "on":
             self.front_end_https = True
         if self.server_port == 443 or self.server_port == 8443:
             self.front_end_https = True
