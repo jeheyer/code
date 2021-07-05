@@ -41,7 +41,7 @@ class HTTPRequest():
                     self.http_version = self.server_protocol.split('/')[1]
                 self.server_software = env_vars.get('SERVER_SOFTWARE', 'Unknown')
                 self.server_address = env_vars.get('SERVER_ADDR', None)
-                self.server_port = env_vars.get('SERVER_PORT', 80)
+                self.server_port = int(env_vars.get('SERVER_PORT', 80))
                 self.remote_addr = env_vars.get('REMOTE_ADDR', "127.0.0.1")
                 self.headers['user-agent'] = env_vars.get('HTTP_USER_AGENT', 'Unknown')
                 self.headers['x-forwarded-for'] = env_vars.get('HTTP_X_FORWARDED_FOR', None)
@@ -79,7 +79,7 @@ class HTTPRequest():
                 self.remote_addr = request.remote_addr
                 self.http_version = request.http_version
                 self.server_protcol = "HTTP/" + request.http_version
-                self.server_port = request.server[1]
+                self.server_port = int(request.server[1])
 
             # FastAPI / Starlette 
             if request and 'starlette' in str(request.__class__):
@@ -93,7 +93,7 @@ class HTTPRequest():
                     self.http_version = request['http_version']
                     self.server_protocol = "HTTP/" + request['http_version']
                 if 'server' in request:
-                    self.server_port = request['server'][1]
+                    self.server_port = int(request['server'][1])
 
             # Google App Engine
             if 'x-appengine-default-version-hostname' in self.headers:
