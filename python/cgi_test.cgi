@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# If still running Python 2.7
 from __future__ import print_function
-import os, cgi
 
 def main():
+
+    import os, cgi
 
     if not 'REQUEST_METHOD' in os.environ:
         quit("Call me via the web, please")

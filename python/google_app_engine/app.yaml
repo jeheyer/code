@@ -1,8 +1,0 @@
-runtime: python38
-#entrypoint: python test-app.py
-entrypoint: uwsgi --http :$PORT --wsgi-file main.py --callable application
-#env: standard
-#handlers:
-#- url: /
-#  http_headers:
-#    Access-Control-Allow-Origin: https://code.j5.org/*

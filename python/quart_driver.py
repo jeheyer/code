@@ -12,7 +12,7 @@ app.config['JSON_SORT_KEYS'] = False
 @app.route("/", defaults = {'path': ""})
 @app.route("/<string:path>")
 @app.route("/<path:path>")
-async def root(path):
+def root(path):
 
     from quart import request
     from quart.helpers import make_response
