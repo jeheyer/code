@@ -4,7 +4,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, PlainTextResponse, RedirectResponse
 from typing import Optional
 from traceback import format_exc
-from lib.webapps import *
+from webapps import *
 import asyncio
 
 RESPONSE_HEADERS = {

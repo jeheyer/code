@@ -1,5 +1,5 @@
 from quart import Quart, request, Response, jsonify
-from lib.webapps import *
+from webapps import *
 import asyncio
 
 app = Quart(__name__)

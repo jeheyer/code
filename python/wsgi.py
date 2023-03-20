@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, redirect, Response
-from lib.webapps import *
+from webapps import *
 import asyncio
 
 app = Flask(__name__)
