@@ -9,8 +9,8 @@ class GeoIPList:
         self.geoips = []
         
         READER_FILES = {
-            'city': "../db/GeoIP2-City.mmdb",
-            'isp': "../db/GeoIP2-ISP.mmdb",
+            'city': "../../../db/GeoIP2-City.mmdb",
+            'isp': "../../../db/GeoIP2-ISP.mmdb",
         }
         reader = {}
 
