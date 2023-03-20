@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>US Constituion Quiz</title>
+<meta charset="utf-8" />
+<meta name="description" content="US Constitution" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="index, follow, archive, imageindex">
+</head>
+<body>
+
+<script>
+	
+function grade() {
+	
+	var questions = 3;	// Number of Questions in Quiz
+	var choices   = 4;      // Number of Choices for Each Question
+	var numright  = 0;	// Number of Correct Answers by User		
+	var wrong = null;              // String of wrong Answers
+	Answers = new StringArray(questions);
+	
+	// Define the correct Answers Here
+	Answers[1] = 'C';
+	Answers[2] = 'D';
+	Answers[3] = 'B';
+	
+	// Begin Processing Form
+	for (var i = 1; i <= questions; i++) {
+		if(Answers[i]  == document.quizform.elements[((choices + 1)*(i - 1))].value) {
+			numright++;
+		} else {
+			if (wrong) // At least one wrong answer so far
+				wrong += ", ";   // add comma
+				wrong += i
+			}			
+		}	
+	
+		// Popup results		
+		if (numright == questions)
+			alert("Perfect Score!  Very Good!");
+		else {
+			alert("You answered " + (questions-numright) + " questions incorrectly: " + wrong);			
+		}	
+	}
+	
+	function StringArray (n) {
+	       	this.length = n;
+	        for (var i = 1; i <= n; i++) {
+	       	        this[i] = '0'
+	        }
+	       	return this
+	}
+	
+</SCRIPT>
+	
+<h1><A NAME="quiz">U.S. Constitution Quiz</A></h1>
+	
+<FORM NAME="quizform" onSubmit="grade(this.form)">
+<OL>
+<DT><LI>In what year was the Constitution created?</DT>	
+		<INPUT TYPE="hidden" NAME="Q1">
+		<DD><INPUT TYPE="radio" NAME="1" VALUE="A" onClick="quizform.Q1.value='A'">1620</DD>
+		<DD><INPUT TYPE="radio" NAME="1" VALUE="B" onClick="quizform.Q1.value='B'">1776</DD>
+		<DD><INPUT TYPE="radio" NAME="1" VALUE="C" onClick="quizform.Q1.value='C'">1787</DD>
+		<DD><INPUT TYPE="radio" NAME="1" VALUE="D" onClick="quizform.Q1.value='D'">1803</DD>
+	<DT><LI>What is not a Branch of the Federal Government?</DT>	
+		<INPUT TYPE="hidden" NAME="Q2">
+		<DD><INPUT TYPE="radio" NAME="2" VALUE="A" onClick="quizform.Q2.value='A'">Executive</DD>
+		<DD><INPUT TYPE="radio" NAME="2" VALUE="B" onClick="quizform.Q2.value='B'">Legislative</DD>
+		<DD><INPUT TYPE="radio" NAME="2" VALUE="C" onClick="quizform.Q2.value='C'">Judicial</DD>
+		<DD><INPUT TYPE="radio" NAME="2" VALUE="D" onClick="quizform.Q2.value='D'">Military</DD>
+	<DT><LI>In what city was the Constitution created in?</DT>	
+		<INPUT TYPE="hidden" NAME="Q3">
+		<DD><INPUT TYPE="radio" NAME="3" VALUE="A" onClick="quizform.Q3.value='A'">New York</DD>
+		<DD><INPUT TYPE="radio" NAME="3" VALUE="B" onClick="quizform.Q3.value='B'">Philadelphia</DD>
+		<DD><INPUT TYPE="radio" NAME="3" VALUE="C" onClick="quizform.Q3.value='C'">Boston</DD>
+		<DD><INPUT TYPE="radio" NAME="3" VALUE="D" onClick="quizform.Q3.value='D'">Washington, DC</DD>
+	</OL>
+	
+	<P><FONT FACE="Arial, Helvetica"><TT><INPUT TYPE="Submit" Value="Grade">   <INPUT TYPE="Reset" Value="Clear Form"></TT></FONT></P>
+	</FORM>
+
+</body>
+</html>

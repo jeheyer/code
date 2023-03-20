@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Apple iOS Device Comparison Table</title>
+<meta charset="utf-8" />
+<meta name="description" content="Apple, iOS, iPhone, iPad, compare, comparison, features table, lighting, USB-C, A15, A14, A13, A12, A11, A10" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="index, follow, archive, noimageindex">
+<meta http-equiv="Cache-Control" content="no-cache"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0" />
+<style>
+table	{ width: 100%; border-spacing: 2px; border-collapse: collapse; border: 1px solid black; }
+th,td	{ font-family: arial; text-align: left; font-size:8; border: 1px solid black; padding: 4px; }
+h1	    { font-family: arial; font-size: 14; }
+tr.even td { background-color: #f8f8f8; }
+tr.odd td { background-color: #dfdfdf; }
+</style>
+</head>
+<body>
+<script>
+
+// HTTP -> HTTPS redirect
+if (location.protocol !== 'https:' ) {
+    let newURL = 'https://' + window.location.hostname + window.location.pathname + window.location.search;
+    window.location.replace(newURL);
+}
+
+</script>
+
+<p id="showData"></p>
+</body>
+
+<script>
+
+(async() => {
+
+  fetch('icompare.json', {method: 'GET', cache: 'no-cache'})
+   .then(response => {
+      if (!response.ok) {
+        throw new Error('HTTP error from server');
+      }
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new TypeError("Did not receive JSON from AJAX call");
+      }
+      return response.json();
+    })
+    .then(data => {
+
+        let columns = [];
+        for (var key in data[0]) {
+          if (columns.indexOf(key) === -1) {
+            columns.push(key);
+          }
+        }
+
+        let table = document.createElement("table");
+        let tr = table.insertRow(-1); 
+        for (let i = 0; i < columns.length; i++) {
+          let th = document.createElement("th");
+          th.innerHTML = columns[i];
+          tr.appendChild(th);
+        }
+
+        // Fill the rows
+        for (let i = 0; i < data.length; i++) {
+          tr = table.insertRow(-1);
+          for (let j = 0; j < columns.length; j++) {
+            let tabCell = tr.insertCell(-1);
+            tabCell.innerHTML = data[i][columns[j]];
+          }
+          tr.className = (i % 2  == 0) ? "even" : "odd";
+        }
+        var divContainer = document.getElementById("showData");
+        divContainer.innerHTML = "";
+        divContainer.appendChild(table);
+    });
+})();
+
+</script>
+
+</html>
+

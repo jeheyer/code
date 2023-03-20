@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Mortgage Calculator</title>
+<meta charset="utf-8" />
+<meta name="description" content="A" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="index, follow, archive, noimageindex">
+<meta http-equiv="Cache-Control" content="no-cache"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0" />
+<style>
+table	{ width: 100%; border-spacing: 2px; border-collapse: collapse; border: 1px solid black; }
+th,td	{ font-family: arial; text-align: left; font-size:8; border: 1px solid black; padding: 4px; }
+h1	{ font-family: arial; font-size: 14; }
+tr.even td { background-color: #fefefe; }
+tr.odd  td { background-color: #efefef; }
+</style>
+</head>
+<body>
+
+<!-- Load external scripts -->
+<script src="../js/canvasjs.min.js"></script>
+
+<script>
+
+function MakeChart(loan_amount, payments) {
+    
+  // Initialize arrays for the lines to draw
+  let principalArray = [];
+  let interestArray = [];
+  let equityArray = [];
+
+  // Calculate and store data points for the chart
+  for (let i = 0; i < payments.length; i++) {
+    principalArray.push({ x: i, y: payments[i].remainingBalance });
+    interestArray.push({ x: i, y: payments[i].sumOfInterestPayments })
+    equityArray.push({ x: i, y: payments[i].sumOfPrinciple });
+  }
+
+  // Set parameters for the chart
+  var chart = new CanvasJS.Chart("chartContainer", {
+    theme: "light2",
+    title: { text: "Payment Chart"  },
+    axisX: { title: "Year Number", interval: 1},
+    axisY: { title: "Principal/Equity", prefix: "$" },
+    axisY2: { title: "Interest Paid", prefix: "$" },
+    data: [
+      { 
+        type: "line",
+        name: "Principal",
+        color: "#0000FF",
+        axisYIndex: 0,
+        showInLegend: true,
+        dataPoints: principalArray
+      }, 
+      {
+        type: "line",
+        name: "Equity",
+        color: "#00FF00",
+        axisYIndex: 1,
+        showInLegend: true,
+        dataPoints: equityArray 
+      },
+      {
+        type: "line",
+        name: "Interest",
+        color: "#FF0000",
+        axisYType: "secondary",
+        showInLegend: true,
+        dataPoints: interestArray 
+      }
+    ]
+  });
+
+  // Draw the chart
+  if (loan_amount)
+    chart.render();
+
+}
+
+function FillTable(table_id, data) {
+
+  // Build a list of colums
+  let columns = [];
+  for (const key in data[0]) {
+    if (columns.indexOf(key) === -1) {
+      columns.push(key);
+    }
+  }
+
+  // Fill Table Header
+  let  table = document.getElementById(table_id);
+  let tr = table.insertRow(-1);
+  for (let i = 0; i < columns.length; i++) {
+    let th = document.createElement("th");
+    th.innerHTML = columns[i];
+    tr.appendChild(th);
+  }
+
+  // Fill Table Body
+  for (let i = 0; i < data.length; i++) {
+    tr = table.insertRow();
+    for (let j = 0; j < columns.length; j++) {
+      let tabCell = tr.insertCell(j);
+      let value = data[i][columns[j]];
+      if (j >= 2)
+        value = "$ " + parseFloat(value.toFixed(2)).toLocaleString();
+      tabCell.innerHTML = value;
+    }
+    tr.className = (i % 2  == 0) ? "even" : "odd";
+  }
+
+}
+
+function ShowLoanData() {
+
+  (async() => {
+
+    const url = "/wsgi/mortgage?" + location.search.substr(1);
+
+    const ajax_request = new Request(url, {method: 'GET', mode: 'cors', cache: 'no-cache'});
+    fetch(ajax_request)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new TypeError("Did not receive JSON from AJAX call");
+        }
+        return response.json();
+      })
+      .then(data => {
+
+        const loanData = data;
+
+        // Show the chart                                                                
+        MakeChart(loanData.loanAmount, loanData.paymentBreakdown);
+
+        // Fill Form with values being used
+        let LoanTableFields = []
+        LoanTableFields =  [ "loanAmount", "interestRate", "years", "startYear", "startMonth" ];
+        for (const field of LoanTableFields) {
+          document.querySelector("#" + field).value = loanData[field];
+        }
+        LoanTableFields = [ "monthlyPayment", "sumOfPayments", "sumOfInterestPayments" ];
+        for (const field of LoanTableFields) {
+          value = loanData[field];
+          document.querySelector("#" + field).innerHTML = "$ " + parseFloat(value.toFixed(2)).toLocaleString();
+        }
+
+        // Fill payment breakdown table with data
+        FillTable("payment_table", loanData.paymentBreakdown);
+
+      })
+      .catch(error => console.error(error));
+  })();
+}
+
+</script>
+
+<table id="input_table" border=0 width=800>
+  <tr>
+    <td width=320><b>Enter Loan Data:</b></td>
+    <td width=480><b>Graph</b></td>
+  </tr>
+  <tr>
+    <td>
+      <table cellspacing=5 align=left>
+        <form method=get action="">
+        <fieldset>    
+          <tr><td><legend>Loan Amount</legend><td><input type='text' name='loanAmount' id='loanAmount' size=4 maxlength=6 value=''></td></tr>
+          <tr><td><legend>Interest Rate:</legend><td><input type='text' name='interestRate' id='interestRate' size=4 maxlength=6 value=''></td></tr>
+          <tr><td><legend>Duration (years):</legend><td><input type='text' name='years' id='years' size=2 maxlength=2 value=''></td></tr>
+          <tr><td><legend>Start Year:</legend><td><input type='text' name='startYear' id='startYear' size=4 maxlength=4></td></tr>
+          <tr><td><legend>Start Month:</legend><td><input type='text' name='startMonth' id='startMonth' size=2 maxlength=2></td></tr>
+          <tr><td>Approximate Payments:</td><td><input type=submit value='Calculate'></td></tr>
+          <tr><td><legend>Monthtly Payment:</legend></td><td><span id="monthlyPayment" class="col-lg-6 px-0">$</span></td></tr>
+          <tr><td><legend>Total Payments:</legend></td><td><span id="sumOfPayments" class="col-lg-6 px-0">$</span></td></tr>
+          <tr><td><legend>Total Interest:</legend></td><td><span id="sumOfInterestPayments" class="col-lg-6 px-0">$</span></td></tr>
+        </fieldset>
+        </form>
+      </table>
+    </td>
+    <td>
+      <div id='chartContainer' style="width:720px; height: 300px"><canvas id='chart' class='chart'>browser doesn't support canvas</canvas></div>
+    </td>
+  </tr>
+</table>
+    
+<hr>
+
+<h1>Annual Payment Breakdown</h1>
+
+<table id="payment_table">
+<caption></caption>
+<thead></thead>
+<tbody></tbody>
+<tfoot></tfoot>
+</table>
+
+<script>
+
+if (location.search.substr(1) !== "") {
+
+  // Got parameters
+  ShowLoanData();
+
+} else {
+
+  // Just populate form with some default values
+  today = new Date();
+  document.querySelector("#loanAmount").value = 200000;
+  document.querySelector("#interestRate").value = 3.25;
+  document.querySelector("#years").value = 30;
+  let year = today.getFullYear();
+  let month = today.getMonth()+2;
+  if (month > 12) {
+    month = 1;
+    year++;
+  }
+  document.querySelector("#startYear").value = year;
+  document.querySelector("#startMonth").value = month;
+}
+
+</script>
+</body>
+</html>

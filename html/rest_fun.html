@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Firewall Rest-API Fun</title>
+<meta charset="utf-8" />
+<meta name="description" content="Rest API, JSON, Fortigate, Palo Alto Networks, CheckPoint" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="index, follow, archive, noimageindex">
+<style>
+table   { width: 100%; border-spacing: 2px; border-collapse: collapse; border: 1px solid black; }
+th,td   { font-family: arial; text-align: left; font-size:8; border: 1px solid black; padding: 4px; }
+h1      { font-family: arial; font-size: 14; }
+tr.even td { background-color: #fefefe; }
+tr.odd  td { background-color: #efefef; }
+</style>
+</head>
+<body>
+    
+<script src="../js/ajax-functions.js"></script>
+
+<script>
+    
+  var device_type;
+  const api_commands = [];
+    
+  function GetAPICommands(device_type) {
+        
+        api_commands["fortigate6"] = {
+            "token_field_name": "access_token",
+            "uri_prefix": "/api/v2",
+            "options": []
+        }
+        api_commands["fortigate6"].options.push({ "path": "/monitor/router/ipv4", description: "Active IPv4 Routes" });
+        api_commands["fortigate6"].options.push({ "path": "/monitor/firewall/policy", description: "Firewall Policy" });
+        api_commands["fortigate6"].options.push({ "path": "/cmdb/router/static", description: "Configured Static Routes" });
+        api_commands["fortigate6"].options.push({ "path": "/monitor/system/interface", description: "Interface Status" });
+        api_commands["fortigate6"].options.push({ "path": "/cmdb/system/interface", description: "Configured Interfaces" });
+        api_commands["fortigate6"].options.push({ "path": "/monitor/vpn/ssl", description: "SSL VPN Sessions" });
+        api_commands["fortigate6"].options.push({ "path": "/monitor/vpn/ipsec", description: "IPSec VPN Tunnel Status" });
+
+        api_commands["paloalto9"] = {
+            "token_field_name": "token",
+            "uri_prefix": "/api/derp",
+            "options": []
+        }
+        api_commands["paloalto9"].options.push({ "path": "/monitor/router/ipv4", description: "Something" });
+
+        api_commands["checkpointr8030"] = {
+            "token_field_name": "token",
+            "uri_prefix": "/api/derp",
+            "options": []
+        }
+        api_commands["checkpointr8030"].options.push({ "path": "/monitor/router/ipv4", description: "Something" });
+        
+        return api_commands[device_type];
+        
+  }
+		
+  function ProcessForm() {
+        
+        // Get values from HTML form
+        device_type = document.getElementById("device_type").value;
+        let api_command_index = document.getElementById("api_command").value;
+        hostname = document.getElementById("hostname").value;
+        tcp_port = document.getElementById("tcp_port").value;        
+        token = document.getElementById("token").value;
+        console.log("Device type: " + device_type);
+        console.log("API Command index: " + api_command_index);
+
+        if (!hostname || !tcp_port || !token || !device_type) {
+            alert("Need Device Type, Hostname, and Token entries");
+            return 1;
+        } 
+                
+        // Create some variables
+        let target = "https://" + hostname + ":" + tcp_port;    
+        let uri_prefix = api_commands[device_type].uri_prefix;
+        let api_command = api_commands[device_type].options[api_command_index].path;        
+        let token_field_name = api_commands[device_type].token_field_name; 	
+        let uri = uri_prefix + api_command + "?" + token_field_name + "=" + token;
+        let ajax_url = target + uri;
+        console.log(`Making REST call against ${ajax_url}`);
+
+        MakeAjaxCall(ajax_url).then(rest_data => {
+          FillTable("results_table", rest_data.results);
+        }).catch(console.log);
+
+  }
+    
+function SetAPICommands(device_type) {
+        
+  let options = GetAPICommands(device_type).options;
+  const selector = document.getElementById("api_command");
+  options.forEach(function (value, i) {
+    let option = document.createElement("option");
+    option.value = i;
+    option.text = value.description;
+    selector.add(option);
+  });
+
+}
+    
+</script>
+
+<h1>Firewall Rest API Fun!</h1>
+
+<form method="post" action="javaScript:ProcessForm();">
+
+    <fieldset>
+  	    <legend>Device Type:</legend>
+        <select name="device_type" id="device_type" size=1 class="device_type">
+            <option value='0' disabled selected>Select Device Type</option>
+        </select>
+    </fieldset>
+    <fieldset>
+  	  <legend>API Command:</legend>
+       <select name="api_command" id="api_command" size=1>
+       </select>
+    </fieldset>
+    <fieldset>
+        <legend>Hostname or IP Address:</legend>
+  	    <input type="text" name="hostname" id="hostname" value="mi-casa.j5.org" size="15" maxlength="64">
+  	    <input type="text" name="tcp_port" id="tcp_port" value="443" size="5" maxlength="5">
+    </fieldset>
+    <fieldset>
+        <legend>API token</legend>
+  	    <input type="text" name="token" id="token" size="30" maxlength="64" value="z0sNjrcysrxHNsgpGG19yh0H6htccz">
+  	    <input type="hidden" name="ajax" value=1>
+    </fieldset>
+      
+<input type="submit" value="Show Rest Data">
+<input type="reset" value="Clear form">
+
+</form>
+
+<script>
+
+  let device_types = [];
+    
+  device_types.push({ "id": "checkpointr8030", "description": "CheckPoint R80.30" });
+  device_types.push({ "id": "fortigate6", "description": "Fortigate 6.x" });
+  device_types.push({ "id": "paloalto9", "description": "Palo Alto 9.x" });
+
+  // Populate device type drop-down
+  const selector = document.getElementById("device_type");
+  device_types.forEach(function (value, id) {
+    let option = document.createElement("option");
+    option.value = value.id;
+    option.text = value.description;
+    selector.add(option);
+  });
+
+  // Upon device type selection, populate API commands
+  selector.onchange = (event) => {
+    SetAPICommands(event.target.value);
+  }
+
+</script>
+
+<hr>
+
+<table id="results_table">
+<caption></caption>
+<thead></thead>
+<tbody></tbody>
+<tfoot></tfoot>
+</table>
+
+</body>
+</html>

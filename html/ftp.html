@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>FTP Browser</title>
+<meta charset="utf-8" />
+<meta name="description" content="FTP using Browser, FTP, File transfer protocol, anonymous FTP" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="index, follow, archive, noimageindex">
+</head>
+<body>
+
+<script>
+
+	// JavaScript FTP Helper
+	// By John Heyer
+	// This code may be used provided the original credits aren't altered
+		
+	function AnonymousSet() {
+		
+		if (AnonymousCheck()) {       // Set Anonymous FTP logins
+			document.ftpform.username.value = "anonymous";
+			document.ftpform.password.value = "anonymous@";
+		} else {                                             // Erase Fields
+			document.ftpform.username.value = ""; 
+			document.ftpform.password.value = "";
+		}			
+	}
+	
+	function AnonymousCheck() {
+		return document.ftpform.anonymous.checked;  
+	}		
+
+	function goFTP() {
+		
+		var hostname = document.ftpform.hostname.value;       // hostname from form
+		var username = document.ftpform.username.value;       // username  "    "
+		var password = document.ftpform.password.value;       // password  "    "
+	
+		if (!hostname) {
+			alert("You Must Enter a Hostname to Connect to, for example sunsite.unc.edu"); 
+			return false;
+		}
+		
+		if (!AnonymousCheck() && (!username || !password)) {   // forgot to enter username or password
+	
+			var msg1 = "You Need a Valid Login and Password to Access Private FTP sites.\n"
+			var msg2 = "Would You Like to Attempt an Anonymous Login?"
+	
+			if (confirm(msg1 + msg2)) {
+				document.ftpform.anonymous.checked = true;
+				AnonymousSet();			      // Set Fields
+				Surf();
+				return true; 
+			} else {
+				return false;
+			}			
+		}			
+		Surf();
+		return true;
+	}
+	
+	function Surf() {
+	
+		var hostname = document.ftpform.hostname.value;       // hostname from form
+		var username = document.ftpform.username.value;       // username  "    "
+		var password = document.ftpform.password.value;       // password  "    "
+		var dest = "ftp://";		                        // create URL
+			
+		if (username != "anonymous")                            // Standard Login
+			dest += username + ":" + password + "@"; 	// Login the way Netscape does
+
+		dest += hostname;
+		window.location.href = dest;                            // Surf to Destination
+		return true;
+	}
+	
+</script>
+	
+<h1>FTP Browser</h1>
+
+<p>Did you know it's possible to access FTP sites with just your browser?</p>
+
+<FORM NAME="ftpform" METHOD="POST">
+<PRE>
+Hostname: <INPUT TYPE="text" size="20" name="hostname">
+<INPUT TYPE="checkbox" NAME="anonymous" onClick="AnonymousSet();"> Anonymous FTP Login
+Username: <INPUT TYPE="text" SIZE="10" NAME="username">
+Password: <INPUT TYPE="password" SIZE="10" NAME="password">
+</PRE>
+<INPUT TYPE="button" VALUE="Login to FTP Site" onClick="goFTP();">	
+<INPUT TYPE="reset" VALUE="Clear Form">	
+</FORM>
+
+</body>
+</html>

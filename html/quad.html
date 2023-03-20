@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Quadradic Equation Solver</title>
+<meta charset="utf-8" />
+<meta name="description" content="JavaScript Quadratic Equation Solver" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="index, follow, archive, imageindex">
+</head>
+<body>
+	
+<h1>Quadratic Equation Solver</h1>	
+
+<script>
+
+function solve(form) {
+	
+        var a = form.A.value;	 
+        var b = form.B.value;	 
+	var c = form.C.value;	 
+	var roots = 1;
+	
+	if (a == 0){
+		alert("That isn't a Quadratic Equation\n");
+		return 1;
+	}
+	
+	var DET = det(a,b,c);
+	
+	if (DET < 0) {
+		alert("\nNo Real Roots!\n");
+		return 0;
+	}
+	
+	b *= -1;
+	
+	var R1 = (b + Math.sqrt(DET)) / 2;
+	
+	if (DET > 0) {
+		var R2 = (b - Math.sqrt(DET)) / 2;
+		roots++;
+	}
+	
+	var Message = roots + " root\(s\): " + R1;
+	
+	if (R2) {
+		Message += " and " + R2;
+	}
+	
+	alert(Message);
+	return 0;
+}	
+
+function det(A,B,C) {
+	return (Math.pow(B,2) - (4 * A * C));
+}
+
+</script>
+<FORM NAME="input">
+<INPUT TYPE="text" NAME="A" SIZE="1" MAXLENGTH="4">x<SUP>2</SUP> + 
+<INPUT TYPE="text" NAME="B" SIZE="2" MAXLENGTH="4">x +
+<INPUT TYPE="text" NAME="C" SIZE="3" MAXLENGTH="5"> = 0
+<INPUT TYPE="Submit" VALUE="Solve!" onClick="solve(this.form)">
+</FORM>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>New Seven Wonders of the World</title>
+    <meta charset="utf-8" />
+    <meta name="description" content="Simple Google Maps demo - plot new 7 wonders of the world" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+    <style>#map { height: 67% } html,body { height: 100%; } Footer { font-family: Arial; }</style>
+</head>
+<body>
+<script>
+
+  // Google maps API requires HTTPS refer
+  if (location.protocol !== 'https:') {
+    let newURL = "https://" + window.location.hostname + window.location.pathname + window.location.search;	
+    window.location.replace(newURL);
+  } 
+
+</script>
+
+<script src="../js/map-functions.js"></script>
+
+<script>
+
+  // This global array will be the list of locations we plot on the map
+  var locations = [];
+			
+  // First location is user's location
+  locations[0] = { title: "My Location", lat: null, lng: null};
+
+  // Locations 1-n will be plotted with markers on the map
+  locations.push({ title: "Great Wall of China", lat: 40.432, lng: 116.570, article: "Great_Wall_of_China"});
+  locations.push({ title: "Christ the Redeemer", lat: -22.952, lng: -42.211, article: "Christ_the_Redeemer_(statue)"});
+  locations.push({ title: "Machu Picchu", lat: -13.163, lng: -72.545, article: "Machu_Picchu"});
+  locations.push({ title: "Chichen Itza", lat: 20.683, lng: -88.569, article: "Chichen_Itza"});
+  locations.push({ title: "Roman Colosseium", lat: 41.890, lng: 12.492, article: "The_Colosseum"});
+  locations.push({ title: "Taj Mahal", lat: 27.175, lng: 78.042, article: "Taj_Mahal"});
+  locations.push({ title: "Petra", lat: 30.329, lng: 35.442, article: "Petra"});
+
+  // Fill in the 'details' attribute for each location 
+  for (let i = 0; i < locations.length; i++) {
+    locations[i].details = `<b>${locations[i].title}</b><br>`;
+    if (typeof locations[i].article !== 'undefined' ) 
+      locations[i].details += `<p>More details: <a href='https://en.wikipedia.org/wiki/${locations[i].article}'>${locations[i].title}</a></p>`;			
+  }
+		
+</script>
+
+<!-- Initialize Map -->
+<div ID="map">
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIKema_GCHpc81j1CeMuemT-C0L1zh1yw&callback=initMap"></script>
+</div>
+
+<!-- Plot locations on map -->
+<script>
+	
+  for (let i = 1; i < locations.length; i++) {
+    PlotMarker(locations[i]);
+  }
+	
+  // Re-zoom based on markers
+  map.fitBounds(bounds);
+  map.panToBounds(bounds);
+	
+</script>
+
+<!-- Give user option to show their location -->
+<script>
+	
+  // Locate user
+  locateMe();
+    
+</script>
+
+<footer>
+Special thanks to this <a href="https://www.taniarascia.com/google-maps-apis-for-multiple-locations/">Google Maps for multiple Locations tutorial</a>
+</footer>
+
+</body>
+</html>

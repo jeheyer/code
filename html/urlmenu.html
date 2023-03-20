@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Primus Site Pull-Down Menu</title>
+<meta charset="utf-8" />
+<meta name="description" content="JavaScriptFTP using Browser, FTP, File transfer protocol, anonymous FTP" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="index, follow, archive, noimageindex">
+</head>
+<body>
+
+<script>
+
+// Michael P. Scholtis (mpscho@planetx.bloomu.edu)
+// All rights reserved. July 21, 1996
+// You may use this JavaScript example as you see fit, as long as the
+// information within this comment above is included in your script.
+ 
+function surfto(form) {
+     var myindex=form.dest.selectedIndex
+     location=form.dest.options[myindex].value;
+}
+
+</script>
+
+<h1>Select URL with Pull-Down Menu</h1>
+
+<FORM NAME="myform">
+<SELECT NAME="dest" SIZE=1>
+	<OPTION SELECTED VALUE="http://www.bastardboat.com" TARGET="_parent">The Bastard Boat
+	<OPTION VALUE="http://www.primusville.com" TARGET="_parent">The Official Primus Page
+	<OPTION VALUE="http://www.ram.org/music/primus/" TARGET="_parent">The Cheesy Primus Page
+</SELECT>
+<INPUT TYPE="BUTTON" VALUE="Go to This Primus Site!" onClick="surfto(this.form)">
+</FORM>
+
+</body>
+</html>
+

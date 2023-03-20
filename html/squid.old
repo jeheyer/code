@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Squid Log Viewer</title>
+<meta charset="utf-8" />
+<meta name="description" content="A" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="index, follow, archive, noimageindex">
+<meta http-equiv="Cache-Control" content="no-cache"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0" />
+<style>
+table	{ width: 100%; border-spacing: 2px; border-collapse: collapse; border: 1px solid black; }
+th,td	{ font-family: arial; text-align: left; font-size: 6; border: 1px solid black; padding: 4px; }
+tr.even td { background-color: #f8f8f8; }
+tr.odd td { background-color: #dfdfdf; }
+</style>
+</head>
+<body>
+  <!-- Begin Form -->
+  <form method="get" action="">
+  <fieldset>
+    <legend>Location:</legend>
+    <select name="location" id="location_list" size=1>
+      <option value="" selected>All Locations</option>
+    </select>
+  </fieldset>
+  <fieldset>
+    <legend>Cluster:</legend>
+    <select name="cluster" id="cluster_list" size=1>
+      <option value="" selected>All Clusters</option>
+    </select>
+  </fieldset>
+  <fieldset>
+    <legend>Client IP Address:</legend>
+    <select name="client_ip" id="client_ip_list" size=1>
+      <option value="" selected>All Clients</option>
+    </select>
+  </fieldset>
+  <fieldset>
+    <legend>Interval:</legend>
+    <select name="interval" id="interval_list" size=1>
+      <option value="120">Last 2 Minutes</option>
+      <option value="300">Last 5 Minutes</option>
+      <option value="900">Last 15 Minutes</option>
+      <option value="1800" selected>Last 30 Minutes</option>
+      <option value="3600">Last 1 Hour</option>
+      <option value="7200">Last 2 Hours</option>
+      <option value="1440">Last 4 Hours</option>
+      <option value="28800">Last 8 Hours</option>
+    </select>
+  </fieldset>
+  <fieldset>
+    <input type='hidden' name="end_time" id="end_time"></select>
+  </fieldset>
+  <input type="submit" value="Show Rest  Data">
+  <input type="reset" value="Clear form">
+  </form>
+  <!-- End Form -->
+  <p><span id="num_rows">0</span> entries match query</p>
+  <p id="showData"></p>
+</body>
+
+<script>
+
+var params = {}
+location.search.substr(1).split("&").forEach(function(item) {
+  params[item.split("=")[0]] = item.split("=")[1];
+}); 
+
+if (params['interval']) {
+  let selector = document.getElementById('interval_list');
+  for (i = 0; i < selector.length; i++) {
+    if (selector[i].value == params['interval'])
+      //document.getElementById('interval_list').selectedIndex = i;
+      selector.selectedIndex = i;
+  }
+}
+
+const MakeAjaxCall = async (url, options) => {
+
+  if (options == undefined)
+    options = {method: 'GET', mode: 'cors', cache: 'no-cache'};
+
+  const ajax_request = new Request(url, options);
+  const ajax_response = await fetch(ajax_request);
+
+  if (ajax_response.ok) {
+
+    const json_data = await ajax_response.json();
+    return Promise.resolve(json_data);
+
+  } else {
+
+    return Promise.reject('Ajax call failed:' + ajax_request);
+
+  }
+}
+
+(async() => {
+
+    const now = Date.now();
+    document.getElementById('end_time').value = now;
+
+    const locale = navigator.language;
+
+    //let ajax_url = "https://www1.whamola.net/flask/?";
+    let ajax_url = "https://squid-log-viewer-dot-otc-core-network-prod-4aea.appspot.com/?";
+
+    // Populate Drop-down with List of Locations
+    MakeAjaxCall(ajax_url + "action=get_locations").then(locations => {
+        const selector = document.getElementById('location_list');
+        locations.forEach(function (value, i) {
+            let option = document.createElement("option");
+            option.value = value;
+            option.text = value;
+            selector.add(option);
+            if (params['location'] == value)
+                document.getElementById('location_list').selectedIndex = i+1;
+        });
+    }).catch(console.log)
+
+    if (params['location']) {
+        // Populate Drop-down with List of Clusters
+        MakeAjaxCall(ajax_url + "location=" + params['location'] + "&action=get_clusters").then(clusters => {
+            const selector = document.getElementById('cluster_list');
+            clusters.forEach(function (value, i) {
+                let option = document.createElement("option");
+                option.value = value;
+                option.text = value;
+                selector.add(option);
+                if (params['cluster'] == value)
+                    document.getElementById('cluster_list').selectedIndex = i+1;
+            });
+        }).catch(console.log)
+    }
+
+  if (params['location'] && params['location'] != "")
+      ajax_url += "location=" + params['location'];
+  if (params['cluster'] && params['cluster'] != "")
+      ajax_url += "&cluster=" + params['cluster'];
+  if (params['client_ip'] && params['client_ip'] != "")
+      ajax_url += "&client_ip=" + params['client_ip'];
+  if (params['interval'] && params['interval'] != "" && params['interval'] > 0)
+      ajax_url += "&interval=" + params['interval'];
+
+  fetch(ajax_url, {method: 'GET', cache: 'no-cache'})
+   .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new TypeError("Did not receive JSON from AJAX call");
+      }
+      return response.json();
+    })
+    .then(data => {
+
+      console.log(`Received ${data.entries.length} rows of data from backend`);
+      document.getElementById('num_rows').innerText = data.entries.length;
+
+      // Populate Drop-down with List of Client IP Addresses
+      let selector = document.getElementById('client_ip_list');
+      //console.log(data.requests_by_client_ip);
+      let i = 0;
+      Object.keys(data.requests_by_client_ip).forEach(client_ip => {
+        let option = document.createElement("option");
+        option.value = client_ip;
+        option.text = client_ip;
+        selector.add(option);        
+        //console.log('%s', client_ip);
+        if (params['client_ip']) {
+            if (params['client_ip'] == client_ip)
+              document.getElementById('client_ip_list').selectedIndex = i+1;
+        }
+        i++;
+      });
+
+      // Build a list of colums
+      let columns = [];
+      for (const key in data.entries[0]) {
+        if (columns.indexOf(key) === -1) {
+          columns.push(key);
+        }
+      }
+
+      // Fill Table Header
+      let table = document.createElement("table");
+      let tr = table.insertRow(-1); 
+      for (let i = 0; i < columns.length; i++) {
+        let th = document.createElement("th");
+        th.innerHTML = columns[i];
+        tr.appendChild(th);
+      }
+
+      // Fill the rows
+      for (let i = 0; i < data.entries.length; i++) {
+        tr = table.insertRow(-1);
+        //console.log(data.entries[i])
+        for (let j = 0; j < columns.length; j++) {
+          let tabCell = tr.insertCell(-1);
+          if (j==0) {
+            const timestamp = data.entries[i][columns[j]] * 1000;
+            const date = new Date(timestamp).toLocaleDateString(locale);
+            const time = new Date(timestamp).toLocaleTimeString(locale);
+            tabCell.innerHTML = `${time} ${date}`;
+          } else {
+            tabCell.innerHTML = data.entries[i][columns[j]];
+          }
+        }
+        tr.className = (i % 2  == 0) ? "even" : "odd";
+      }
+      var divContainer = document.getElementById("showData");
+      divContainer.innerHTML = "";
+      divContainer.appendChild(table);
+    });
+})();
+
+</script>
+</html>

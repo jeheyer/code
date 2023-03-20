@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>IPv4 Subnet Calculator</title>
+<meta charset="utf-8" />
+<meta name="description" content="IPv4 Subnet Calculator" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="index, follow, archive, noimageindex">
+<style>
+<style>
+h1     { font-family: arial; font-size: 24; }
+h2     { font-family: arial; font-size: 16; }
+tr.even td { background-color: #fcfcfc; }
+tr.odd  td { background-color: #f5f5f5; }
+table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 500px;
+}
+td {
+  font-family: arial;
+  border: 1px solid black;
+  width: 250px;
+  overflow: hidden;
+  padding: 4px;
+}
+</style>
+</head>
+<body>
+    
+<h1>IPv4 Subnet Calculator</h1>
+
+<form>
+
+<fieldset>
+  <legend>IPv4 Address:</legend>
+  <input type="text" name="ipv4_address" id="ipv4_address" value="192.168.1.123" size="15" maxlength="15">
+</fieldset>
+<fieldset>
+  <legend>Prefix Length:</legend>
+  <input type="text" name="prefix_len" id="prefix_len" value="24" size="2" maxlength="2">
+</fieldset>
+      
+<input type="submit" value="Calculate!">
+<input type="reset" value="Reset">
+
+</form>
+<hr>
+
+<table id="breakdown_table">
+<caption></caption>
+<thead></thead>
+<tbody>
+<tr class="even"><td>IP Address as Integer:</td><td id="ip_as_int"></td></tr>
+<tr class="odd"><td>IP Address as Hexadecimal:</td><td id="ip_as_hex"></td></tr>
+<tr class="even"><td>Network Prefix:</td><td id="network_prefix"></td></tr>
+<tr class="odd"><td>Subnet Mask:</td><td id="subnet_mask"></td></tr>
+<tr class="even"><td>Subnet Mask as Integer:</td><td id="subnet_mask_as_int"></td></tr>
+<tr class="odd"><td>Inverted Subnet Mask:</td><td id="inverted_subnet_mask"></td></tr>
+<tr class="even"><td>Inverted Subnet Mask as Integer:</td><td id="inverted_subnet_mask_as_int"></td></tr>
+<tr class="odd"><td>Broadcast Address:</td><td id="broadcast_address"></td></tr>
+<tr class="even"><td>Total IP Addresses:</td><td id="total_address"></td></tr>
+<tr class="odd"><td>First Usable Address:</td><td id="first_address"></td></tr>
+<tr class="even"><td>Last Usable Address:</td><td id="last_address"></td></tr>
+<tr class="odd"><td>Network  as IPv6 Link-Local:</td><td id="network_as_ipv6_linklocal"></td></tr>
+</tbody>
+<tfoot></tfoot>
+</table>
+
+<h2 id="breakdown_header">This Supernet can be subdivided as follows</h2>
+<ul id="breakdown_list">
+</ul>
+
+<script>
+    
+    Main();
+	
+    function GetParams() {
+        let get_params = {}
+        location.search.substr(1).split("&").forEach(function(item) {
+            get_params[item.split("=")[0]] = item.split("=")[1]
+        })
+	    return get_params;
+	}
+    
+    function Main() {
+    	
+        let get_params = GetParams();
+
+        ipv4_address = get_params['ipv4_address'];
+        prefix_len = get_params['prefix_len'];
+        
+        if (ipv4_address && prefix_len) {
+            document.getElementById("ipv4_address").value = ipv4_address;
+            document.getElementById("prefix_len").value = prefix_len;
+            if (prefix_len < 1 || prefix_len > 32) {
+                alert("Prefix Length must be between 1 and 32!");
+                document.getElementById("prefix_len").value = "";
+            }
+        } else {
+      	    return;
+        }
+        ip_as_int = OctetToInteger(ipv4_address);
+        ip_as_hex = IntegerToHex(ip_as_int);
+        network_prefix_as_int = ip_as_int - ip_as_int % Math.pow(2, 32 - prefix_len);
+        subnet_mask_as_int = Math.pow(2, 32) - Math.pow(2, 32 - prefix_len);
+        inverted_subnet_mask_as_int = Math.pow(2, 32 - prefix_len) - 1;
+        broadcast_address_as_int = network_prefix_as_int + Math.pow(2, 32 - prefix_len) - 1;
+
+        network_prefix = IntegerToString(network_prefix_as_int);
+        network_prefix_as_hex = IntegerToHex(network_prefix_as_int);
+        
+        document.querySelector("#ip_as_int").innerHTML = ip_as_int;
+        document.querySelector("#ip_as_hex").innerHTML = ip_as_hex;
+        document.querySelector("#network_prefix").innerHTML = network_prefix;
+        document.querySelector("#network_as_ipv6_linklocal").innerHTML = `fe80:0000:${network_prefix_as_hex.slice(0,4)}:${network_prefix_as_hex.slice(4,8)}::0`;
+        document.querySelector("#subnet_mask").innerHTML = IntegerToString(subnet_mask_as_int);
+        document.querySelector("#subnet_mask_as_int").innerHTML = subnet_mask_as_int;
+        document.querySelector("#inverted_subnet_mask").innerHTML = IntegerToString(inverted_subnet_mask_as_int);
+        document.querySelector("#inverted_subnet_mask_as_int").innerHTML = inverted_subnet_mask_as_int;
+        document.querySelector("#broadcast_address").innerHTML = IntegerToString(broadcast_address_as_int);
+        document.querySelector("#total_address").innerHTML = (inverted_subnet_mask_as_int + 1).toLocaleString();
+        document.querySelector("#first_address").innerHTML = IntegerToString(network_prefix_as_int + 1);
+        document.querySelector("#last_address").innerHTML = IntegerToString(broadcast_address_as_int - 1);
+        
+        FillBreakdownTable(network_prefix, prefix_len);
+    }
+
+    function OctetToInteger(oct) {
+
+        octets = oct.split(".");
+        let int_val = 0;
+        for (i = 0; i < 4; i++) {
+            int_val += octets[i] * Math.pow(2, 8 * (3-i));
+        }
+        
+        return int_val;
+    }
+    
+    function IntegerToString(integer) {
+
+        remainder = integer;
+        as_string = "";
+        for (i = 3; i > 0;i--) {
+            octet = Math.floor(remainder / Math.pow(2, 8 * i));
+            as_string = as_string + octet + ".";
+        	  remainder = remainder % Math.pow(2, 8 * i);
+        }
+        // Last octet
+        as_string = as_string + integer % 256;
+        
+        return as_string;
+
+    }
+    
+    function IntegerToHex(integer) {
+
+        return integer.toString(16);
+
+    }
+   
+    function FillBreakdownTable(network_prefix, prefix_len) {
+    	
+        const list = document.getElementById('breakdown_list');
+ 
+        for (i = 1; i < 33 - prefix_len; i++) {
+            n = Math.pow(2, i);
+            size = Number(prefix_len) + i;
+            let list_item = document.createElement('li');
+            list_item.appendChild(document.createTextNode(`${n} x /${size}s (${Math.pow(2, 32 - prefix_len - i)} IPs each)`));
+            list.appendChild(list_item)
+        }
+    }
+    
+</script>
+
+</body>
+</html>

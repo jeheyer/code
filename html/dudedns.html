@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta name="description" content="Find the location of your DNS resolvers, Quad 8, Quad 9, CloudFlare, DNS, Domain Name Service, Cache-only, Recursive DNS server, GeoIP" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="index, follow, noarchive, noimageindex">
+  <title>Dude, Where's my DNS?</title>
+  <style>#map { height: 100%; } html,body { height: 100%; }</style>	
+</head>
+
+<body>
+
+<script>
+	
+// Do redirect to main site if required
+if (!window.location.hostname.includes("192.168") && (window.location.hostname !== "www.dudewheresmydns.com")) {
+    let newURL = 'https://www.dudewheresmydns.com';
+    window.location.replace(newURL);
+}
+
+// Google maps API requires HTTPS refer
+if (location.protocol !== 'https:') {
+    let newURL = "https://" + window.location.hostname + window.location.pathname + window.location.search;
+    window.location.replace(newURL);
+}
+
+// Generate a token & Trigger a DNS Query
+const token = Math.random().toString(36).substr(2);
+const dummyDnsName = token + ".tokens.dudewheresmydns.com";
+const socket = new WebSocket("wss://" + dummyDnsName);
+	
+// Initialize locations array
+var locations = [];	 
+locations[0] = { title: "My Location", lat: null, lng: null};
+
+function sleep(milliseconds) {
+    let start = new Date().getTime();
+    for (let i = 0; i < 1e7; i++) {
+        if ((new Date().getTime() - start) > milliseconds){
+            break;
+        }
+    }
+}
+
+// Allow time for the DNS query to reach the backend server
+sleep(150);
+
+</script>
+
+<!-- load google maps functions -->
+<script src="https://code.whamola.net/js/map-functions.js"></script>
+
+<!-- Initialize Map -->
+<div id='map'>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCWIGhZmmEZevUOImiopt0gqwKlFZEkB2M&callback=initMap"></script>
+</div>
+
+<script>
+
+function PlotDNSResolvers(dns_resolvers = []) {
+
+  let url = "https://webapps-trvxp2zy2q-uc.a.run.app/geoip";
+  for (let i = 0; i < dns_resolvers.length; i++) 
+      url += "/" + dns_resolvers[i];
+  
+  fetch(url, { method: 'GET', mode: 'cors' })
+  .then(response => {
+    if (response.ok)
+      return response.json();
+  })
+  .then(data => {
+    for (const geoip of data) {     
+      if (geoip.country_code) {
+        // Create and fill in location Marker
+        let location_info = {};
+        location_info.title = geoip.ipv4_address;
+        random_offset = Math.round(Math.random() * 10) / 2000;
+        random_offset *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
+        location_info.lat = geoip.lat + random_offset;
+        location_info.lng = geoip.lng + random_offset;
+        location_info.details = `<b>DNS Resolver</b><br>${geoip.ipv4_address}<br>`;
+        if (geoip.isp_name)
+          location_info.details += `<abbr title="ASN ${geoip.isp_asn}">${geoip.isp_name}</abbr><br>`;
+        if (geoip.city)
+          location_info.details += `${geoip.city}`;
+        if (geoip.region_code) {
+          location_info.details += `, <abbr title="${geoip.region_name}">${geoip.region_code}</abbr>`;
+          location_info.details += ` <abbr title="${geoip.country_name}">${geoip.country_code}</abbr>`;
+        }
+
+        // Plot marker on map
+        PlotMarker(location_info);
+
+        // Re-zoom map
+        map.fitBounds(bounds);
+        map.panToBounds(bounds);
+
+      }
+    }
+  });
+}
+
+// Prep Main API Call
+const tokenRequest = new Request("/getdnsservers/" + token, {
+  method: 'GET',
+  mode: 'cors',
+  cache: 'no-cache',
+});
+
+fetch(tokenRequest).then(response => {
+  if (!response.ok) 
+    throw new TypeError("Did not receive good HTTP code from backend");
+  const contentType = response.headers.get('content-type');
+  if (!contentType || !contentType.includes('application/json'))
+    throw new TypeError("Did not receive valid JSON from backend");
+  return response.json();
+}).then(data => {
+  dns_resolvers = data.dns_resolvers;
+  console.log(`Found ${dns_resolvers.length} DNS resolvers for token: '${token}'`);
+  PlotDNSResolvers(dns_resolvers);
+}).catch((error) => {
+  console.error('Error:', error);
+});
+
+// Locate user
+locateMe();
+    
+</script>
+
+</body>
+</html>
