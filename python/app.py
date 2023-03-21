@@ -79,9 +79,8 @@ def _get_table(req: Request):
             data = asyncio.run(get_table(db_name, "graffiti", wall=wall))
             formatted_data = []
             for row in data:
-                timestamp = row['timestamp'].strftime('%Y-%m-%d %H:%M:%S')
                 formatted_data.append({
-                    'timestampe': timestamp,
+                    'timestamp': row['timestamp'].strftime('%Y-%m-%d %H:%M:%S'),
                     'name': row['name'],
                     'text': row['text'],
                 })
