@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
 from traceback import format_exc
-from os import path
-from tomli import load
 
 
 def get_client_ip(headers={}):
@@ -122,41 +120,9 @@ def mortgage(options={}):
         raise Exception(format_exc())
 
 
-async def db_engine(db_name):
-
-    from sqlalchemy.ext.asyncio import create_async_engine
-
-    # Get Database connection info
-    pwd = path.realpath(path.dirname(__file__))
-    cfg_file = path.join(pwd, "../../../private/cfg/db_config.toml")
-    with open(cfg_file, mode="rb") as fp:
-        db_info = load(fp).get(db_name)
-        if not db_info:
-            raise Exception("Database config not found for '{}'".format(db_name))
-
-    # Connect to DB
-    db_hostname = db_info.get('hostname', "127.0.0.1")
-    db_username = db_info.get('username', "root")
-    db_password = db_info.get('password', "")
-    db_type = db_info.get('driver', "mysql").lower()
-    if db_type == "mysql":
-        db_driver = "mysql+asyncmy"
-    engine = create_async_engine("{}://{}:{}@{}/{}".format(db_driver, db_username, db_password, db_hostname, db_name))
-
-    return engine
-
-
-async def db_engine_dispose(engine=None, session=None):
-
-    # Disconnect from DB
-    if engine:
-        await engine.dispose()
-    if session:
-        await session.close()
-
-
 async def get_table(db_name, db_table=None, db_join_table=None, wall=None):
 
+    from database import db_engine, db_engine_dispose
     from sqlalchemy import Table, MetaData, select
     from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -200,7 +166,7 @@ async def get_table(db_name, db_table=None, db_join_table=None, wall=None):
 
 async def graffiti_post(db_name, wall, graffiti_url=None, name=None, text=None):
 
-    from sqlalchemy import Table, MetaData
+    from database import db_engine, db_engine_dispose, db_insert
 
     if not graffiti_url:
         graffiti_url = "http://localhost"
@@ -212,10 +178,7 @@ async def graffiti_post(db_name, wall, graffiti_url=None, name=None, text=None):
     try:
 
         engine = await db_engine(db_name)
-        async with engine.begin() as conn:
-            table = await conn.run_sync(lambda conn: Table("graffiti", MetaData(), autoload_with=conn))
-            statement = table.insert().values(wall=wall, name=name, text=text)
-            result = await conn.execute(statement)
+        result = await db_insert(engine, "graffiti", {'wall': wall, 'name': name, 'text': text})
         await db_engine_dispose(engine)
 
         return f"{graffiti_url}?wall={wall}"
@@ -226,8 +189,8 @@ async def graffiti_post(db_name, wall, graffiti_url=None, name=None, text=None):
 
 def poll_vote(db_name, poll_name, poll_url, poll_desc, choice_id):
 
+    from database import db_engine, db_engine_dispose, db_insert
     from sqlalchemy import Table, MetaData, orm
-
 
     try:
 

@@ -77,6 +77,14 @@ def _get_table(req: Request):
             data = asyncio.run(get_table(db_name, "polls", db_join_table=db_join_table))
         elif path.startswith("/graffiti"):
             data = asyncio.run(get_table(db_name, "graffiti", wall=wall))
+            formatted_data = []
+            for row in data:
+                formatted_data.append({
+                    'timestamp': row['timestamp'].strftime("%Y-%m-%d %H:%M:%S"),
+                    'name': row.get('name'),
+                    'text': row.get('text'),
+                })
+            data = formatted_data
         else:
             data = asyncio.run(get_table(db_name, db_table))
         return JSONResponse(content=data, headers=RESPONSE_HEADERS)
@@ -88,12 +96,14 @@ def _get_table(req: Request):
 def _graffiti_post(req: Request):
 
     try:
-        form = req.form()
-        db_name = form['db_name']
-        wall = form['wall']
-        graffiti_url = form.get('graffiti_url')
-        name = form.get('name')
-        text = form.get('text')
+        inputs = {} #await req.form()
+        #db_name = inputs['db_name']
+        #wall = inputs['wall']
+        db_name = "primus"
+        wall = "Brain"
+        graffiti_url = inputs.get('graffiti_url')
+        name = inputs.get('name')
+        text = inputs.get('text')
         redirect_url = asyncio.run(graffiti_post(db_name, wall, graffiti_url, name, text))
         return RedirectResponse(url=redirect_url, status_code=302)
 
