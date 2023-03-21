@@ -124,8 +124,27 @@ APP_ROUTES = [
     Route('/get_table/{db_name:str}/{db_table:str}', _get_table,  methods=["GET"]),
     Route('/graffiti/{db_name:str}/{wall:str}', _get_table,  methods=["GET"]),
     Route('/graffiti_post', _graffiti_post,  methods=["POST"]),
-    Route('/polls/{db_name:str}/{db_join_table:str}', _poll_vote,  methods=["GET"]),
+    Route('/polls/{db_name:str}/{db_join_table:str}', _get_table,  methods=["GET"]),
+    Route('/poll_vote', _poll_vote,  methods=["POST"]),
 ]
+
+@app.route("/get_table/<db_name>/<db_table>")
+@app.route("/graffiti/<db_name>/<wall>")
+@app.route("/polls/<db_name>/<db_join_table>")
+def _get_table(db_name, db_table=None, wall=None, db_join_table=None):
+
+    try:
+        path = request.path
+        if path.startswith("/polls"):
+            data = asyncio.run(get_table(db_name, "polls", db_join_table=db_join_table))
+        elif path.startswith("/graffiti"):
+            data = asyncio.run(get_table(db_name, "graffiti", wall=wall))
+        else:
+            data = asyncio.run(get_table(db_name, db_table))
+        return jsonify(data)
+
+    except Exception as e:
+        return Response(format(e), 500, content_type="text/plain")
 
 app = Starlette(debug=True, routes=APP_ROUTES)
 
