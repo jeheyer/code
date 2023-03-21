@@ -1,6 +1,7 @@
 from starlette.applications import Starlette
 from starlette.routing import Route
 from starlette.requests import Request
+from starlette.encoders import jsonable_encoder
 from starlette.responses import JSONResponse, PlainTextResponse, RedirectResponse
 from typing import Optional
 from traceback import format_exc
