@@ -1,7 +1,6 @@
 from starlette.applications import Starlette
 from starlette.routing import Route
 from starlette.requests import Request
-from starlette.encoders import jsonable_encoder
 from starlette.responses import JSONResponse, PlainTextResponse, RedirectResponse
 from typing import Optional
 from traceback import format_exc
@@ -80,7 +79,7 @@ def _get_table(req: Request):
             data = asyncio.run(get_table(db_name, "graffiti", wall=wall))
         else:
             data = asyncio.run(get_table(db_name, db_table))
-        return JSONResponse(content=jsonable_encoder(data), headers=RESPONSE_HEADERS)
+        return JSONResponse(content=data, headers=RESPONSE_HEADERS)
 
     except Exception as e:
         return PlainTextResponse(content=format(e), status_code=500)
