@@ -1,11 +1,12 @@
-from os import path
-from tomli import load
 from sqlalchemy import Table, MetaData, select
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def db_engine(db_name):
+
+    from os import path
+    from tomli import load
 
     try:
         # Get Database connection info

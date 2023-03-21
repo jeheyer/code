@@ -80,9 +80,9 @@ def _get_table(req: Request):
             formatted_data = []
             for row in data:
                 formatted_data.append({
-                    'timestamp': row['timestamp'].strftime("%Y-%m-%d %H:%M:%S"),
-                    'name': row.get('name'),
-                    'text': row.get('text'),
+                    'timestamp': row['timestamp'].strftime('%Y-%m-%d %H:%M:%S'),
+                    'name': row['name'],
+                    'text': row['text'],
                 })
             data = formatted_data
         else:
