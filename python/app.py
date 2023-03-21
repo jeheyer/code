@@ -77,6 +77,15 @@ def _get_table(req: Request):
             data = asyncio.run(get_table(db_name, "polls", db_join_table=db_join_table))
         elif path.startswith("/graffiti"):
             data = asyncio.run(get_table(db_name, "graffiti", wall=wall))
+            formatted_data = []
+            for row in data:
+                timestamp = row['timestamp'].strftime('%Y-%m-%d %H:%M:%S')
+                formatted_data.append({
+                    'timestampe': timestamp,
+                    'name': row['name'],
+                    'text': row['text'],
+                })
+            data = formatted_data
         else:
             data = asyncio.run(get_table(db_name, db_table))
         return JSONResponse(content=data, headers=RESPONSE_HEADERS)
