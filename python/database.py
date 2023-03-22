@@ -10,12 +10,18 @@ async def db_engine(db_name):
 
     try:
         # Get Database connection info
-        pwd = path.realpath(path.dirname(__file__))
-        cfg_file = path.join(pwd, "../../../private/cfg/db_config.toml")
-        with open(cfg_file, mode="rb") as fp:
-            db_info = load(fp).get(db_name)
-            if not db_info:
-                raise Exception("Database config not found for '{}'".format(db_name))
+        db_info = {}
+        fp = None
+        for cfg_dir in ["..", "../..", "../../.."]:
+            pwd = path.realpath(path.dirname(__file__))
+            if path.isfile(cfg_file := path.join(pwd, cfg_dir + "/private/cfg/db_config.toml")):
+                fp = open(cfg_file, mode="rb")
+                db_info = load(fp).get(db_name)
+                break
+        if not fp:
+            raise Exception("Database config file could not be opened")
+        if not db_info:
+            raise Exception(f"Database config not found for '{db_name}'")
 
         # Connect to DB
         db_hostname = db_info.get('hostname', "127.0.0.1")
@@ -63,7 +69,6 @@ async def db_get_table(engine, table_name, join_table_name=None, where={}, order
         async with engine.begin() as conn:
             table = await conn.run_sync(lambda conn: Table(table_name, MetaData(), autoload_with=conn))
             column_names = [c.name for c in table.columns]
-            #return column_names
             if join_table_name:
                 join_table = await conn.run_sync(lambda conn: Table(join_table_name, MetaData(), autoload_with=conn))
                 column_names.extend([c.name for c in join_table.columns])

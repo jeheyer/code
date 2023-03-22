@@ -1,13 +1,13 @@
 from json import dumps
 from urllib import parse
+from asyncio import run
 from webapps import *
-import asyncio
 
 
 # WSGI entry point
 def application(environ, start_response):
 
-    data = None
+    _ = None
     code = "200 OK"
     headers = [('Content-type', 'text/plain')]
 
@@ -23,25 +23,25 @@ def application(environ, start_response):
             query_params = dict(parse.parse_qsl(parse.urlsplit(uri).query))
 
         if "/ping" in path:
-            data = ping(environ)
+            _ = ping(environ)
 
         if "/mortgage" in path:
-            data = mortgage(query_params)
+            _ = mortgage(query_params)
 
         if "/get_table" in path:
             db_name = path.split('/')[-2]
             db_table = path.split('/')[-1]
-            data = asyncio.run(get_table(db_name, db_table))
+            _ = run(get_table(db_name, db_table))
 
-        if "/polls" in path:
+        if "/polls/" in path:
             db_name = path.split('/')[-2]
             db_join_table = path.split('/')[-1]
-            data = asyncio.run(get_table(db_name, "polls", db_join_table=db_join_table))
+            _ = run(polls(db_name, db_join_table))
 
         if "/graffiti/" in path:
             db_name = path.split('/')[-2]
             wall = path.split('/')[-1]
-            data = asyncio.run(get_table(db_name, "graffiti", wall=wall))
+            _ = run(graffiti(db_name, wall))
 
         if "/geoip" in path:
             ip_list = []
@@ -49,14 +49,14 @@ def application(environ, start_response):
                 ip_list = path.replace("/geoip/", "").split('/')
             if len(ip_list) < 1:
                 ip_list = [ get_client_ip(environ) ]
-            data = get_geoip_info(ip_list)
+            _ = get_geoip_info(ip_list)
 
         if "/getdnsservers" in path:
             token = path.split("/")[-1]
-            data = get_dns_servers(token)
+            _ = get_dns_servers(token)
 
-        if data:
-            output = dumps(data, default=str, indent=2)
+        if _:
+            output = dumps(_, default=str, indent=2)
             headers = [
                 ('Access-Control-Allow-Origin', '*'),
                 ('Cache-Control', 'no-cache, no-store'),

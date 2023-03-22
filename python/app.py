@@ -15,8 +15,8 @@ RESPONSE_HEADERS = {
 def _ping(req: Request):
 
     try:
-        data = ping(request=req)
-        return JSONResponse(content=data, headers=RESPONSE_HEADERS)
+        _ = ping(request=req)
+        return JSONResponse(content=_, headers=RESPONSE_HEADERS)
     except Exception as e:
         return PlainTextResponse(content=format(e), status_code=500)
 
@@ -24,8 +24,8 @@ def _ping(req: Request):
 def _mortgage(req: Request):
 
     try:
-        data = mortgage(dict(req.query_params))
-        return JSONResponse(content=data, headers=RESPONSE_HEADERS)
+        _ = mortgage(dict(req.query_params))
+        return JSONResponse(content=_, headers=RESPONSE_HEADERS)
     except Exception as e:
         return PlainTextResponse(content=format(e), status_code=500)
 
@@ -46,8 +46,8 @@ def _geoip(req: Request):
                 ip_list = ip_list.split('/')
             else:
                 ip_list = [ip_list]
-        data = get_geoip_info(ip_list)
-        return JSONResponse(content=data, headers=RESPONSE_HEADERS)
+        _ = get_geoip_info(ip_list)
+        return JSONResponse(content=_, headers=RESPONSE_HEADERS)
     except Exception as e:
         return PlainTextResponse(content=format(e), status_code=500)
 
@@ -56,8 +56,8 @@ def _get_dns_servers(req: Request):
 
     try:
         token = req.path_params.get('token')
-        data = get_dns_servers(token)
-        return JSONResponse(content=data, headers=RESPONSE_HEADERS)
+        _ = get_dns_servers(token)
+        return JSONResponse(content=_, headers=RESPONSE_HEADERS)
     except Exception as e:
         return PlainTextResponse(content=format(e), status_code=500)
 
@@ -67,8 +67,8 @@ async def _get_table(req: Request):
     try:
         db_name = req.path_params.get('db_name')
         db_table = req.path_params.get('db_table')
-        data = await create_task(get_table(db_name, db_table))
-        return JSONResponse(content=data, headers=RESPONSE_HEADERS)
+        _ = await create_task(get_table(db_name, db_table))
+        return JSONResponse(content=_, headers=RESPONSE_HEADERS)
     except Exception as e:
         return PlainTextResponse(content=format(e), status_code=500)
 
@@ -79,16 +79,16 @@ async def _graffiti(req: Request):
 
         db_name = req.path_params.get('db_name')
         wall = req.path_params.get('wall')
-        data = await create_task(graffiti(db_name, wall))
+        _ = await create_task(graffiti(db_name, wall))
         formatted_data = []
-        for row in data:
+        for row in _:
             formatted_data.append({
                 'timestamp': row['timestamp'].strftime('%Y-%m-%d %H:%M:%S'),
                 'name': row['name'],
                 'text': row['text'],
             })
-        data = formatted_data
-        return JSONResponse(content=data, headers=RESPONSE_HEADERS)
+        _ = formatted_data
+        return JSONResponse(content_, headers=RESPONSE_HEADERS)
 
     except Exception as e:
         return PlainTextResponse(content=format(e), status_code=500)
@@ -103,8 +103,8 @@ async def _graffiti_post(req: Request):
         graffiti_url = inputs.get('graffiti_url')
         name = inputs.get('name')
         text = inputs.get('text')
-        redirect_url = await create_task(graffiti_post(db_name, wall, graffiti_url, name, text))
-        return RedirectResponse(url=redirect_url, status_code=302)
+        _ = await create_task(graffiti_post(db_name, wall, graffiti_url, name, text))
+        return RedirectResponse(url=_, status_code=302)
     except Exception as e:
         return PlainTextResponse(content=format(e), status_code=500)
 
@@ -114,8 +114,8 @@ async def _polls(req: Request):
     try:
         db_name = req.path_params.get('db_name')
         db_join_table = req.path_params.get('db_join_table')
-        data = await create_task(polls(db_name, db_join_table=db_join_table))
-        return JSONResponse(content=data, headers=RESPONSE_HEADERS)
+        _ = await create_task(polls(db_name, db_join_table=db_join_table))
+        return JSONResponse(content=_, headers=RESPONSE_HEADERS)
     except Exception as e:
         return PlainTextResponse(content=format(e), status_code=500)
 
@@ -129,8 +129,8 @@ async def _poll_vote(req: Request):
         poll_url = inputs.get('poll_url')
         poll_desc = inputs.get('poll_desc', "")
         choice_id = inputs.get('choice_id', 0)
-        redirect_url = await create_task(poll_vote(db_name, poll_name, poll_url, poll_desc, choice_id))
-        return RedirectResponse(url=redirect_url, status_code=302)
+        _ = await create_task(poll_vote(db_name, poll_name, poll_url, poll_desc, choice_id))
+        return RedirectResponse(url=_, status_code=302)
     except Exception as e:
         return PlainTextResponse(content=e, status_code=500)
 
