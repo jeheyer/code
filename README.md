@@ -1,1 +1,0 @@
-### source code for [code.whamola.net](https://code.whamola.net)

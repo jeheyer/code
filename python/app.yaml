@@ -1,5 +1,0 @@
-service: python
-runtime: python311
-env: standard
-entrypoint: gunicorn -b 0.0.0.0:$PORT -w 1 --threads=8 main:application
-instance_class: F1
