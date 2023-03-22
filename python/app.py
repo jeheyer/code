@@ -2,10 +2,8 @@ from starlette.applications import Starlette
 from starlette.routing import Route
 from starlette.requests import Request
 from starlette.responses import JSONResponse, PlainTextResponse, RedirectResponse
-from typing import Optional
-from traceback import format_exc
+from asyncio import create_task
 from webapps import *
-import asyncio
 
 RESPONSE_HEADERS = {
     'Access-Control-Allow-Origin': '*',
@@ -64,64 +62,77 @@ def _get_dns_servers(req: Request):
         return PlainTextResponse(content=format(e), status_code=500)
 
 
-def _get_table(req: Request):
+async def _get_table(req: Request):
+
+    try:
+        db_name = req.path_params.get('db_name')
+        db_table = req.path_params.get('db_table')
+        data = await create_task(get_table(db_name, db_table))
+        return JSONResponse(content=data, headers=RESPONSE_HEADERS)
+    except Exception as e:
+        return PlainTextResponse(content=format(e), status_code=500)
+
+
+async def _graffiti(req: Request):
 
     try:
 
-        path = req.url.path
         db_name = req.path_params.get('db_name')
-        db_table = req.path_params.get('db_table')
-        db_join_table = req.path_params.get('db_join_table')
         wall = req.path_params.get('wall')
-        if path.startswith("/polls"):
-            data = asyncio.run(get_table(db_name, "polls", db_join_table=db_join_table))
-        elif path.startswith("/graffiti"):
-            data = asyncio.run(get_table(db_name, "graffiti", wall=wall))
-            formatted_data = []
-            for row in data:
-                formatted_data.append({
-                    'timestamp': row['timestamp'].strftime('%Y-%m-%d %H:%M:%S'),
-                    'name': row['name'],
-                    'text': row['text'],
-                })
-            data = formatted_data
-        else:
-            data = asyncio.run(get_table(db_name, db_table))
+        data = await create_task(graffiti(db_name, wall))
+        formatted_data = []
+        for row in data:
+            formatted_data.append({
+                'timestamp': row['timestamp'].strftime('%Y-%m-%d %H:%M:%S'),
+                'name': row['name'],
+                'text': row['text'],
+            })
+        data = formatted_data
         return JSONResponse(content=data, headers=RESPONSE_HEADERS)
 
     except Exception as e:
         return PlainTextResponse(content=format(e), status_code=500)
 
 
-def _graffiti_post(req: Request):
+async def _graffiti_post(req: Request):
 
     try:
-        inputs = {} #await req.form()
-        #db_name = inputs['db_name']
-        #wall = inputs['wall']
-        db_name = "primus"
-        wall = "Brain"
+        inputs = await req.form()
+        db_name = inputs['db_name']
+        wall = inputs['wall']
         graffiti_url = inputs.get('graffiti_url')
         name = inputs.get('name')
         text = inputs.get('text')
-        redirect_url = asyncio.run(graffiti_post(db_name, wall, graffiti_url, name, text))
+        redirect_url = await create_task(graffiti_post(db_name, wall, graffiti_url, name, text))
         return RedirectResponse(url=redirect_url, status_code=302)
-
     except Exception as e:
-        return PlainTextResponse(content=format_exc(), status_code=500)
+        return PlainTextResponse(content=format(e), status_code=500)
 
 
-def _poll_vote(req: Request):
+async def _polls(req: Request):
 
     try:
-        db_name = "primus"
-        poll_name = "albums"
-        poll_url = ""
-        poll_desc = ""
-        choice_id = 1
-        poll_vote(db_name, poll_name, poll_url, poll_desc, choice_id)
+        db_name = req.path_params.get('db_name')
+        db_join_table = req.path_params.get('db_join_table')
+        data = await create_task(polls(db_name, db_join_table=db_join_table))
+        return JSONResponse(content=data, headers=RESPONSE_HEADERS)
     except Exception as e:
-        return PlainTextResponse(content=format_exc(), status_code=500)
+        return PlainTextResponse(content=format(e), status_code=500)
+
+
+async def _poll_vote(req: Request):
+
+    try:
+        inputs = await req.form()
+        db_name = inputs['db_name']
+        poll_name = inputs['poll_name']
+        poll_url = inputs.get('poll_url')
+        poll_desc = inputs.get('poll_desc', "")
+        choice_id = inputs.get('choice_id', 0)
+        redirect_url = await create_task(poll_vote(db_name, poll_name, poll_url, poll_desc, choice_id))
+        return RedirectResponse(url=redirect_url, status_code=302)
+    except Exception as e:
+        return PlainTextResponse(content=e, status_code=500)
 
 
 APP_ROUTES = [
@@ -132,9 +143,9 @@ APP_ROUTES = [
     Route('/geoip/{ip_list:path}', _geoip, methods=["GET"]),
     Route('/getdnsservers/{token:str}', _get_dns_servers, methods=["GET"]),
     Route('/get_table/{db_name:str}/{db_table:str}', _get_table,  methods=["GET"]),
-    Route('/graffiti/{db_name:str}/{wall:str}', _get_table,  methods=["GET"]),
+    Route('/graffiti/{db_name:str}/{wall:str}', _graffiti,  methods=["GET"]),
     Route('/graffiti_post', _graffiti_post,  methods=["POST"]),
-    Route('/polls/{db_name:str}/{db_join_table:str}', _get_table,  methods=["GET"]),
+    Route('/polls/{db_name:str}/{db_join_table:str}', _polls,  methods=["GET"]),
     Route('/poll_vote', _poll_vote,  methods=["POST"]),
 ]
 

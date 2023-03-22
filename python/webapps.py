@@ -23,7 +23,7 @@ def get_client_ip(headers={}):
             return x_forwarded_for
         return remote_addr
 
-    except:
+    except Exception as e:
         raise Exception(format_exc())
 
 
@@ -106,7 +106,7 @@ def ping(headers={}, request=None) -> dict:
 
         return info
 
-    except:
+    except Exception as e:
         raise Exception(format_exc())
 
 
@@ -116,19 +116,56 @@ def mortgage(options={}):
 
     try:
         return GetPaymentData(options)
-    except:
+    except Exception as e:
+        raise Exception(format_exc())
+
+
+async def graffiti(db_name, wall):
+
+    from database import db_engine, db_engine_dispose, db_get_table
+
+    try:
+        engine = await db_engine(db_name)
+        posts = await db_get_table(engine, "graffiti", where={'wall': wall})
+        await db_engine_dispose(engine)
+        return posts
+    except Exception as e:
+        raise Exception(format_exc())
+
+
+async def polls(db_name, db_join_table):
+
+    from database import db_engine, db_engine_dispose, db_get_table
+
+    try:
+        engine = await db_engine(db_name)
+        results = await db_get_table(engine, "polls", join_table_name=db_join_table)
+        await db_engine_dispose(engine)
+        return results
+    except Exception as e:
         raise Exception(format_exc())
 
 
 async def get_table(db_name, db_table=None, db_join_table=None, wall=None):
 
-    from database import db_engine, db_engine_dispose
-    from sqlalchemy import Table, MetaData, select
-    from sqlalchemy.ext.asyncio import AsyncSession
+    from database import db_engine, db_engine_dispose, db_get_table
 
     try:
-
         engine = await db_engine(db_name)
+        results = await db_get_table(engine, db_table)
+        await db_engine_dispose(engine)
+        return results
+    except Exception as e:
+        raise Exception(format_exc())
+
+
+    """
+        if db_table == "polls":
+            result = await get_table(engine, db_table, db_join_table, {'wall': wall, 'name': name, 'text': text})
+        if db_table == "graffiti":
+            result = await get_table(engine, db_table, where={'wall': wall})
+        await db_engine_dispose(engine)
+
         async with engine.begin() as conn:
             table = await conn.run_sync(lambda conn: Table(db_table, MetaData(), autoload_with=conn))
             column_names = [c.name for c in table.columns]
@@ -162,6 +199,7 @@ async def get_table(db_name, db_table=None, db_join_table=None, wall=None):
 
     except:
         raise Exception(format_exc())
+"""
 
 
 async def graffiti_post(db_name, wall, graffiti_url=None, name=None, text=None):
@@ -176,25 +214,27 @@ async def graffiti_post(db_name, wall, graffiti_url=None, name=None, text=None):
         text = "I have nothing to say"
 
     try:
-
         engine = await db_engine(db_name)
         result = await db_insert(engine, "graffiti", {'wall': wall, 'name': name, 'text': text})
         await db_engine_dispose(engine)
-
         return f"{graffiti_url}?wall={wall}"
-
-    except:
+    except Exception as e:
         raise Exception(format_exc())
 
 
-def poll_vote(db_name, poll_name, poll_url, poll_desc, choice_id):
+async def poll_vote(db_name, poll_name, poll_url, poll_desc, choice_id):
 
     from database import db_engine, db_engine_dispose, db_insert
     from sqlalchemy import Table, MetaData, orm
 
+    if not poll_url:
+        poll_url = "http://localhost"
+
     try:
 
-        engine = db_engine(db_name)
+        engine = await db_engine(db_name)
+
+        """
         session = orm.sessionmaker(bind=engine)()
 
         table = Table("polls", MetaData(), autoload_with=engine)
@@ -214,12 +254,15 @@ def poll_vote(db_name, poll_name, poll_url, poll_desc, choice_id):
             statement = table.insert().values(poll_name=poll_name, choice_id=choice_id, num_votes=1)
 
         result = session.execute(statement)
+        """
 
-        db_engine_dispose(engine, session)
+        result = await db_insert(engine, "polls", {'poll_name': poll_name, 'choice_id': choice_id, 'num_votes': 1})
 
-        return "{}?poll_name={}&poll_desc={}".format(poll_url, poll_name, poll_desc)
+        await db_engine_dispose(engine)
 
-    except:
+        return str(f"{poll_url}?poll_name={poll_name}&poll_desc={poll_desc}")
+
+    except Exception as e:
         raise Exception(format_exc())
 
 
@@ -229,7 +272,7 @@ def get_geoip_info(geoiplist=["127.0.0.1"]):
 
     try:
         return GeoIPList(geoiplist).geoips
-    except:
+    except Exception as e:
         raise Exception(format_exc())
 
 
@@ -239,7 +282,7 @@ def get_dns_servers(token="testing1234"):
 
     try:
         return GetDNSServersFromToken(token)
-    except:
+    except Exception as e:
         raise Exception(format_exc())
 
 

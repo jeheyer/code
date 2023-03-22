@@ -1,6 +1,7 @@
 from quart import Quart, request, Response, jsonify
+from asyncio import create_task, run
 from webapps import *
-import asyncio
+
 
 app = Quart(__name__)
 
@@ -33,11 +34,11 @@ def _get_table(db_name, db_table=None, wall=None, db_join_table=None):
     try:
         path = request.path
         if path.startswith("/polls"):
-            data = asyncio.run(get_table(db_name, "polls", db_join_table=db_join_table))
+            data = run(get_table(db_name, "polls", db_join_table=db_join_table))
         elif path.startswith("/graffiti"):
-            data = asyncio.run(get_table(db_name, "graffiti", wall=wall))
+            data = run(get_table(db_name, "graffiti", wall=wall))
         else:
-            data = asyncio.run(get_table(db_name, db_table))
+            data = run(get_table(db_name, db_table))
         return jsonify(data)
 
     except Exception as e:
