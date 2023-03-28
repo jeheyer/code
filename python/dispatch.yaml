@@ -1,0 +1,7 @@
+dispatch:
+  - url: "flask.gcp.j5.org/*"
+    service: default
+  - url: "quart.gcp.j5.org/*"
+    service: default
+  - url: "python.gcp.j5.org/*"
+    service: default

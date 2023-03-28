@@ -1,0 +1,13 @@
+starlette
+flask
+quart
+uvicorn
+hypercorn
+gunicorn
+pymysql
+py-postgresql
+asyncpg
+asyncmy
+sqlalchemy
+geoip2
+tomli
