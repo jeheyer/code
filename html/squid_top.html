@@ -63,9 +63,9 @@ fieldset input{
     <legend>Interval:</legend>
     <select name="interval" id="interval_list" size=1>
       <option value="120">Last 2 Minutes</option>
-      <option value="300">Last 5 Minutes</option>
+      <option value="300 selected">Last 5 Minutes</option>
       <option value="900">Last 15 Minutes</option>
-      <option value="1800" selected>Last 30 Minutes</option>
+      <option value="1800">Last 30 Minutes</option>
       <option value="3600">Last 1 Hour</option>
       <option value="7200">Last 2 Hours</option>
       <option value="14400">Last 4 Hours</option>
@@ -91,7 +91,7 @@ location.search.substr(1).split("&").forEach(function(item) {
 
 (async() => {
 
-  let ajax_url = "/wsgi/?"
+  let ajax_url = "https://squid-log-view-trvxp2zy2q-uc.a.run.app/?"
 
   // Get current date/time
   const now = Date.now();

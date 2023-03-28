@@ -3,10 +3,14 @@
 
 # If still running Python 2.7
 from __future__ import print_function
+import os
+import cgi
+import sys
+import json
+import traceback
+
 
 def main():
-
-    import os, cgi
 
     if not 'REQUEST_METHOD' in os.environ:
         quit("Call me via the web, please")
@@ -19,9 +23,8 @@ def main():
     output.update(form_data)
     return output
 
-if __name__ == "__main__":
 
-    import sys, json, traceback
+if __name__ == "__main__":
 
     sys.stderr = sys.stdout
 
@@ -33,4 +36,3 @@ if __name__ == "__main__":
     except Exception as e:
         print("Status: 500\nContent-Type: text/plain\n")
         traceback.print_exc(file=sys.stdout, limit=3)
-
