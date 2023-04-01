@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 from starlette.applications import Starlette
 from starlette.routing import Route
 from starlette.requests import Request
@@ -90,7 +87,8 @@ async def _graffiti(req: Request):
                 'name': row['name'],
                 'text': row['text'],
             })
-        return JSONResponse(content=formatted_data, headers=RESPONSE_HEADERS)
+        _ = formatted_data
+        return JSONResponse(content_, headers=RESPONSE_HEADERS)
 
     except Exception as e:
         return PlainTextResponse(content=format(e), status_code=500)

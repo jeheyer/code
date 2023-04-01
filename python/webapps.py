@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 from traceback import format_exc
 
@@ -190,6 +189,7 @@ async def poll_vote(db_name, poll_name, poll_url, poll_desc, choice_id):
 
     try:
 
+        engine = await db_engine(db_name)
 
         """
         session = orm.sessionmaker(bind=engine)()
@@ -213,10 +213,9 @@ async def poll_vote(db_name, poll_name, poll_url, poll_desc, choice_id):
         result = session.execute(statement)
         """
 
-        if choice_id > 0:
-            engine = await db_engine(db_name)
-            result = await db_insert(engine, "polls", {'poll_name': poll_name, 'choice_id': choice_id, 'num_votes': 1})
-            await db_engine_dispose(engine)
+        result = await db_insert(engine, "polls", {'poll_name': poll_name, 'choice_id': choice_id, 'num_votes': 1})
+
+        await db_engine_dispose(engine)
 
         return f"{poll_url}?poll_name={poll_name}&poll_desc={poll_desc}"
 

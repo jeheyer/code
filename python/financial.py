@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import math
 
 def GetColumn(matrix, column_n):

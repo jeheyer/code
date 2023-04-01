@@ -117,7 +117,7 @@ function ShowLoanData() {
 
   (async() => {
 
-    const url = "/wsgi/mortgage?" + location.search.substr(1);
+    const url = "/mortgage?" + location.search.substr(1);
 
     const ajax_request = new Request(url, {method: 'GET', mode: 'cors', cache: 'no-cache'});
     fetch(ajax_request)

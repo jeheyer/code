@@ -1,6 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 from quart import Quart, request, Response, jsonify
 from asyncio import create_task
 from webapps import *
