@@ -10,8 +10,8 @@ app = Flask(__name__)
 def _ping():
 
     try:
-        _ = ping(request.environ)
-        return jsonify(_)
+        data = ping(request.environ)
+        return jsonify(data)
     except Exception as e:
         return Response(format(e), 500, content_type="text/plain")
 
@@ -30,8 +30,8 @@ def _mortgage():
 def _get_table(db_name, db_table=None, wall=None, db_join_table=None):
 
     try:
-        _ = run(get_table(db_name, db_table))
-        return jsonify(_)
+        data = run(get_table(db_name, db_table))
+        return jsonify(data)
     except Exception as e:
         return Response(format(e), 500, content_type="text/plain")
 
@@ -40,8 +40,8 @@ def _get_table(db_name, db_table=None, wall=None, db_join_table=None):
 def _graffiti(db_name, wall):
 
     try:
-        _ = run(graffiti(db_name, wall))
-        return jsonify(_)
+        data = run(graffiti(db_name, wall))
+        return jsonify(data)
     except Exception as e:
         return Response(format(e), 500, content_type="text/plain")
 
@@ -55,8 +55,8 @@ def _graffiti_post():
         graffiti_url = request.form.get('graffiti_url')
         name = request.form.get('name')
         text = request.form.get('text')
-        _ = run(graffiti_post(db_name, wall, graffiti_url, name, text))
-        return redirect(_, code=302)
+        redirect_url = run(graffiti_post(db_name, wall, graffiti_url, name, text))
+        return redirect(redirect_url, code=302)
     except Exception as e:
         return Response(format(e), 500, content_type="text/plain")
 
@@ -65,13 +65,13 @@ def _graffiti_post():
 def _polls(db_name, db_join_table=None):
 
     try:
-        _ = run(polls(db_name, db_join_table=db_join_table))
-        return jsonify(_)
+        data = run(polls(db_name, db_join_table=db_join_table))
+        return jsonify(data)
     except Exception as e:
         return Response(format(e), 500, content_type="text/plain")
 
 
-@app.route("/poll_vote", methods=["POST"])
+@app.route("/poll_vote", methods=["GET","POST"])
 def _poll_vote():
 
     try:
@@ -79,9 +79,9 @@ def _poll_vote():
         poll_name = request.form.get('poll_name')
         poll_url = request.form.get('poll_url')
         poll_desc = request.form.get('poll_desc', "")
-        choice_id = request.form.get('choice_id', 0)
-        _ = run(poll_vote(db_name, poll_name, poll_url, poll_desc, choice_id))
-        return redirect(_, code=302)
+        choice_id = request.form.get('choice_id')
+        redirect_url = run(poll_vote(db_name, poll_name, poll_url, poll_desc, choice_id))
+        return redirect(redirect_url, code=302)
     except Exception as e:
         return Response(format(e), 500, content_type="text/plain")
 
@@ -99,8 +99,8 @@ def _geoip(path=None):
                 ip_list = path.split('/')
             else:
                 ip_list = [path]
-        _ = get_geoip_info(ip_list)
-        return jsonify(_)
+        data = get_geoip_info(ip_list)
+        return jsonify(data)
     except Exception as e:
         return Response(format(e), 500, content_type="text/plain")
 

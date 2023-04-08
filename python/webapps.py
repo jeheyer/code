@@ -146,7 +146,7 @@ async def polls(db_name, db_join_table):
         raise Exception(format_exc())
 
 
-async def get_table(db_name, db_table=None):
+async def get_table(db_name, db_table=None, db_join_table=None, wall=None):
 
     from database import db_engine, db_engine_dispose, db_get_table
 
@@ -157,6 +157,49 @@ async def get_table(db_name, db_table=None):
         return results
     except Exception as e:
         raise Exception(format_exc())
+
+
+    """
+        if db_table == "polls":
+            result = await get_table(engine, db_table, db_join_table, {'wall': wall, 'name': name, 'text': text})
+        if db_table == "graffiti":
+            result = await get_table(engine, db_table, where={'wall': wall})
+        await db_engine_dispose(engine)
+
+        async with engine.begin() as conn:
+            table = await conn.run_sync(lambda conn: Table(db_table, MetaData(), autoload_with=conn))
+            column_names = [c.name for c in table.columns]
+            if db_join_table:
+                join_table = await conn.run_sync(lambda conn: Table(db_join_table, MetaData(), autoload_with=conn))
+                column_names.extend([c.name for c in join_table.columns])
+
+        if db_table == "polls":
+            async with AsyncSession(engine) as session:
+                statement = select(table, join_table)\
+                    .filter(table.columns.poll_name == db_join_table)\
+                    .filter(join_table.columns.id == table.columns.choice_id)\
+                    .order_by(table.columns.num_votes.desc())
+                result = await session.execute(statement)
+            await db_engine_dispose(engine, session)
+        else:
+            async with engine.connect() as conn:
+                if db_table == "graffiti":
+                    statement = table.select().where(table.columns.wall == wall).order_by(table.columns.timestamp.desc())
+                    result = await conn.execute(statement)
+                else:
+                    result = await conn.execute(select(table))
+            await db_engine_dispose(engine)
+
+        # Convert to dictionary with the column name as key
+        rows = []
+        for row in result:
+            rows.append(dict(zip(column_names, row)))
+
+        return rows
+
+    except:
+        raise Exception(format_exc())
+"""
 
 
 async def graffiti_post(db_name, wall, graffiti_url=None, name=None, text=None):
@@ -217,7 +260,7 @@ async def poll_vote(db_name, poll_name, poll_url, poll_desc, choice_id):
 
         await db_engine_dispose(engine)
 
-        return f"{poll_url}?poll_name={poll_name}&poll_desc={poll_desc}"
+        return str(f"{poll_url}?poll_name={poll_name}&poll_desc={poll_desc}")
 
     except Exception as e:
         raise Exception(format_exc())
