@@ -1,5 +1,11 @@
 from os import path
 
+READER_FILES = {
+    'city': "../../../db/GeoIP2-City.mmdb",
+    'isp': "../../../db/GeoIP2-ISP.mmdb",
+}
+
+
 class GeoIPList:
 
     def __init__(self, ip_list):
@@ -8,15 +14,11 @@ class GeoIPList:
         
         self.geoips = []
         
-        READER_FILES = {
-            'city': "../../../db/GeoIP2-City.mmdb",
-            'isp': "../../../db/GeoIP2-ISP.mmdb",
-        }
         reader = {}
 
         pwd = path.realpath(path.dirname(__file__))
-        for type, db_file in READER_FILES.items():
-            reader[type] = geoip2.database.Reader(path.join(pwd, db_file))
+        for reader_type, db_file in READER_FILES.items():
+            reader[reader_type] = geoip2.database.Reader(path.join(pwd, db_file))
 
         for _ in ip_list:
             geoip = Host(_)
@@ -46,8 +48,10 @@ class GeoIPList:
                     geoip.isp_org = response.autonomous_system_organization
             self.geoips.append(vars(geoip))
 
-        for type in READER_FILES.keys():
-            reader[type].close()
+        # Close reader files
+        for reader_type in READER_FILES.keys():
+            reader[reader_type].close()
+
 
 class Host:
 
