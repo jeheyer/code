@@ -146,7 +146,7 @@ APP_ROUTES = [
     Route('/graffiti/{db_name:str}/{wall:str}', _graffiti,  methods=["GET"]),
     Route('/graffiti_post', _graffiti_post,  methods=["POST"]),
     Route('/polls/{db_name:str}/{db_join_table:str}', _polls,  methods=["GET"]),
-    Route('/poll_vote', _poll_vote,  methods=["GET","POST"]),
+    Route('/poll_vote', _poll_vote,  methods=["GET", "POST"]),
 ]
 
 app = Starlette(debug=True, routes=APP_ROUTES)

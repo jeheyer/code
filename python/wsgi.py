@@ -71,7 +71,7 @@ def _polls(db_name, db_join_table=None):
         return Response(format(e), 500, content_type="text/plain")
 
 
-@app.route("/poll_vote", methods=["GET","POST"])
+@app.route("/poll_vote", methods=["GET", "POST"])
 def _poll_vote():
 
     try:
