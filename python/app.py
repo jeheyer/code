@@ -132,7 +132,7 @@ async def _poll_vote(req: Request):
         redirect_url = await create_task(poll_vote(db_name, poll_name, poll_url, poll_desc, choice_id))
         return RedirectResponse(url=redirect_url, status_code=302)
     except Exception as e:
-        return PlainTextResponse(content=e, status_code=500)
+        return PlainTextResponse(content=format(e), status_code=500)
 
 
 APP_ROUTES = [
