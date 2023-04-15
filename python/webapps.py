@@ -241,7 +241,8 @@ async def poll_vote(db_name: str, poll_name: str, poll_url: str, poll_desc: str,
 
         results = await db_get_table(engine, "polls", join_table_name=poll_name)
         if len(results) > 0:
-            result = await db_update(engine, "polls", {'poll_name': poll_name, 'choice_id': 69, 'num_votes': 1})
+            return results
+            result = await db_update(engine, "polls", {'poll_name': poll_name, 'choice_id': choice_id, 'num_votes': 1})
         else:
             result = await db_insert(engine, "polls", {'poll_name': poll_name, 'choice_id': choice_id, 'num_votes': 1})
         """
