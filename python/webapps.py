@@ -224,17 +224,25 @@ async def graffiti_post(db_name, wall, graffiti_url=None, name=None, text=None):
 
 async def poll_vote(db_name, poll_name, poll_url, poll_desc, choice_id):
 
-    from database import db_engine, db_engine_dispose, db_insert
+    from database import db_engine, db_engine_dispose, db_insert, db_get_table
     from sqlalchemy import Table, MetaData, orm
 
     if not poll_url:
         poll_url = "http://localhost"
 
+    poll_url = f"{poll_url}?poll_name={poll_name}&poll_desc={poll_desc}"
+    if choice_id < 1:
+        return poll_url
+
     try:
 
-        if choice_id > 0:
-            engine = await db_engine(db_name)
+        engine = await db_engine(db_name)
 
+        results = await db_get_table(engine, "polls", join_table_name=poll_name)
+        if len(results) > 0:
+            return poll_url
+        else:
+            result = await db_insert(engine, "polls", {'poll_name': poll_name, 'choice_id': choice_id, 'num_votes': 1})
         """
         session = orm.sessionmaker(bind=engine)()
 
@@ -256,11 +264,10 @@ async def poll_vote(db_name, poll_name, poll_url, poll_desc, choice_id):
 
         result = session.execute(statement)
         """
-            result = await db_insert(engine, "polls", {'poll_name': poll_name, 'choice_id': choice_id, 'num_votes': 1})
 
-            await db_engine_dispose(engine)
+        await db_engine_dispose(engine)
 
-        return str(f"{poll_url}?poll_name={poll_name}&poll_desc={poll_desc}")
+        return poll_url
 
     except Exception as e:
         raise Exception(format_exc())
