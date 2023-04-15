@@ -53,6 +53,18 @@ async def db_insert(engine, table_name, values={}):
         raise e
 
 
+async def db_update(engine, table_name, values={}):
+
+    try:
+        async with engine.begin() as conn:
+            table = await conn.run_sync(lambda conn: Table(table_name, MetaData(), autoload_with=conn))
+            statement = table.update().values(values)
+            result = await conn.execute(statement)
+            return result
+
+    except Exception as e:
+        raise e
+
 async def db_get_table(engine, table_name, join_table_name=None, where={}, order_by={}):
 
     from sqlalchemy import Table, MetaData, select
