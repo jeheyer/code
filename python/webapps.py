@@ -222,7 +222,7 @@ async def graffiti_post(db_name, wall, graffiti_url=None, name=None, text=None):
         raise Exception(format_exc())
 
 
-async def poll_vote(db_name, poll_name, poll_url, poll_desc, choice_id):
+async def poll_vote(db_name: str, poll_name: str, poll_url: str, poll_desc: str, choice_id: int):
 
     from database import db_engine, db_engine_dispose, db_insert, db_get_table
     from sqlalchemy import Table, MetaData, orm
@@ -231,6 +231,8 @@ async def poll_vote(db_name, poll_name, poll_url, poll_desc, choice_id):
         poll_url = "http://localhost"
 
     poll_url = f"{poll_url}?poll_name={poll_name}&poll_desc={poll_desc}"
+
+    choice_id = int(choice_id)
     if choice_id < 1:
         return poll_url
 
