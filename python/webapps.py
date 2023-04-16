@@ -232,7 +232,8 @@ async def poll_vote(db_name: str, poll_name: str, poll_url: str, poll_desc: str,
 
     poll_url = f"{poll_url}?poll_name={poll_name}&poll_desc={poll_desc}"
 
-    if choice_id := int(choice_id) < 1:
+    choice_id = int(choice_id)
+    if choice_id < 1:
         return poll_url
 
     row = {'poll_name': poll_name, 'choice_id': choice_id, 'num_votes': 1}
@@ -242,7 +243,7 @@ async def poll_vote(db_name: str, poll_name: str, poll_url: str, poll_desc: str,
 
         results = await db_get_table(engine, "polls", join_table_name=poll_name)
         if len(results) > 0:
-            row['num_votes'] = results[0].get('num_votes', 0) + 1
+            row['num_votes'] = results[0]
             result = await db_update(engine, "polls", row)
         else:
             result = await db_insert(engine, "polls", row)
