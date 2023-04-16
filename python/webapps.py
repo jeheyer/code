@@ -243,8 +243,8 @@ async def poll_vote(db_name: str, poll_name: str, poll_url: str, poll_desc: str,
 
         num_votes = 0
         results = await db_get_table(engine, "polls", join_table_name=poll_name)
-        for row in results:
-            if row['choice_id'] == choice_id:
+        for _ in results:
+            if int(_['choice_id']) == choice_id:
                 num_votes = row.get('num_votes', 0)
                 break
 
