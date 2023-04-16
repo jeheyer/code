@@ -236,7 +236,7 @@ async def poll_vote(db_name: str, poll_name: str, poll_url: str, poll_desc: str,
     if choice_id < 1:
         return poll_url
 
-    row = {'poll_name': poll_name, 'choice_id': choice_id, 'num_votes': 0}
+    db_row = {'poll_name': poll_name, 'choice_id': choice_id, 'num_votes': 0}
     try:
 
         engine = await db_engine(db_name)
@@ -245,14 +245,14 @@ async def poll_vote(db_name: str, poll_name: str, poll_url: str, poll_desc: str,
         results = await db_get_table(engine, "polls", join_table_name=poll_name)
         for _ in results:
             if int(_['choice_id']) == choice_id:
-                num_votes = row.get('num_votes', 0)
+                num_votes = _.get('num_votes', 0)
                 break
 
-        row['num_votes'] = num_votes + 1
+        db_row['num_votes'] = num_votes + 1
         if num_votes > 0:
-            result = await db_update(engine, "polls", row)
+            result = await db_update(engine, "polls", db_row)
         else:
-            result = await db_insert(engine, "polls", row)
+            result = await db_insert(engine, "polls", db_row)
         """
         session = orm.sessionmaker(bind=engine)()
 
