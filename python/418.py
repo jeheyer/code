@@ -10,6 +10,7 @@ FIELDS = {
     'path': "PATH_INFO",
     'user-agent': "HTTP_USER_AGENT",
     'x-real-ip': "HTTP_X_REAL_IP",
+    'via': "VIA",
     'x-forwarded-for': "HTTP_X_FORWARDED_FOR",
     'x-forwarded-proto': "HTTP_X_FORWARDED_PROTO",
     'x-forwarded-host': "HTTP_X_FORWARDED_HOST",
