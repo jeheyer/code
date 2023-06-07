@@ -36,7 +36,7 @@ def ping(headers={}, request=None) -> dict:
     info = {}
 
     header_names = ('HTTP_HOST', 'SERVER_NAME', 'SERVER_ADDR', 'SERVER_SOFTWARE', 'SERVER_PROTOCOL', 'SERVER_PORT',
-        'REMOTE_ADDR', 'HTTP_X_REAL_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED_PROTO', 'HTTP_CONNECTION',
+        'REMOTE_ADDR', 'HTTP_X_REAL_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED_PROTO', 'HTTP_CONNECTION', 'VIA',
         'PATH_INFO', 'REQUEST_URI', 'RAW_URI', 'SCRIPT_NAME', 'QUERY_STRING', 'HTTP_USER_AGENT', 'REQUEST_METHOD'
     )
 
@@ -76,6 +76,7 @@ def ping(headers={}, request=None) -> dict:
                 info['remote_addr'] = request.remote_addr
                 info['headers'] = str(request.headers)
                 info['server_protocol'] = "HTTP/" + request.http_version
+                info['via'] = request.headers.get('via')
                 info['http_x_real_ip'] = request.headers.get('X-Real-IP')
                 info['http_x_forwarded_for'] = request.headers.get('X-Forwarded-For')
                 info['http_x_forwarded_proto'] = request.headers.get('X-Forwarded-Proto')
@@ -90,6 +91,7 @@ def ping(headers={}, request=None) -> dict:
                 info['headers'] = str(request.headers)
                 info['server_protocol'] = "HTTP/" + request.get('http_version')
                 info['request_method'] = request.method
+                info['via'] = request.headers.get('via')
                 info['http_x_real_ip'] = request.headers.get('x-real-ip')
                 info['http_x_forwarded_for'] = request.headers.get('x-forwarded-for')
                 info['http_x_forwarded_proto'] = request.headers.get('x-forwarded-proto')
